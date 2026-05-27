@@ -2,82 +2,54 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/types'
 import { formatPrice } from '@/lib/products'
-import Badge from '@/components/ui/Badge'
 
 interface Props {
   product: Product
 }
 
 export default function ProductCard({ product }: Props) {
-  const primaryImage = product.images.white?.[0] ?? product.images.black?.[0]
+  const variant = product.variants[0]
+  const onSale = product.compareAtPrice > product.price
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
-      {/* Image container — no rounded corners, editorial square */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-cream-dark mb-4">
-        {primaryImage ? (
-          <Image
-            src={primaryImage}
-            alt={product.name}
-            fill
-            className="object-cover object-center group-hover:scale-103 transition-transform duration-700 ease-out"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        ) : (
-          /* Placeholder: show the product phrase */
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-cream-dark p-8">
-            {product.phrase.map((line, i) => (
-              <span
-                key={i}
-                className="font-sans text-xs tracking-[0.3em] uppercase text-ink-light text-center leading-loose"
-              >
-                {line}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-          {product.isBestseller && <Badge variant="bestseller" />}
-          {product.isNew && <Badge variant="new" />}
-        </div>
-
-        {/* Compare price overlay */}
-        {product.compareAtPrice > product.price && (
-          <div className="absolute bottom-3 right-3">
-            <span className="font-sans text-[10px] tracking-[0.15em] uppercase bg-red-accent text-white px-2 py-1">
-              Sale
-            </span>
-          </div>
+      <div className="relative aspect-[3/4] bg-neutral-50 overflow-hidden mb-3">
+        <Image
+          src={variant.back}
+          alt={product.name}
+          fill
+          className="object-contain object-center p-4 group-hover:scale-[1.02] transition-transform duration-500"
+          sizes="(max-width: 768px) 50vw, 25vw"
+        />
+        {onSale && (
+          <span className="absolute top-3 right-3 bg-black text-white text-[10px] font-bold uppercase px-2 py-1 rounded-full">
+            Sale
+          </span>
         )}
       </div>
-
-      {/* Info */}
-      <div className="border-b border-gold/20 pb-4">
-        <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-ink mb-1 leading-relaxed">
-          {product.name}
-        </p>
-        <div className="flex items-center gap-3">
-          <span className="font-serif text-base text-ink">{formatPrice(product.price)}</span>
-          {product.compareAtPrice > product.price && (
-            <span className="font-sans text-xs text-ink-light line-through">
-              {formatPrice(product.compareAtPrice)}
-            </span>
-          )}
-        </div>
-        {/* Color swatches */}
-        <div className="flex gap-2 mt-2">
-          {product.colors.map((color) => (
+      <h3 className="text-xs font-bold uppercase tracking-wide text-black line-clamp-2">
+        {product.name}
+      </h3>
+      <div className="flex items-center gap-2 mt-1">
+        <span className="text-sm font-semibold">{formatPrice(product.price)}</span>
+        {onSale && (
+          <span className="text-xs text-neutral-400 line-through">
+            {formatPrice(product.compareAtPrice)}
+          </span>
+        )}
+      </div>
+      {product.variants.length > 1 && (
+        <div className="flex gap-1.5 mt-2">
+          {product.variants.map((v) => (
             <span
-              key={color}
-              className="w-3 h-3 border border-gold/30"
-              style={{ backgroundColor: color === 'white' ? '#FFFFFF' : '#1A1A18' }}
-              title={color}
+              key={v.color}
+              className="w-4 h-4 rounded-full border border-neutral-200"
+              style={{ backgroundColor: v.hex }}
+              title={v.label}
             />
           ))}
         </div>
-      </div>
+      )}
     </Link>
   )
 }

@@ -17,18 +17,7 @@ const config: Config = {
         'red-accent': '#B5281C',
       },
       fontFamily: {
-        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
-        sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
-      },
-      letterSpacing: {
-        widest: '0.2em',
-        'ultra-wide': '0.3em',
-      },
-      borderWidth: {
-        '0.5': '0.5px',
-      },
-      scale: {
-        '103': '1.03',
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       animation: {
         marquee: 'marquee 28s linear infinite',

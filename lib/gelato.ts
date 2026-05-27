@@ -5,6 +5,7 @@ const GELATO_BASE = 'https://order.api.gelato.com'
 
 export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session): Promise<unknown> {
   const shipping = stripeSession.shipping_details
+  const customer = stripeSession.customer_details
   const lineItems = (stripeSession.line_items as Stripe.ApiList<Stripe.LineItem>)?.data ?? []
 
   if (!shipping?.address) {
@@ -13,21 +14,27 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
 
   const gelatoItems = lineItems.map((item, idx) => {
     const product = item.price?.product as Stripe.Product | undefined
+    const gelatoProductUid = product?.metadata?.gelatoProductUid ?? ''
+
+    if (!gelatoProductUid) {
+      throw new Error(`Missing gelatoProductUid for line item ${idx}`)
+    }
+
     return {
       itemReferenceId: `item-${stripeSession.id}-${idx}`,
-      productUid: product?.metadata?.gelatoProductId ?? '',
+      productUid: gelatoProductUid,
       quantity: item.quantity ?? 1,
       files: [],
     }
   })
 
-  const nameParts = (shipping.name ?? '').split(' ')
-  const firstName = nameParts[0] ?? ''
-  const lastName = nameParts.slice(1).join(' ')
+  const nameParts = (shipping.name ?? customer?.name ?? '').split(' ')
+  const firstName = nameParts[0] ?? 'Customer'
+  const lastName = nameParts.slice(1).join(' ') || firstName
 
   const order: GelatoOrder = {
     orderReferenceId: stripeSession.id,
-    customerReferenceId: stripeSession.customer_details?.email,
+    customerReferenceId: customer?.email ?? undefined,
     currency: 'EUR',
     items: gelatoItems,
     shippingAddress: {
@@ -38,7 +45,7 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
       city: shipping.address.city ?? '',
       postCode: shipping.address.postal_code ?? '',
       country: shipping.address.country ?? '',
-      email: stripeSession.customer_details?.email ?? '',
+      email: customer?.email ?? '',
     },
   }
 

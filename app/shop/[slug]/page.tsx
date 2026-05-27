@@ -14,14 +14,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = getProductBySlug(params.slug)
   if (!product) return {}
+  const image = product.variants[0]?.back
   return {
     title: product.name,
-    description: product.description ?? `${product.name} — Premium oversized statement tee by Told—`,
-    openGraph: {
-      images: product.images.white?.[0]
-        ? [{ url: product.images.white[0], width: 1200, height: 1500 }]
-        : [],
-    },
+    description: product.description,
+    openGraph: image ? { images: [{ url: image, width: 1200, height: 1200 }] } : {},
   }
 }
 

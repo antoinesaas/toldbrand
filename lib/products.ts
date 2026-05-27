@@ -1,62 +1,90 @@
-import type { Product } from '@/types'
+import type { Product, ProductVariant } from '@/types'
+
+const gelatoUid = (key: string) =>
+  process.env[`GELATO_UID_${key}`] ?? process.env.GELATO_DEFAULT_PRODUCT_UID ?? ''
+
+const eatFrenchVariants: ProductVariant[] = [
+  {
+    color: 'pink',
+    label: 'Pink print',
+    hex: '#E91E8C',
+    front: '/images/products/eat-french/pink/front.jpg',
+    back: '/images/products/eat-french/pink/back.jpg',
+    lifestyle: '/images/products/eat-french/pink/lifestyle.jpg',
+    gelatoProductUid: gelatoUid('EAT_FRENCH_PINK'),
+  },
+  {
+    color: 'blue',
+    label: 'Blue print',
+    hex: '#4FC3F7',
+    front: '/images/products/eat-french/blue/front.jpg',
+    back: '/images/products/eat-french/blue/back.jpg',
+    lifestyle: '/images/products/eat-french/blue/lifestyle.jpg',
+    gelatoProductUid: gelatoUid('EAT_FRENCH_BLUE'),
+  },
+  {
+    color: 'black',
+    label: 'Black print',
+    hex: '#1A1A18',
+    front: '/images/products/eat-french/black/front.jpg',
+    back: '/images/products/eat-french/black/back.jpg',
+    lifestyle: '/images/products/eat-french/black/lifestyle.jpg',
+    gelatoProductUid: gelatoUid('EAT_FRENCH_BLACK'),
+  },
+]
+
+const kissMeVariant: ProductVariant = {
+  color: 'white',
+  label: 'White / Red print',
+  hex: '#FFFFFF',
+  front: '/images/products/just-kiss-me/front.jpg',
+  back: '/images/products/just-kiss-me/back.jpg',
+  lifestyle: '/images/products/just-kiss-me/lifestyle.jpg',
+  gelatoProductUid: gelatoUid('JUST_KISS_ME'),
+}
 
 export const PRODUCTS: Product[] = [
   {
-    id: 'great-taste',
-    slug: 'great-taste-terrible-decisions',
-    name: 'GREAT TASTE, TERRIBLE DECISIONS',
-    phrase: ['GREAT TASTE', 'TERRIBLE', 'DECISIONS'],
-    gelatoProductId: 'YOUR_GELATO_PRODUCT_ID',
+    id: 'eat-french',
+    slug: 'eat-french-drive-german-date-italian',
+    name: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
+    tagline: 'European taste, one tee.',
+    phrase: ['EAT', 'FRENCH', 'DRIVE', 'GERMAN', 'DATE', 'ITALIAN'],
     price: 2995,
     compareAtPrice: 3995,
-    colors: ['white', 'black'],
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    images: {
-      white: ['/images/great-taste-white-back.jpg', '/images/great-taste-white-front.jpg'],
-      black: ['/images/great-taste-black-back.jpg'],
-    },
+    variants: eatFrenchVariants,
     isNew: false,
     isBestseller: true,
     description:
-      'Oversized unisex tee. 100% organic cotton, 220 gsm. Printed in Europe by Gelato. Wash at 30°C.',
+      'Oversized unisex tee. 100% cotton, heavyweight soft-wash. Printed on demand in Europe via Gelato.',
+    details: ['Front: TOLD logo', 'Back: Bold typographic print'],
+    material: [
+      '100% cotton',
+      'Heavyweight, soft-washed',
+      'Relaxed unisex fit with durable stitching',
+    ],
   },
   {
-    id: 'not-avoiding',
-    slug: 'not-avoiding-you-avoiding-everyone',
-    name: "I'M NOT AVOIDING YOU, I'M AVOIDING EVERYONE",
-    phrase: ["I'M NOT", 'AVOIDING YOU', "I'M AVOIDING", 'EVERYONE'],
-    gelatoProductId: 'YOUR_GELATO_PRODUCT_ID',
+    id: 'just-kiss-me',
+    slug: 'just-kiss-me-we-can-talk-later',
+    name: 'JUST KISS ME',
+    tagline: 'We can talk later.',
+    phrase: ['JUST KISS ME', 'WE CAN TALK LATER'],
     price: 2995,
     compareAtPrice: 3995,
-    colors: ['white', 'black'],
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    images: {
-      white: ['/images/not-avoiding-white-back.jpg'],
-      black: ['/images/not-avoiding-black-back.jpg'],
-    },
+    variants: [kissMeVariant],
     isNew: true,
     isBestseller: false,
     description:
-      'Oversized unisex tee. 100% organic cotton, 220 gsm. Printed in Europe by Gelato. Wash at 30°C.',
-  },
-  {
-    id: 'give-great-advice',
-    slug: 'give-great-advice-follow-none',
-    name: 'I GIVE GREAT ADVICE, I FOLLOW NONE OF IT',
-    phrase: ['I GIVE', 'GREAT ADVICE', 'I FOLLOW', 'NONE OF IT'],
-    gelatoProductId: 'YOUR_GELATO_PRODUCT_ID',
-    price: 2995,
-    compareAtPrice: 3995,
-    colors: ['white', 'black'],
-    sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    images: {
-      white: ['/images/great-advice-white-back.jpg'],
-      black: ['/images/great-advice-black-back.jpg'],
-    },
-    isNew: true,
-    isBestseller: false,
-    description:
-      'Oversized unisex tee. 100% organic cotton, 220 gsm. Printed in Europe by Gelato. Wash at 30°C.',
+      'Oversized unisex tee. 100% cotton, heavyweight soft-wash. Printed on demand in Europe via Gelato.',
+    details: ['Front: TOLD logo', 'Back: Bold text print'],
+    material: [
+      '100% cotton',
+      'Heavyweight, soft-washed',
+      'Relaxed unisex fit with durable stitching',
+    ],
   },
 ]
 
@@ -64,6 +92,13 @@ export function getProductBySlug(slug: string): Product | undefined {
   return PRODUCTS.find((p) => p.slug === slug)
 }
 
-export function formatPrice(cents: number): string {
-  return `€${(cents / 100).toFixed(2)}`
+export function getVariant(product: Product, color: string): ProductVariant | undefined {
+  return product.variants.find((v) => v.color === color)
+}
+
+export function formatPrice(cents: number, locale = 'fr-FR'): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(cents / 100)
 }

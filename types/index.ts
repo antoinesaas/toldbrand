@@ -1,21 +1,32 @@
+export type ProductColor = 'pink' | 'blue' | 'black' | 'white'
+export type ProductSize = 'S' | 'M' | 'L' | 'XL' | '2XL'
+
+export interface ProductVariant {
+  color: ProductColor
+  label: string
+  hex: string
+  front: string
+  back: string
+  lifestyle: string
+  gelatoProductUid: string
+}
+
 export interface Product {
   id: string
   slug: string
   name: string
+  tagline: string
   phrase: string[]
-  gelatoProductId: string
   price: number
   compareAtPrice: number
-  colors: ProductColor[]
   sizes: ProductSize[]
-  images: Record<string, string[]>
+  variants: ProductVariant[]
   isNew: boolean
   isBestseller: boolean
-  description?: string
+  description: string
+  details: string[]
+  material: string[]
 }
-
-export type ProductColor = 'white' | 'black'
-export type ProductSize = 'XS' | 'S' | 'M' | 'L' | 'XL' | '2XL'
 
 export interface CartItem {
   id: string
@@ -23,10 +34,11 @@ export interface CartItem {
   name: string
   size: ProductSize
   color: ProductColor
+  colorLabel: string
   price: number
   quantity: number
   imageUrl: string
-  gelatoProductId: string
+  gelatoProductUid: string
 }
 
 export interface GelatoOrderItem {

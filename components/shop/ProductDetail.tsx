@@ -2,40 +2,49 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import type { Product, ProductColor, ProductSize } from '@/types'
-import { formatPrice } from '@/lib/products'
+import type { Product, ProductSize } from '@/types'
+import { PRODUCTS, formatPrice } from '@/lib/products'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
-import Badge from '@/components/ui/Badge'
-import Button from '@/components/ui/Button'
+import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
 
 interface Props {
   product: Product
 }
 
+const TRUST_ITEMS = [
+  { icon: '✓', text: 'BUY NOW — ', highlight: 'ORDERS SHIPPED WITHIN 24–48 HOURS' },
+  { icon: '✈', text: 'WORLDWIDE SHIPPING' },
+  { icon: '↩', text: 'EASY RETURNS' },
+  { icon: '★', text: 'HIGH QUALITY' },
+]
+
 export default function ProductDetail({ product }: Props) {
-  const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0])
+  const [variant, setVariant] = useState(product.variants[0])
   const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null)
-  const [activeImage, setActiveImage] = useState(0)
+  const [quantity, setQuantity] = useState(1)
+  const [detailsOpen, setDetailsOpen] = useState(true)
+  const [shippingOpen, setShippingOpen] = useState(false)
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false)
   const [added, setAdded] = useState(false)
-  const { addItem, openCart } = useCartStore()
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const { addItem, openCart, items } = useCartStore()
 
-  const images = product.images[selectedColor] ?? []
-  const currentImage = images[activeImage] ?? null
+  const related = PRODUCTS.filter((p) => p.id !== product.id)
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (!selectedSize) return
 
     addItem({
-      id: makeItemId(product.id, selectedColor, selectedSize),
+      id: makeItemId(product.id, variant.color, selectedSize),
       productId: product.id,
       name: product.name,
       size: selectedSize,
-      color: selectedColor,
+      color: variant.color,
+      colorLabel: variant.label,
       price: product.price,
-      imageUrl: images[0] ?? '',
-      gelatoProductId: product.gelatoProductId,
+      imageUrl: variant.back,
+      gelatoProductUid: variant.gelatoProductUid,
     })
 
     setAdded(true)
@@ -43,156 +52,290 @@ export default function ProductDetail({ product }: Props) {
     setTimeout(() => setAdded(false), 2000)
   }
 
+  async function handleBuyNow() {
+    if (!selectedSize) return
+    setCheckoutLoading(true)
+
+    const cartItem = {
+      id: makeItemId(product.id, variant.color, selectedSize),
+      productId: product.id,
+      name: product.name,
+      size: selectedSize,
+      color: variant.color,
+      colorLabel: variant.label,
+      price: product.price,
+      quantity,
+      imageUrl: variant.back,
+      gelatoProductUid: variant.gelatoProductUid,
+    }
+
+    const existing = items.find((i) => i.id === cartItem.id)
+    const checkoutItems = existing
+      ? items.map((i) => (i.id === cartItem.id ? { ...i, quantity: i.quantity + quantity } : i))
+      : [...items, cartItem]
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: checkoutItems }),
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+    } finally {
+      setCheckoutLoading(false)
+    }
+  }
+
   return (
-    <div className="pt-24 min-h-screen">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-        {/* Image column */}
-        <div className="sticky top-24 self-start">
-          {/* Main image */}
-          <div className="relative aspect-[3/4] bg-cream-dark overflow-hidden">
-            {currentImage ? (
-              <Image
-                src={currentImage}
-                alt={product.name}
-                fill
-                priority
-                className="object-cover object-center"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-12">
-                {product.phrase.map((line, i) => (
-                  <span
-                    key={i}
-                    className="font-sans text-sm tracking-[0.3em] uppercase text-ink-light text-center leading-loose"
-                  >
-                    {line}
+    <div className="pt-20 min-h-screen bg-white">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 lg:gap-12">
+          {/* Gallery — TalkLess dual + lifestyle */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="relative aspect-square bg-neutral-50 overflow-hidden">
+                <Image
+                  src={variant.back}
+                  alt={`${product.name} — back`}
+                  fill
+                  priority
+                  className="object-contain object-center p-4"
+                  sizes="(max-width: 640px) 100vw, 35vw"
+                />
+              </div>
+              <div className="relative aspect-square bg-neutral-50 overflow-hidden">
+                <Image
+                  src={variant.lifestyle}
+                  alt={`${product.name} — lifestyle`}
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 640px) 100vw, 35vw"
+                />
+              </div>
+            </div>
+
+            {/* Front thumbnail strip */}
+            <div className="flex gap-2">
+              {[variant.back, variant.front, variant.lifestyle].map((src, i) => (
+                <div
+                  key={i}
+                  className="relative w-20 h-20 border border-neutral-200 overflow-hidden bg-neutral-50"
+                >
+                  <Image src={src} alt="" fill className="object-cover" sizes="80px" />
+                </div>
+              ))}
+            </div>
+
+            {/* Trust badges */}
+            <ul className="space-y-3 pt-4 border-t border-neutral-100">
+              {TRUST_ITEMS.map((item) => (
+                <li key={item.text} className="flex items-start gap-3 text-xs font-medium tracking-wide">
+                  <span className="text-neutral-400 w-4">{item.icon}</span>
+                  <span>
+                    {item.text}
+                    {item.highlight && (
+                      <span className="text-emerald-600">{item.highlight}</span>
+                    )}
                   </span>
-                ))}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Purchase panel */}
+          <div className="lg:sticky lg:top-24 lg:self-start space-y-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tight text-black leading-tight">
+                {product.phrase[0]}
+                {product.phrase.length > 1 && (
+                  <>
+                    <br />
+                    <span className="text-lg md:text-xl font-semibold text-neutral-600">
+                      {product.phrase.slice(1).join(' ')}
+                    </span>
+                  </>
+                )}
+              </h1>
+              <div className="flex items-baseline gap-3 mt-4">
+                <span className="text-xl font-semibold">{formatPrice(product.price)}</span>
+                {product.compareAtPrice > product.price && (
+                  <span className="text-neutral-400 line-through text-sm">
+                    {formatPrice(product.compareAtPrice)}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Color / variant */}
+            {product.variants.length > 1 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
+                  Print color — <span className="text-black">{variant.label}</span>
+                </p>
+                <div className="flex gap-2">
+                  {product.variants.map((v) => (
+                    <button
+                      key={v.color}
+                      onClick={() => setVariant(v)}
+                      className={`w-10 h-10 rounded-full border-2 transition-all ${
+                        variant.color === v.color ? 'border-black scale-110' : 'border-neutral-200'
+                      }`}
+                      style={{ backgroundColor: v.hex }}
+                      title={v.label}
+                      aria-label={v.label}
+                    />
+                  ))}
+                </div>
               </div>
             )}
-          </div>
 
-          {/* Thumbnail strip */}
-          {images.length > 1 && (
-            <div className="flex gap-2 mt-2 px-4 lg:px-0">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImage(i)}
-                  className={`relative w-16 h-20 overflow-hidden border ${
-                    i === activeImage ? 'border-ink' : 'border-transparent'
-                  }`}
-                >
-                  <Image src={img} alt="" fill className="object-cover" sizes="64px" />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Info column */}
-        <div className="px-8 md:px-16 py-12 lg:py-16 flex flex-col gap-8">
-          {/* Badges */}
-          <div className="flex gap-2">
-            {product.isBestseller && <Badge variant="bestseller" />}
-            {product.isNew && <Badge variant="new" />}
-          </div>
-
-          {/* Name */}
-          <div>
-            <h1 className="font-sans text-sm tracking-[0.2em] uppercase text-ink leading-loose">
-              {product.name}
-            </h1>
-            <div className="flex items-center gap-4 mt-3">
-              <span className="font-serif text-2xl text-ink">{formatPrice(product.price)}</span>
-              {product.compareAtPrice > product.price && (
-                <span className="font-sans text-sm text-ink-light line-through">
-                  {formatPrice(product.compareAtPrice)}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Color selector */}
-          <div>
-            <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-ink-light mb-3">
-              Color — <span className="text-ink capitalize">{selectedColor}</span>
-            </p>
-            <div className="flex gap-3">
-              {product.colors.map((color) => (
-                <button
-                  key={color}
-                  onClick={() => {
-                    setSelectedColor(color)
-                    setActiveImage(0)
-                  }}
-                  className={`w-8 h-8 border transition-all ${
-                    selectedColor === color
-                      ? 'border-ink scale-110'
-                      : 'border-gold/40 hover:border-ink'
-                  }`}
-                  style={{ backgroundColor: color === 'white' ? '#FFFFFF' : '#1A1A18' }}
-                  title={color}
-                  aria-label={`Select ${color}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Size selector */}
-          <div>
-            <div className="flex items-baseline justify-between mb-3">
-              <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-ink-light">
+            {/* Size */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
                 Size
               </p>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`min-w-[48px] h-11 px-3 text-sm font-medium border transition-all ${
+                      selectedSize === size
+                        ? 'bg-black text-white border-black'
+                        : 'bg-white text-black border-neutral-300 hover:border-black'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+              {!selectedSize && (
+                <p className="text-xs text-neutral-400 mt-2">Please select a size</p>
+              )}
+            </div>
+
+            {/* Quantity */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
+                Quantity
+              </p>
+              <div className="inline-flex items-center border border-neutral-300">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="w-11 h-11 text-lg hover:bg-neutral-50"
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className="w-12 text-center text-sm font-medium">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="w-11 h-11 text-lg hover:bg-neutral-50"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="space-y-3">
               <button
-                onClick={() => setSizeGuideOpen(true)}
-                className="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-light hover:text-ink transition-colors underline underline-offset-2"
+                type="button"
+                onClick={handleAddToCart}
+                disabled={!selectedSize}
+                className="w-full h-12 bg-black text-white text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                Size guide
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M6 6h15l-1.5 9h-12z" />
+                  <circle cx="9" cy="20" r="1" />
+                  <circle cx="18" cy="20" r="1" />
+                </svg>
+                {added ? 'Added to cart ✓' : 'Add to cart'}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleBuyNow}
+                disabled={!selectedSize || checkoutLoading}
+                className="w-full h-12 bg-[#5A31F4] text-white text-sm font-semibold hover:bg-[#4a28d4] disabled:opacity-40 transition-colors"
+              >
+                {checkoutLoading ? 'Redirecting…' : 'Buy now — Stripe Checkout'}
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {product.sizes.map((size) => (
+
+            {/* Accordions */}
+            <div className="border-t border-neutral-200 pt-2 space-y-0">
+              <div className="border-b border-neutral-200">
                 <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`w-14 h-10 font-sans text-xs tracking-[0.1em] border transition-all ${
-                    selectedSize === size
-                      ? 'border-ink bg-ink text-cream'
-                      : 'border-gold/40 text-ink hover:border-ink'
-                  }`}
+                  type="button"
+                  onClick={() => setDetailsOpen(!detailsOpen)}
+                  className="w-full flex justify-between items-center py-4 text-xs font-bold uppercase tracking-widest"
                 >
-                  {size}
+                  Details
+                  <span>{detailsOpen ? '−' : '+'}</span>
                 </button>
-              ))}
+                {detailsOpen && (
+                  <div className="pb-4 text-sm text-neutral-600 space-y-3">
+                    {product.details.map((d) => (
+                      <p key={d}>{d}</p>
+                    ))}
+                    <p className="font-semibold text-black text-xs uppercase tracking-wider">
+                      Material &amp; Quality
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      {product.material.map((m) => (
+                        <li key={m}>{m}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-b border-neutral-200">
+                <button
+                  type="button"
+                  onClick={() => setShippingOpen(!shippingOpen)}
+                  className="w-full flex justify-between items-center py-4 text-xs font-bold uppercase tracking-widest"
+                >
+                  <span>🚚 Shipping</span>
+                  <span>{shippingOpen ? '−' : '+'}</span>
+                </button>
+                {shippingOpen && (
+                  <p className="pb-4 text-sm text-neutral-600">
+                    Printed on demand in Europe via Gelato. Standard delivery 3–7 business days.
+                    Orders ship within 24–48 hours after payment.
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSizeGuideOpen(true)}
+                className="w-full flex justify-between items-center py-4 text-xs font-bold uppercase tracking-widest"
+              >
+                <span>👕 Size guide</span>
+                <span>+</span>
+              </button>
             </div>
-            {!selectedSize && (
-              <p className="font-sans text-[10px] text-ink-light mt-2">Please select a size</p>
-            )}
           </div>
-
-          {/* Add to cart */}
-          <Button
-            onClick={handleAddToCart}
-            disabled={!selectedSize}
-            variant="primary"
-            fullWidth
-          >
-            {added ? 'Added to bag ✓' : 'Add to bag'}
-          </Button>
-
-          {/* Description */}
-          {product.description && (
-            <div className="border-t border-gold/20 pt-6">
-              <p className="font-sans text-xs text-ink-light leading-relaxed">
-                {product.description}
-              </p>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Related */}
+      {related.length > 0 && (
+        <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-16 border-t border-neutral-100">
+          <h2 className="text-sm font-bold uppercase tracking-widest mb-8">You may also like</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {related.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {sizeGuideOpen && <SizeGuide onClose={() => setSizeGuideOpen(false)} />}
     </div>
