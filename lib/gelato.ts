@@ -1,7 +1,8 @@
 import Stripe from 'stripe'
 import type { GelatoOrder } from '@/types'
 
-const GELATO_BASE = 'https://order.api.gelato.com'
+const GELATO_ORDER_BASE = 'https://order.gelatoapis.com'
+const GELATO_CONNECT_BASE = 'https://connect.gelatoapis.com'
 
 export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session): Promise<unknown> {
   const shipping = stripeSession.shipping_details
@@ -49,7 +50,7 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
     },
   }
 
-  const res = await fetch(`${GELATO_BASE}/v4/orders`, {
+  const res = await fetch(`${GELATO_ORDER_BASE}/v4/orders`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -66,16 +67,18 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
   return res.json()
 }
 
-export async function getGelatoProducts(): Promise<unknown> {
-  const res = await fetch(`${GELATO_BASE}/v4/products`, {
+export async function getGelatoCustomerProducts(): Promise<unknown> {
+  const res = await fetch(`${GELATO_CONNECT_BASE}/product/v1/customer-products?limit=250&offset=0`, {
     headers: {
+      Accept: 'application/json',
       'X-API-KEY': process.env.GELATO_API_KEY!,
     },
     next: { revalidate: 3600 },
   })
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch Gelato products: ${res.statusText}`)
+    const text = await res.text().catch(() => '')
+    throw new Error(`Failed to fetch Gelato customer products: ${res.status} ${res.statusText} ${text}`)
   }
 
   return res.json()
