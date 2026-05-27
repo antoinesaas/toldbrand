@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #F8F5F0;
+  --cream-dark: #EDE9E2;
+  --ink: #1A1A18;
+  --ink-light: #6B6B67;
+  --gold: #C9A872;
+  --white: #FFFFFF;
+  --red-accent: #B5281C;
+}
+
+html {
+  background-color: var(--cream);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--ink);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--gold); }
+
+/* Selection */
+::selection {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+/* Hide number input arrows */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@layer utilities {
+  .editorial-border {
+    border-color: var(--gold);
+    border-width: 0.5px;
+  }
+  .text-ink { color: var(--ink); }
+  .text-ink-light { color: var(--ink-light); }
+  .bg-cream { background-color: var(--cream); }
+  .bg-cream-dark { background-color: var(--cream-dark); }
+}

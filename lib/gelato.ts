@@ -1,0 +1,75 @@
+import Stripe from 'stripe'
+import type { GelatoOrder } from '@/types'
+
+const GELATO_BASE = 'https://order.api.gelato.com'
+
+export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session): Promise<unknown> {
+  const shipping = stripeSession.shipping_details
+  const lineItems = (stripeSession.line_items as Stripe.ApiList<Stripe.LineItem>)?.data ?? []
+
+  if (!shipping?.address) {
+    throw new Error('Stripe session missing shipping details')
+  }
+
+  const gelatoItems = lineItems.map((item, idx) => {
+    const product = item.price?.product as Stripe.Product | undefined
+    return {
+      itemReferenceId: `item-${stripeSession.id}-${idx}`,
+      productUid: product?.metadata?.gelatoProductId ?? '',
+      quantity: item.quantity ?? 1,
+      files: [],
+    }
+  })
+
+  const nameParts = (shipping.name ?? '').split(' ')
+  const firstName = nameParts[0] ?? ''
+  const lastName = nameParts.slice(1).join(' ')
+
+  const order: GelatoOrder = {
+    orderReferenceId: stripeSession.id,
+    customerReferenceId: stripeSession.customer_details?.email,
+    currency: 'EUR',
+    items: gelatoItems,
+    shippingAddress: {
+      firstName,
+      lastName,
+      addressLine1: shipping.address.line1 ?? '',
+      addressLine2: shipping.address.line2 ?? '',
+      city: shipping.address.city ?? '',
+      postCode: shipping.address.postal_code ?? '',
+      country: shipping.address.country ?? '',
+      email: stripeSession.customer_details?.email ?? '',
+    },
+  }
+
+  const res = await fetch(`${GELATO_BASE}/v4/orders`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-KEY': process.env.GELATO_API_KEY!,
+    },
+    body: JSON.stringify(order),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Gelato order failed: ${err}`)
+  }
+
+  return res.json()
+}
+
+export async function getGelatoProducts(): Promise<unknown> {
+  const res = await fetch(`${GELATO_BASE}/v4/products`, {
+    headers: {
+      'X-API-KEY': process.env.GELATO_API_KEY!,
+    },
+    next: { revalidate: 3600 },
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch Gelato products: ${res.statusText}`)
+  }
+
+  return res.json()
+}
