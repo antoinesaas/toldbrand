@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { REGIONS, useLocaleStore } from '@/lib/locale-store'
+import { useI18n } from '@/lib/i18n/use-i18n'
 
 interface Props {
   onSelect?: () => void
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function RegionSelector({ onSelect, compact = false }: Props) {
+  const { t } = useI18n()
   const { country, currency, setRegion } = useLocaleStore()
   const [open, setOpen] = useState(false)
   const current = REGIONS.find((r) => r.country === country) ?? REGIONS[0]
@@ -57,7 +59,7 @@ export default function RegionSelector({ onSelect, compact = false }: Props) {
   return (
     <div>
       <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-400 mb-3">
-        Pays / devise
+        {t.region.label}
       </p>
       <p className="text-sm mb-2">
         {current.label}

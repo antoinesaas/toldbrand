@@ -1,14 +1,14 @@
+'use client'
+
+import { useI18n } from '@/lib/i18n/use-i18n'
+
 interface Props {
   light?: boolean
 }
 
 export default function AnnouncementBar({ light = false }: Props) {
-  const messages = [
-    'Livraison offerte dès 60 €',
-    'Coton bio · 220 gsm',
-    'Nouveautés chaque mois',
-    'Expédition sous 24–48 h',
-  ]
+  const { t } = useI18n()
+  const messages = t.announcement
 
   return (
     <div

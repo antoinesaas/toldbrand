@@ -5,7 +5,7 @@ import Image from 'next/image'
 import type { Product, ProductSize } from '@/types'
 import { PRODUCTS } from '@/lib/products'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
-import { useLocaleStore } from '@/lib/locale-store'
+import { useI18n } from '@/lib/i18n/use-i18n'
 import { useFormatPrice } from '@/lib/use-format-price'
 import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
@@ -27,13 +27,13 @@ export default function ProductDetail({ product }: Props) {
   const [added, setAdded] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const { addItem, openCart, items } = useCartStore()
-  const { currency, country } = useLocaleStore()
+  const { t, currency, country, language } = useI18n()
   const formatPrice = useFormatPrice()
 
   const gallery: GalleryImage[] = useMemo(() => {
     const imgs: GalleryImage[] = [
-      { src: variant.back, label: 'Dos' },
       { src: variant.front, label: 'Face' },
+      { src: variant.back, label: 'Dos' },
       { src: variant.lifestyle, label: 'Porté' },
     ]
     if (product.id === 'just-kiss-me') {
@@ -55,7 +55,7 @@ export default function ProductDetail({ product }: Props) {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: checkoutItems, currency, country }),
+      body: JSON.stringify({ items: checkoutItems, currency, country, language }),
     })
     const data = await res.json()
     if (data.url) {
@@ -123,19 +123,37 @@ export default function ProductDetail({ product }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-0 lg:gap-12">
           {/* Gallery — Dior vertical scroll */}
           <div className="lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto lg:scrollbar-thin">
-            <div className="hidden lg:block space-y-1">
-              {gallery.map((img, i) => (
-                <div key={img.src} className="relative aspect-[4/5] bg-[#f7f7f7]">
-                  <Image
-                    src={img.src}
-                    alt={`${product.name} — ${img.label}`}
-                    fill
-                    priority={i === 0}
-                    className={i === 0 || i === 1 ? 'object-contain p-6' : 'object-cover object-center'}
-                    sizes="50vw"
-                  />
-                </div>
-              ))}
+            <div className="hidden lg:block">
+              <div className="relative aspect-[4/5] bg-[#f7f7f7] overflow-hidden">
+                <Image
+                  src={active.src}
+                  alt={`${product.name} — ${active.label}`}
+                  fill
+                  priority
+                  className={
+                    activeIndex <= 1
+                      ? 'object-contain p-6'
+                      : 'object-cover object-center object-top'
+                  }
+                  sizes="50vw"
+                />
+              </div>
+
+              <div className="flex gap-2 mt-3">
+                {gallery.map((img, i) => (
+                  <button
+                    key={img.src}
+                    type="button"
+                    onClick={() => setActiveIndex(i)}
+                    className={`relative w-16 h-20 overflow-hidden border-2 transition-colors ${
+                      i === activeIndex ? 'border-black' : 'border-transparent'
+                    }`}
+                    aria-label={`Show ${img.label}`}
+                  >
+                    <Image src={img.src} alt={img.label} fill className="object-cover" sizes="64px" />
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Mobile: main + thumbnails */}
@@ -171,8 +189,8 @@ export default function ProductDetail({ product }: Props) {
 
           {/* Purchase panel */}
           <div className="lg:sticky lg:top-[88px] lg:self-start px-4 md:px-8 lg:px-0 py-8 lg:py-12 lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto">
-            <div className="text-center lg:text-left mb-6">
-              <h1 className="text-xl md:text-2xl font-normal uppercase tracking-[0.08em] leading-snug">
+            <div className="text-center mb-6">
+              <h1 className="text-xl md:text-2xl font-normal font-serif uppercase tracking-[0.12em] leading-snug">
                 {titleLine1}
               </h1>
               {titleRest && (
@@ -193,7 +211,7 @@ export default function ProductDetail({ product }: Props) {
             {product.variants.length > 1 && (
               <div className="mb-6">
                 <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 mb-3 text-center lg:text-left">
-                  Autres coloris
+                  {t.product.otherColors}
                 </p>
                 <div className="flex justify-center lg:justify-start gap-2">
                   {product.variants.map((v) => (
@@ -214,7 +232,7 @@ export default function ProductDetail({ product }: Props) {
 
             <div className="mb-6">
               <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 mb-3 text-center lg:text-left">
-                Taille
+                {t.product.size}
               </p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-2">
                 {product.sizes.map((size) => (
@@ -237,7 +255,7 @@ export default function ProductDetail({ product }: Props) {
                 onClick={() => setSizeGuideOpen(true)}
                 className="block w-full text-center lg:text-left text-xs underline text-neutral-500 mt-3"
               >
-                Guide des tailles
+                {t.product.sizeGuide}
               </button>
             </div>
 
@@ -263,8 +281,6 @@ export default function ProductDetail({ product }: Props) {
               </div>
             </div>
 
-            <PaymentIcons className="mb-4" />
-
             <div className="space-y-2">
               <button
                 type="button"
@@ -273,7 +289,7 @@ export default function ProductDetail({ product }: Props) {
                 className="w-full h-12 bg-neutral-900 text-white text-sm flex items-center justify-between px-5 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 <span className="uppercase tracking-[0.12em]">
-                  {added ? 'Ajouté' : 'Ajouter au panier'}
+                  {added ? t.product.added : t.product.addToCart}
                 </span>
                 <span className="font-medium">{formatPrice(product.price * quantity)}</span>
               </button>
@@ -284,21 +300,23 @@ export default function ProductDetail({ product }: Props) {
                 disabled={!selectedSize || checkoutLoading}
                 className="w-full h-11 border border-neutral-900 text-sm uppercase tracking-[0.12em] hover:bg-neutral-50 disabled:opacity-40"
               >
-                {checkoutLoading ? 'Redirection…' : 'Payer maintenant'}
+                {checkoutLoading ? t.product.redirecting : t.product.payNow}
               </button>
             </div>
 
+            <PaymentIcons className="mt-4" />
+
             <p className="text-[11px] text-neutral-500 text-center lg:text-left mt-4 leading-relaxed">
-              Livraison offerte dès 60 €. Expédition sous 24–48 h. Retours sous 30 jours.
+              {t.product.shippingNote}
             </p>
 
             <div className="mt-8 border-t border-neutral-200">
               <div className="flex border-b border-neutral-200">
                 {(
                   [
-                    ['description', 'Description'],
-                    ['shipping', 'Livraison'],
-                    ['size', 'Taille'],
+                    ['description', t.product.description],
+                    ['shipping', t.product.shipping],
+                    ['size', t.product.sizeTab],
                   ] as const
                 ).map(([key, label]) => (
                   <button
@@ -324,17 +342,8 @@ export default function ProductDetail({ product }: Props) {
                     </ul>
                   </>
                 )}
-                {tab === 'shipping' && (
-                  <p>
-                    Livraison directe à domicile. Délais habituels : 3 à 7 jours ouvrés selon la destination.
-                    Livraison offerte pour toute commande de 60 € et plus.
-                  </p>
-                )}
-                {tab === 'size' && (
-                  <p>
-                    Coupe relax unisexe. Consultez le guide des tailles pour les mesures détaillées.
-                  </p>
-                )}
+                {tab === 'shipping' && <p>{t.product.shippingText}</p>}
+                {tab === 'size' && <p>{t.product.sizeText}</p>}
               </div>
             </div>
           </div>
@@ -344,7 +353,7 @@ export default function ProductDetail({ product }: Props) {
       {related.length > 0 && (
         <section className="max-w-[1200px] mx-auto px-4 md:px-8 py-20 border-t border-neutral-100 mt-12">
           <h2 className="text-center text-sm font-medium uppercase tracking-[0.2em] mb-12">
-            Vous aimerez aussi
+            {t.product.related}
           </h2>
           <div className="grid grid-cols-2 gap-8 md:gap-12 max-w-2xl mx-auto">
             {related.map((p) => (

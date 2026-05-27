@@ -8,11 +8,13 @@ import { useCartStore } from '@/lib/cart-store'
 import AnnouncementBar from './AnnouncementBar'
 import MenuDrawer from './MenuDrawer'
 import RegionSelector from './RegionSelector'
+import { useI18n } from '@/lib/i18n/use-i18n'
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const { t } = useI18n()
   const { count, toggleCart } = useCartStore()
   const cartCount = count()
   const isHome = pathname === '/'
@@ -39,7 +41,7 @@ export default function SiteHeader() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <AnnouncementBar light={lightOnDark} />
         <div className={`transition-colors duration-300 ${navBg}`}>
-          <nav className="max-w-[1400px] mx-auto h-14 md:h-16 flex items-center justify-between px-4 md:px-8">
+          <nav className="max-w-[1400px] mx-auto h-14 md:h-16 grid grid-cols-3 items-center px-4 md:px-8">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
@@ -50,7 +52,7 @@ export default function SiteHeader() {
               <span className={`block w-5 h-px ${lightOnDark ? 'bg-white' : 'bg-black'}`} />
             </button>
 
-            <Link href="/" className="absolute left-1/2 -translate-x-1/2">
+            <Link href="/" className="justify-self-center">
               <Image
                 src="/branding/logo.png"
                 alt="TOLD"
@@ -61,7 +63,7 @@ export default function SiteHeader() {
               />
             </Link>
 
-            <div className={`flex items-center gap-4 md:gap-6 ml-auto ${textClass}`}>
+            <div className={`justify-self-end flex items-center gap-4 md:gap-6 ${textClass}`}>
               <RegionSelector compact />
               <button
                 type="button"
@@ -69,7 +71,7 @@ export default function SiteHeader() {
                 className="text-xs tracking-[0.15em] uppercase flex items-center gap-2"
                 aria-label="Panier"
               >
-                Panier
+                {t.nav.cart}
                 {cartCount > 0 && (
                   <span
                     className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] rounded-full ${

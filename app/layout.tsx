@@ -1,13 +1,27 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Playfair_Display, DM_Sans } from 'next/font/google'
 import './globals.css'
 import SiteHeader from '@/components/layout/SiteHeader'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
+import LocaleSync from '@/components/layout/LocaleSync'
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+  weight: ['200', '300', '400'],
+})
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -32,8 +46,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={inter.variable}>
+    <html lang="fr" className={`${playfair.variable} ${dmSans.variable}`}>
       <body className="font-sans bg-white text-black antialiased">
+        <LocaleSync />
         <SiteHeader />
         <main className="min-h-screen">{children}</main>
         <Footer />

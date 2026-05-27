@@ -1,42 +1,79 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import RegionSelector from './RegionSelector'
+import { useI18n } from '@/lib/i18n/use-i18n'
 
 interface Props {
   open: boolean
   onClose: () => void
 }
 
-const NAV_LINKS = [
-  { href: '/', label: 'Accueil' },
-  { href: '/shop', label: 'T-shirts' },
-  { href: 'mailto:antoine08.pro@gmail.com', label: 'Nous contacter', external: true },
-]
-
-const LEGAL_LINKS = [
-  { href: '/legal/mentions-legales', label: 'Mentions légales' },
-  { href: '/legal/cgu', label: 'Conditions générales' },
-  { href: '/legal/confidentialite', label: 'Politique de confidentialité' },
-]
-
 export default function MenuDrawer({ open, onClose }: Props) {
   const pathname = usePathname()
+  const { t } = useI18n()
+  const [visible, setVisible] = useState(false)
+  const [animateIn, setAnimateIn] = useState(false)
 
-  if (!open) return null
+  useEffect(() => {
+    if (open) {
+      setVisible(true)
+      document.body.style.overflow = 'hidden'
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setAnimateIn(true))
+      })
+    } else {
+      setAnimateIn(false)
+      document.body.style.overflow = ''
+      const timer = setTimeout(() => setVisible(false), 320)
+      return () => clearTimeout(timer)
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
+
+  if (!visible) return null
+
+  const NAV_LINKS = [
+    { href: '/', label: t.nav.home },
+    { href: '/shop', label: t.nav.shirts },
+    { href: 'mailto:antoine08.pro@gmail.com', label: t.nav.contact, external: true },
+  ]
+
+  const LEGAL_LINKS = [
+    { href: '/legal/mentions-legales', label: t.menu.legal },
+    { href: '/legal/cgu', label: t.menu.terms },
+    { href: '/legal/confidentialite', label: t.menu.privacy },
+  ]
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 z-[60]" onClick={onClose} aria-hidden />
-      <aside className="fixed top-0 left-0 h-full w-full max-w-sm bg-white z-[70] flex flex-col shadow-xl">
+      <div
+        className={`fixed inset-0 z-[60] backdrop-blur-md bg-white/20 transition-opacity duration-300 ease-out ${
+          animateIn ? 'opacity-100' : 'opacity-0'
+        }`}
+        onClick={onClose}
+        aria-hidden
+      />
+
+      <aside
+        className={`fixed top-0 left-0 h-full w-full max-w-sm bg-white z-[70] flex flex-col shadow-2xl transition-transform duration-300 ease-out ${
+          animateIn ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+      >
         <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
           <button
             type="button"
             onClick={onClose}
             className="text-xs tracking-[0.15em] uppercase text-neutral-600 hover:text-black"
           >
-            Fermer
+            {t.nav.close}
           </button>
         </div>
 
@@ -69,7 +106,7 @@ export default function MenuDrawer({ open, onClose }: Props) {
             ))}
           </ul>
 
-          <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-400 mb-3">Informations</p>
+          <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-400 mb-3">{t.menu.info}</p>
           <ul className="space-y-3 mb-8">
             {LEGAL_LINKS.map(({ href, label }) => (
               <li key={href}>
@@ -84,7 +121,7 @@ export default function MenuDrawer({ open, onClose }: Props) {
             ))}
             <li>
               <Link href="/cart" onClick={onClose} className="text-sm text-neutral-600 hover:text-black">
-                Panier
+                {t.nav.cart}
               </Link>
             </li>
           </ul>
