@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 export default function ShopPage() {
   return (
     <div className="pt-28 bg-white min-h-screen">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-12 border-b border-neutral-100">
-        <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 mb-3">All products</p>
-        <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-tight">The Collection</h1>
-        <p className="text-sm text-neutral-500 mt-3">{PRODUCTS.length} statement tees</p>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-12 border-b border-neutral-100 text-center">
+        <p className="text-[10px] tracking-[0.3em] uppercase text-neutral-400 mb-3">Boutique</p>
+        <h1 className="text-sm font-medium uppercase tracking-[0.25em]">La collection</h1>
+        <p className="text-xs text-neutral-500 mt-3">{PRODUCTS.length} t-shirts</p>
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-16">

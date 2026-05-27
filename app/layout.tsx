@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Nav from '@/components/layout/Nav'
+import SiteHeader from '@/components/layout/SiteHeader'
 import Footer from '@/components/layout/Footer'
-import AnnouncementBar from '@/components/layout/AnnouncementBar'
 import CartDrawer from '@/components/cart/CartDrawer'
 
 const inter = Inter({
@@ -13,27 +12,30 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? 'https://toldbrand.vercel.app'),
   title: {
-    default: 'TOLD— Statement Clothing',
-    template: '%s | TOLD—',
+    default: 'TOLD — Statement Clothing',
+    template: '%s | TOLD',
   },
   description:
-    'Premium statement tees. Unisex, oversized, printed in Europe. Say what you mean.',
-  keywords: ['statement tshirt', 'oversized tee', 'told brand', 'eat french'],
+    'T-shirts statement premium. Coupe relax unisexe, coton bio. Dites ce que vous pensez.',
+  icons: {
+    icon: '/branding/logo.png',
+    apple: '/branding/logo.png',
+  },
   openGraph: {
     type: 'website',
-    locale: 'en_EU',
-    siteName: 'TOLD—',
+    locale: 'fr_FR',
+    siteName: 'TOLD',
   },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="fr" className={inter.variable}>
       <body className="font-sans bg-white text-black antialiased">
-        <AnnouncementBar />
-        <Nav />
-        <main>{children}</main>
+        <SiteHeader />
+        <main className="min-h-screen">{children}</main>
         <Footer />
         <CartDrawer />
       </body>

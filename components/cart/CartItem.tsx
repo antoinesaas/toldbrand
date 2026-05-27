@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import type { CartItem as CartItemType } from '@/types'
 import { useCartStore } from '@/lib/cart-store'
-import { formatPrice } from '@/lib/products'
+import { useFormatPrice } from '@/lib/use-format-price'
 
 interface Props {
   item: CartItemType
@@ -11,6 +11,7 @@ interface Props {
 
 export default function CartItem({ item }: Props) {
   const { removeItem, updateQuantity } = useCartStore()
+  const formatPrice = useFormatPrice()
 
   return (
     <div className="flex gap-4 py-4">

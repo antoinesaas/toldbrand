@@ -57,7 +57,7 @@ export const PRODUCTS: Product[] = [
     isNew: false,
     isBestseller: true,
     description:
-      'Oversized unisex tee. 100% cotton, heavyweight soft-wash. Printed on demand in Europe via Gelato.',
+      'T-shirt oversize unisexe. 100 % coton, lavage doux, 220 gsm. Impression haute qualité.',
     details: ['Front: TOLD logo', 'Back: Bold typographic print'],
     material: [
       '100% cotton',
@@ -78,7 +78,7 @@ export const PRODUCTS: Product[] = [
     isNew: true,
     isBestseller: false,
     description:
-      'Oversized unisex tee. 100% cotton, heavyweight soft-wash. Printed on demand in Europe via Gelato.',
+      'T-shirt oversize unisexe. 100 % coton, lavage doux, 220 gsm. Impression haute qualité.',
     details: ['Front: TOLD logo', 'Back: Bold text print'],
     material: [
       '100% cotton',

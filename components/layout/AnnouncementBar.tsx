@@ -1,16 +1,24 @@
-export default function AnnouncementBar() {
+interface Props {
+  light?: boolean
+}
+
+export default function AnnouncementBar({ light = false }: Props) {
   const messages = [
-    'Free shipping on orders over €60',
-    'Printed in Europe via Gelato',
-    'Organic cotton · 220 gsm',
-    'New drops every month',
+    'Livraison offerte dès 60 €',
+    'Coton bio · 220 gsm',
+    'Nouveautés chaque mois',
+    'Expédition sous 24–48 h',
   ]
 
   return (
-    <div className="bg-ink text-cream overflow-hidden h-8 flex items-center">
+    <div
+      className={`overflow-hidden h-8 flex items-center ${
+        light ? 'bg-black/30 text-white/80' : 'bg-black text-white/70'
+      }`}
+    >
       <div className="flex whitespace-nowrap animate-marquee">
         {[...messages, ...messages].map((msg, i) => (
-          <span key={i} className="font-sans text-[10px] tracking-[0.25em] uppercase mx-12 text-cream/70">
+          <span key={i} className="text-[10px] tracking-[0.25em] uppercase mx-12">
             {msg}
           </span>
         ))}

@@ -1,7 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/types'
-import { formatPrice } from '@/lib/products'
+import { useFormatPrice } from '@/lib/use-format-price'
 
 interface Props {
   product: Product
@@ -10,46 +12,49 @@ interface Props {
 export default function ProductCard({ product }: Props) {
   const variant = product.variants[0]
   const onSale = product.compareAtPrice > product.price
+  const formatPrice = useFormatPrice()
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
-      <div className="relative aspect-[3/4] bg-neutral-50 overflow-hidden mb-3">
+      <div className="relative aspect-[3/4] overflow-hidden bg-white mb-4">
         <Image
           src={variant.back}
           alt={product.name}
           fill
-          className="object-contain object-center p-4 group-hover:scale-[1.02] transition-transform duration-500"
-          sizes="(max-width: 768px) 50vw, 25vw"
+          className="object-contain object-center p-2 group-hover:opacity-95 transition-opacity duration-500"
+          sizes="(max-width: 768px) 50vw, 400px"
         />
         {onSale && (
-          <span className="absolute top-3 right-3 bg-black text-white text-[10px] font-bold uppercase px-2 py-1 rounded-full">
+          <span className="absolute top-2 right-2 bg-black text-white text-[9px] font-medium uppercase px-2 py-0.5 tracking-wider">
             Sale
           </span>
         )}
       </div>
-      <h3 className="text-xs font-bold uppercase tracking-wide text-black line-clamp-2">
-        {product.name}
-      </h3>
-      <div className="flex items-center gap-2 mt-1">
-        <span className="text-sm font-semibold">{formatPrice(product.price)}</span>
-        {onSale && (
-          <span className="text-xs text-neutral-400 line-through">
-            {formatPrice(product.compareAtPrice)}
-          </span>
+      <div className="text-center">
+        <h3 className="text-[10px] font-medium uppercase tracking-[0.15em] text-black line-clamp-2">
+          {product.name}
+        </h3>
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <span className="text-sm">{formatPrice(product.price)}</span>
+          {onSale && (
+            <span className="text-xs text-neutral-400 line-through">
+              {formatPrice(product.compareAtPrice)}
+            </span>
+          )}
+        </div>
+        {product.variants.length > 1 && (
+          <div className="flex justify-center gap-1.5 mt-3">
+            {product.variants.map((v) => (
+              <span
+                key={v.color}
+                className="w-3 h-3 rounded-full border border-neutral-200"
+                style={{ backgroundColor: v.hex }}
+                title={v.label}
+              />
+            ))}
+          </div>
         )}
       </div>
-      {product.variants.length > 1 && (
-        <div className="flex gap-1.5 mt-2">
-          {product.variants.map((v) => (
-            <span
-              key={v.color}
-              className="w-4 h-4 rounded-full border border-neutral-200"
-              style={{ backgroundColor: v.hex }}
-              title={v.label}
-            />
-          ))}
-        </div>
-      )}
     </Link>
   )
 }

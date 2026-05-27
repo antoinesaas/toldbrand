@@ -1,36 +1,69 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import type { Product, ProductSize } from '@/types'
-import { PRODUCTS, formatPrice } from '@/lib/products'
+import { PRODUCTS } from '@/lib/products'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
+import { useLocaleStore } from '@/lib/locale-store'
+import { useFormatPrice } from '@/lib/use-format-price'
 import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
+import PaymentIcons from './PaymentIcons'
 
 interface Props {
   product: Product
 }
 
-const TRUST_ITEMS = [
-  { icon: '✓', text: 'BUY NOW — ', highlight: 'ORDERS SHIPPED WITHIN 24–48 HOURS' },
-  { icon: '✈', text: 'WORLDWIDE SHIPPING' },
-  { icon: '↩', text: 'EASY RETURNS' },
-  { icon: '★', text: 'HIGH QUALITY' },
-]
+type GalleryImage = { src: string; label: string }
 
 export default function ProductDetail({ product }: Props) {
   const [variant, setVariant] = useState(product.variants[0])
+  const [activeIndex, setActiveIndex] = useState(0)
   const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const [detailsOpen, setDetailsOpen] = useState(true)
-  const [shippingOpen, setShippingOpen] = useState(false)
+  const [tab, setTab] = useState<'description' | 'shipping' | 'size'>('description')
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false)
   const [added, setAdded] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const { addItem, openCart, items } = useCartStore()
+  const { currency, country } = useLocaleStore()
+  const formatPrice = useFormatPrice()
 
+  const gallery: GalleryImage[] = useMemo(() => {
+    const imgs: GalleryImage[] = [
+      { src: variant.back, label: 'Dos' },
+      { src: variant.front, label: 'Face' },
+      { src: variant.lifestyle, label: 'Porté' },
+    ]
+    if (product.id === 'just-kiss-me') {
+      imgs.push({ src: '/images/lifestyle/just-kiss-me-boat.jpg', label: 'Lifestyle' })
+      imgs.push({ src: '/images/lifestyle/just-kiss-me-couple.jpg', label: 'Lifestyle' })
+    }
+    return imgs
+  }, [variant, product.id])
+
+  const active = gallery[activeIndex] ?? gallery[0]
   const related = PRODUCTS.filter((p) => p.id !== product.id)
+
+  function selectVariant(v: typeof variant) {
+    setVariant(v)
+    setActiveIndex(0)
+  }
+
+  async function checkoutWithItems(checkoutItems: typeof items) {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: checkoutItems, currency, country }),
+    })
+    const data = await res.json()
+    if (data.url) {
+      window.location.href = data.url
+      return
+    }
+    alert(data.error ?? 'Le paiement est temporairement indisponible.')
+  }
 
   async function handleAddToCart() {
     if (!selectedSize) return
@@ -52,7 +85,7 @@ export default function ProductDetail({ product }: Props) {
     setTimeout(() => setAdded(false), 2000)
   }
 
-  async function handleBuyNow() {
+  async function handleCheckout() {
     if (!selectedSize) return
     setCheckoutLoading(true)
 
@@ -75,261 +108,245 @@ export default function ProductDetail({ product }: Props) {
       : [...items, cartItem]
 
     try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: checkoutItems }),
-      })
-      const data = await res.json()
-      if (data.url) window.location.href = data.url
+      await checkoutWithItems(checkoutItems)
     } finally {
       setCheckoutLoading(false)
     }
   }
 
-  return (
-    <div className="pt-20 min-h-screen bg-white">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 lg:gap-12">
-          {/* Gallery — TalkLess dual + lifestyle */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="relative aspect-square bg-neutral-50 overflow-hidden">
-                <Image
-                  src={variant.back}
-                  alt={`${product.name} — back`}
-                  fill
-                  priority
-                  className="object-contain object-center p-4"
-                  sizes="(max-width: 640px) 100vw, 35vw"
-                />
-              </div>
-              <div className="relative aspect-square bg-neutral-50 overflow-hidden">
-                <Image
-                  src={variant.lifestyle}
-                  alt={`${product.name} — lifestyle`}
-                  fill
-                  className="object-cover object-center"
-                  sizes="(max-width: 640px) 100vw, 35vw"
-                />
-              </div>
-            </div>
+  const titleLine1 = product.phrase[0]
+  const titleRest = product.phrase.slice(1).join(' ')
 
-            {/* Front thumbnail strip */}
-            <div className="flex gap-2">
-              {[variant.back, variant.front, variant.lifestyle].map((src, i) => (
-                <div
-                  key={i}
-                  className="relative w-20 h-20 border border-neutral-200 overflow-hidden bg-neutral-50"
-                >
-                  <Image src={src} alt="" fill className="object-cover" sizes="80px" />
+  return (
+    <div className="pt-[88px] min-h-screen bg-white">
+      <div className="max-w-[1400px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-0 lg:gap-12">
+          {/* Gallery — Dior vertical scroll */}
+          <div className="lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto lg:scrollbar-thin">
+            <div className="hidden lg:block space-y-1">
+              {gallery.map((img, i) => (
+                <div key={img.src} className="relative aspect-[4/5] bg-[#f7f7f7]">
+                  <Image
+                    src={img.src}
+                    alt={`${product.name} — ${img.label}`}
+                    fill
+                    priority={i === 0}
+                    className={i === 0 || i === 1 ? 'object-contain p-6' : 'object-cover object-center'}
+                    sizes="50vw"
+                  />
                 </div>
               ))}
             </div>
 
-            {/* Trust badges */}
-            <ul className="space-y-3 pt-4 border-t border-neutral-100">
-              {TRUST_ITEMS.map((item) => (
-                <li key={item.text} className="flex items-start gap-3 text-xs font-medium tracking-wide">
-                  <span className="text-neutral-400 w-4">{item.icon}</span>
-                  <span>
-                    {item.text}
-                    {item.highlight && (
-                      <span className="text-emerald-600">{item.highlight}</span>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {/* Mobile: main + thumbnails */}
+            <div className="lg:hidden px-4 pt-4">
+              <div className="relative aspect-square bg-[#f7f7f7] mb-3">
+                <Image
+                  src={active.src}
+                  alt={active.label}
+                  fill
+                  priority
+                  className={
+                    activeIndex <= 1 ? 'object-contain p-4' : 'object-cover object-center'
+                  }
+                  sizes="100vw"
+                />
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {gallery.map((img, i) => (
+                  <button
+                    key={img.src}
+                    type="button"
+                    onClick={() => setActiveIndex(i)}
+                    className={`relative flex-shrink-0 w-16 h-20 overflow-hidden border-2 transition-colors ${
+                      i === activeIndex ? 'border-black' : 'border-transparent'
+                    }`}
+                  >
+                    <Image src={img.src} alt={img.label} fill className="object-cover" sizes="64px" />
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Purchase panel */}
-          <div className="lg:sticky lg:top-24 lg:self-start space-y-6">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tight text-black leading-tight">
-                {product.phrase[0]}
-                {product.phrase.length > 1 && (
-                  <>
-                    <br />
-                    <span className="text-lg md:text-xl font-semibold text-neutral-600">
-                      {product.phrase.slice(1).join(' ')}
-                    </span>
-                  </>
-                )}
+          <div className="lg:sticky lg:top-[88px] lg:self-start px-4 md:px-8 lg:px-0 py-8 lg:py-12 lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto">
+            <div className="text-center lg:text-left mb-6">
+              <h1 className="text-xl md:text-2xl font-normal uppercase tracking-[0.08em] leading-snug">
+                {titleLine1}
               </h1>
-              <div className="flex items-baseline gap-3 mt-4">
-                <span className="text-xl font-semibold">{formatPrice(product.price)}</span>
-                {product.compareAtPrice > product.price && (
-                  <span className="text-neutral-400 line-through text-sm">
-                    {formatPrice(product.compareAtPrice)}
-                  </span>
-                )}
-              </div>
+              {titleRest && (
+                <p className="text-sm text-neutral-500 mt-2 uppercase tracking-wider">{titleRest}</p>
+              )}
+              <p className="text-xs text-neutral-400 mt-2">{product.tagline}</p>
             </div>
 
-            {/* Color / variant */}
+            <div className="flex items-baseline justify-center lg:justify-start gap-3 mb-8">
+              <span className="text-base font-medium">{formatPrice(product.price)}</span>
+              {product.compareAtPrice > product.price && (
+                <span className="text-sm text-neutral-400 line-through">
+                  {formatPrice(product.compareAtPrice)}
+                </span>
+              )}
+            </div>
+
             {product.variants.length > 1 && (
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
-                  Print color — <span className="text-black">{variant.label}</span>
+              <div className="mb-6">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 mb-3 text-center lg:text-left">
+                  Autres coloris
                 </p>
-                <div className="flex gap-2">
+                <div className="flex justify-center lg:justify-start gap-2">
                   {product.variants.map((v) => (
                     <button
                       key={v.color}
-                      onClick={() => setVariant(v)}
-                      className={`w-10 h-10 rounded-full border-2 transition-all ${
-                        variant.color === v.color ? 'border-black scale-110' : 'border-neutral-200'
+                      type="button"
+                      onClick={() => selectVariant(v)}
+                      className={`relative w-14 h-16 border overflow-hidden ${
+                        variant.color === v.color ? 'border-black' : 'border-neutral-200'
                       }`}
-                      style={{ backgroundColor: v.hex }}
-                      title={v.label}
-                      aria-label={v.label}
-                    />
+                    >
+                      <Image src={v.back} alt={v.label} fill className="object-contain p-1" sizes="56px" />
+                    </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Size */}
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
-                Size
+            <div className="mb-6">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 mb-3 text-center lg:text-left">
+                Taille
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
                 {product.sizes.map((size) => (
                   <button
                     key={size}
+                    type="button"
                     onClick={() => setSelectedSize(size)}
-                    className={`min-w-[48px] h-11 px-3 text-sm font-medium border transition-all ${
+                    className={`min-w-[52px] h-11 text-sm border transition-all ${
                       selectedSize === size
-                        ? 'bg-black text-white border-black'
-                        : 'bg-white text-black border-neutral-300 hover:border-black'
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 hover:border-black'
                     }`}
                   >
                     {size}
                   </button>
                 ))}
               </div>
-              {!selectedSize && (
-                <p className="text-xs text-neutral-400 mt-2">Please select a size</p>
-              )}
+              <button
+                type="button"
+                onClick={() => setSizeGuideOpen(true)}
+                className="block w-full text-center lg:text-left text-xs underline text-neutral-500 mt-3"
+              >
+                Guide des tailles
+              </button>
             </div>
 
-            {/* Quantity */}
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
-                Quantity
-              </p>
+            <div className="mb-8 flex justify-center lg:justify-start">
               <div className="inline-flex items-center border border-neutral-300">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="w-11 h-11 text-lg hover:bg-neutral-50"
-                  aria-label="Decrease quantity"
+                  className="w-11 h-11 hover:bg-neutral-50"
+                  aria-label="Moins"
                 >
                   −
                 </button>
-                <span className="w-12 text-center text-sm font-medium">{quantity}</span>
+                <span className="w-12 text-center text-sm">{quantity}</span>
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="w-11 h-11 text-lg hover:bg-neutral-50"
-                  aria-label="Increase quantity"
+                  className="w-11 h-11 hover:bg-neutral-50"
+                  aria-label="Plus"
                 >
                   +
                 </button>
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="space-y-3">
+            <PaymentIcons className="mb-4" />
+
+            <div className="space-y-2">
               <button
                 type="button"
                 onClick={handleAddToCart}
                 disabled={!selectedSize}
-                className="w-full h-12 bg-black text-white text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-full h-12 bg-neutral-900 text-white text-sm flex items-center justify-between px-5 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M6 6h15l-1.5 9h-12z" />
-                  <circle cx="9" cy="20" r="1" />
-                  <circle cx="18" cy="20" r="1" />
-                </svg>
-                {added ? 'Added to cart ✓' : 'Add to cart'}
+                <span className="uppercase tracking-[0.12em]">
+                  {added ? 'Ajouté' : 'Ajouter au panier'}
+                </span>
+                <span className="font-medium">{formatPrice(product.price * quantity)}</span>
               </button>
 
               <button
                 type="button"
-                onClick={handleBuyNow}
+                onClick={handleCheckout}
                 disabled={!selectedSize || checkoutLoading}
-                className="w-full h-12 bg-[#5A31F4] text-white text-sm font-semibold hover:bg-[#4a28d4] disabled:opacity-40 transition-colors"
+                className="w-full h-11 border border-neutral-900 text-sm uppercase tracking-[0.12em] hover:bg-neutral-50 disabled:opacity-40"
               >
-                {checkoutLoading ? 'Redirecting…' : 'Buy now — Stripe Checkout'}
+                {checkoutLoading ? 'Redirection…' : 'Payer maintenant'}
               </button>
             </div>
 
-            {/* Accordions */}
-            <div className="border-t border-neutral-200 pt-2 space-y-0">
-              <div className="border-b border-neutral-200">
-                <button
-                  type="button"
-                  onClick={() => setDetailsOpen(!detailsOpen)}
-                  className="w-full flex justify-between items-center py-4 text-xs font-bold uppercase tracking-widest"
-                >
-                  Details
-                  <span>{detailsOpen ? '−' : '+'}</span>
-                </button>
-                {detailsOpen && (
-                  <div className="pb-4 text-sm text-neutral-600 space-y-3">
-                    {product.details.map((d) => (
-                      <p key={d}>{d}</p>
-                    ))}
-                    <p className="font-semibold text-black text-xs uppercase tracking-wider">
-                      Material &amp; Quality
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1">
+            <p className="text-[11px] text-neutral-500 text-center lg:text-left mt-4 leading-relaxed">
+              Livraison offerte dès 60 €. Expédition sous 24–48 h. Retours sous 30 jours.
+            </p>
+
+            <div className="mt-8 border-t border-neutral-200">
+              <div className="flex border-b border-neutral-200">
+                {(
+                  [
+                    ['description', 'Description'],
+                    ['shipping', 'Livraison'],
+                    ['size', 'Taille'],
+                  ] as const
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setTab(key)}
+                    className={`flex-1 py-3 text-[10px] uppercase tracking-widest ${
+                      tab === key ? 'border-b-2 border-black font-semibold' : 'text-neutral-400'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="py-4 text-sm text-neutral-600 leading-relaxed">
+                {tab === 'description' && (
+                  <>
+                    <p className="mb-3">{product.description}</p>
+                    <ul className="list-disc pl-4 space-y-1">
                       {product.material.map((m) => (
                         <li key={m}>{m}</li>
                       ))}
                     </ul>
-                  </div>
+                  </>
                 )}
-              </div>
-
-              <div className="border-b border-neutral-200">
-                <button
-                  type="button"
-                  onClick={() => setShippingOpen(!shippingOpen)}
-                  className="w-full flex justify-between items-center py-4 text-xs font-bold uppercase tracking-widest"
-                >
-                  <span>🚚 Shipping</span>
-                  <span>{shippingOpen ? '−' : '+'}</span>
-                </button>
-                {shippingOpen && (
-                  <p className="pb-4 text-sm text-neutral-600">
-                    Printed on demand in Europe via Gelato. Standard delivery 3–7 business days.
-                    Orders ship within 24–48 hours after payment.
+                {tab === 'shipping' && (
+                  <p>
+                    Livraison directe à domicile. Délais habituels : 3 à 7 jours ouvrés selon la destination.
+                    Livraison offerte pour toute commande de 60 € et plus.
+                  </p>
+                )}
+                {tab === 'size' && (
+                  <p>
+                    Coupe relax unisexe. Consultez le guide des tailles pour les mesures détaillées.
                   </p>
                 )}
               </div>
-
-              <button
-                type="button"
-                onClick={() => setSizeGuideOpen(true)}
-                className="w-full flex justify-between items-center py-4 text-xs font-bold uppercase tracking-widest"
-              >
-                <span>👕 Size guide</span>
-                <span>+</span>
-              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Related */}
       {related.length > 0 && (
-        <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-16 border-t border-neutral-100">
-          <h2 className="text-sm font-bold uppercase tracking-widest mb-8">You may also like</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <section className="max-w-[1200px] mx-auto px-4 md:px-8 py-20 border-t border-neutral-100 mt-12">
+          <h2 className="text-center text-sm font-medium uppercase tracking-[0.2em] mb-12">
+            Vous aimerez aussi
+          </h2>
+          <div className="grid grid-cols-2 gap-8 md:gap-12 max-w-2xl mx-auto">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
