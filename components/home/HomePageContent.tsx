@@ -4,66 +4,92 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PRODUCTS } from '@/lib/products'
 import ProductCard from '@/components/shop/ProductCard'
-import LifestyleImage from '@/components/ui/LifestyleImage'
 import { useI18n } from '@/lib/i18n/use-i18n'
 
 const SITUATIONS = [
   {
-    src: '/images/products/eat-french/black/lifestyle.jpg',
-    title: 'EAT FRENCH',
+    productId: 'eat-french',
+    src: '/images/products/eat-french/black/back.jpg',
     subtitleKey: 'night' as const,
   },
   {
-    src: '/images/products/eat-french/pink/lifestyle.jpg',
-    title: 'EAT FRENCH',
+    productId: 'eat-french',
+    src: '/images/products/eat-french/pink/back.jpg',
     subtitleKey: 'pop' as const,
   },
   {
+    productId: 'eat-french',
     src: '/images/products/eat-french/blue/back.jpg',
-    title: 'EAT FRENCH',
     subtitleKey: 'evening' as const,
   },
   {
-    src: '/images/lifestyle/just-kiss-me-boat.jpg',
-    title: 'JUST KISS ME',
-    subtitleKey: 'boat' as const,
-    lifestyle: true,
-  },
-  {
-    src: '/images/lifestyle/just-kiss-me-couple.jpg',
-    title: 'JUST KISS ME',
-    subtitleKey: 'urban' as const,
-    lifestyle: true,
-  },
-  {
-    src: '/images/products/just-kiss-me/lifestyle.jpg',
-    title: 'JUST KISS ME',
+    productId: 'just-kiss-me',
+    src: '/images/products/just-kiss-me/back.jpg',
     subtitleKey: 'street' as const,
+  },
+  {
+    productId: 'just-kiss-me',
+    src: '/images/products/just-kiss-me/front.jpg',
+    subtitleKey: 'detail' as const,
   },
 ]
 
 const SUBTITLE: Record<string, Record<string, string>> = {
-  fr: { night: 'Nuit & ville', pop: 'Couleurs pop', evening: 'Lumière du soir', boat: 'En bateau', urban: 'Moment urbain', street: 'Street look' },
-  en: { night: 'Night & city', pop: 'Pop colors', evening: 'Evening light', boat: 'On the water', urban: 'Urban moment', street: 'Street look' },
-  de: { night: 'Nacht & Stadt', pop: 'Pop-Farben', evening: 'Abendlicht', boat: 'Auf dem Boot', urban: 'Urbaner Moment', street: 'Street Look' },
-  it: { night: 'Notte & città', pop: 'Colori pop', evening: 'Luce serale', boat: 'In barca', urban: 'Momento urbano', street: 'Street look' },
-  es: { night: 'Noche y ciudad', pop: 'Colores pop', evening: 'Luz de tarde', boat: 'En barco', urban: 'Momento urbano', street: 'Street look' },
+  fr: {
+    night: 'Noir — impression premium',
+    pop: 'Rose — édition pop',
+    evening: 'Bleu — édition ciel',
+    street: 'Dos — message signature',
+    detail: 'Face — logo TOLD',
+  },
+  en: {
+    night: 'Black — premium print',
+    pop: 'Pink — pop edition',
+    evening: 'Blue — sky edition',
+    street: 'Back — signature message',
+    detail: 'Front — TOLD logo',
+  },
+  de: {
+    night: 'Schwarz — Premium-Druck',
+    pop: 'Rosa — Pop-Edition',
+    evening: 'Blau — Himmel-Edition',
+    street: 'Rücken — Signature',
+    detail: 'Vorne — TOLD Logo',
+  },
+  it: {
+    night: 'Nero — stampa premium',
+    pop: 'Rosa — edizione pop',
+    evening: 'Blu — edizione cielo',
+    street: 'Retro — messaggio',
+    detail: 'Fronte — logo TOLD',
+  },
+  es: {
+    night: 'Negro — impresión premium',
+    pop: 'Rosa — edición pop',
+    evening: 'Azul — edición cielo',
+    street: 'Espalda — mensaje',
+    detail: 'Frente — logo TOLD',
+  },
 }
 
 export default function HomePageContent() {
   const { t, language } = useI18n()
   const subs = SUBTITLE[language] ?? SUBTITLE.fr
 
+  function productName(id: string) {
+    return PRODUCTS.find((p) => p.id === id)?.name ?? id
+  }
+
   return (
     <>
-      <section className="relative w-full h-[100svh] min-h-[600px] overflow-hidden bg-black">
+      <section className="relative w-full h-[100svh] min-h-[600px] overflow-hidden bg-black rounded-b-3xl">
         <video
           autoPlay
           muted
           loop
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          poster="/images/products/eat-french/black/lifestyle.jpg"
+          poster="/images/products/eat-french/black/front.jpg"
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
@@ -78,7 +104,7 @@ export default function HomePageContent() {
           </h1>
           <Link
             href="/shop"
-            className="mt-10 inline-block text-[10px] tracking-[0.25em] uppercase border border-white/80 px-10 py-3 hover:bg-white hover:text-black transition-colors"
+            className="mt-10 inline-block text-[10px] tracking-[0.25em] uppercase border border-white/80 px-10 py-3 rounded-full hover:bg-white hover:text-black transition-colors"
           >
             {t.hero.cta}
           </Link>
@@ -93,28 +119,52 @@ export default function HomePageContent() {
         <div className="max-w-[1400px] mx-auto space-y-16">
           {SITUATIONS.map((item, idx) => {
             const left = idx % 2 === 0
-            const image = item.lifestyle ? (
-              <LifestyleImage src={item.src} alt={item.title} sizes="(max-width: 768px) 100vw, 50vw" />
-            ) : (
-              <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100">
-                <Image src={item.src} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
-              </div>
-            )
+            const title = productName(item.productId)
 
             return (
-              <div key={item.src} className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                {left && <div className="order-1 md:order-1">{image}</div>}
+              <div key={`${item.productId}-${item.src}`} className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                {left && (
+                  <div className="order-1 md:order-1">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100 rounded-2xl">
+                      <Image
+                        src={item.src}
+                        alt={title}
+                        fill
+                        className="object-contain p-6"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className={`order-2 ${left ? 'md:order-2' : 'md:order-1'} text-center md:text-left`}>
-                  <h3 className="font-serif text-2xl md:text-3xl font-normal uppercase tracking-[0.12em]">
-                    {item.title}
+                  <h3 className="font-serif text-xl md:text-2xl font-normal uppercase tracking-[0.08em] leading-snug">
+                    {title}
                   </h3>
                   <p className="mt-4 text-xs tracking-[0.25em] uppercase text-neutral-500">
                     {subs[item.subtitleKey]}
                   </p>
+                  <Link
+                    href={`/shop/${PRODUCTS.find((p) => p.id === item.productId)?.slug}`}
+                    className="inline-block mt-6 text-[10px] tracking-[0.2em] uppercase text-neutral-400 hover:text-black underline-offset-4 hover:underline"
+                  >
+                    {t.home.viewAll}
+                  </Link>
                 </div>
 
-                {!left && <div className="order-1 md:order-2">{image}</div>}
+                {!left && (
+                  <div className="order-1 md:order-2">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100 rounded-2xl">
+                      <Image
+                        src={item.src}
+                        alt={title}
+                        fill
+                        className="object-contain p-6"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )
           })}
@@ -138,7 +188,7 @@ export default function HomePageContent() {
         </div>
       </section>
 
-      <section className="py-24 px-6 bg-neutral-950 text-white text-center">
+      <section className="py-24 px-6 bg-neutral-950 text-white text-center rounded-3xl mx-4 md:mx-8">
         <blockquote className="text-2xl md:text-4xl font-normal uppercase tracking-[0.08em] leading-snug max-w-3xl mx-auto">
           &ldquo;{t.home.quote}&rdquo;
         </blockquote>
@@ -151,7 +201,7 @@ export default function HomePageContent() {
             { label: t.home.benefitShipping, sub: t.home.benefitShippingSub },
             { label: t.home.benefitFast, sub: t.home.benefitFastSub },
           ].map(({ label, sub }) => (
-            <div key={label}>
+            <div key={label} className="rounded-2xl border border-neutral-100 py-6 px-4">
               <p className="text-[10px] tracking-[0.2em] uppercase font-medium mb-1">{label}</p>
               <p className="text-xs text-neutral-500">{sub}</p>
             </div>

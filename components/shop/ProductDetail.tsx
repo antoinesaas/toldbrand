@@ -19,7 +19,6 @@ type GalleryImage = { src: string; label: string }
 
 export default function ProductDetail({ product }: Props) {
   const [variant, setVariant] = useState(product.variants[0])
-  const [activeIndex, setActiveIndex] = useState(0)
   const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [tab, setTab] = useState<'description' | 'shipping' | 'size'>('description')
@@ -30,25 +29,18 @@ export default function ProductDetail({ product }: Props) {
   const { t, currency, country, language } = useI18n()
   const formatPrice = useFormatPrice()
 
-  const gallery: GalleryImage[] = useMemo(() => {
-    const imgs: GalleryImage[] = [
+  const gallery: GalleryImage[] = useMemo(
+    () => [
       { src: variant.front, label: 'Face' },
       { src: variant.back, label: 'Dos' },
-      { src: variant.lifestyle, label: 'Porté' },
-    ]
-    if (product.id === 'just-kiss-me') {
-      imgs.push({ src: '/images/lifestyle/just-kiss-me-boat.jpg', label: 'Lifestyle' })
-      imgs.push({ src: '/images/lifestyle/just-kiss-me-couple.jpg', label: 'Lifestyle' })
-    }
-    return imgs
-  }, [variant, product.id])
+    ],
+    [variant]
+  )
 
-  const active = gallery[activeIndex] ?? gallery[0]
   const related = PRODUCTS.filter((p) => p.id !== product.id)
 
   function selectVariant(v: typeof variant) {
     setVariant(v)
-    setActiveIndex(0)
   }
 
   async function checkoutWithItems(checkoutItems: typeof items) {
@@ -114,89 +106,54 @@ export default function ProductDetail({ product }: Props) {
     }
   }
 
-  const titleLine1 = product.phrase[0]
-  const titleRest = product.phrase.slice(1).join(' ')
-
   return (
     <div className="pt-[88px] min-h-screen bg-white">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-0 lg:gap-12">
-          {/* Gallery — Dior vertical scroll */}
+          {/* Gallery — vertical scroll (studio shots only, no watermarks) */}
           <div className="lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto lg:scrollbar-thin">
-            <div className="hidden lg:block">
-              <div className="relative aspect-[4/5] bg-[#f7f7f7] overflow-hidden">
-                <Image
-                  src={active.src}
-                  alt={`${product.name} — ${active.label}`}
-                  fill
-                  priority
-                  className={
-                    activeIndex <= 1
-                      ? 'object-contain p-6'
-                      : 'object-cover object-center object-top'
-                  }
-                  sizes="50vw"
-                />
-              </div>
-
-              <div className="flex gap-2 mt-3">
-                {gallery.map((img, i) => (
-                  <button
-                    key={img.src}
-                    type="button"
-                    onClick={() => setActiveIndex(i)}
-                    className={`relative w-16 h-20 overflow-hidden border-2 transition-colors ${
-                      i === activeIndex ? 'border-black' : 'border-transparent'
-                    }`}
-                    aria-label={`Show ${img.label}`}
-                  >
-                    <Image src={img.src} alt={img.label} fill className="object-cover" sizes="64px" />
-                  </button>
-                ))}
-              </div>
+            <div className="hidden lg:block space-y-3 px-0 lg:pr-4">
+              {gallery.map((img) => (
+                <div
+                  key={img.src}
+                  className="relative aspect-[4/5] bg-[#f7f7f7] overflow-hidden rounded-2xl"
+                >
+                  <Image
+                    src={img.src}
+                    alt={`${product.name} — ${img.label}`}
+                    fill
+                    className="object-contain p-8"
+                    sizes="50vw"
+                  />
+                </div>
+              ))}
             </div>
 
-            {/* Mobile: main + thumbnails */}
-            <div className="lg:hidden px-4 pt-4">
-              <div className="relative aspect-square bg-[#f7f7f7] mb-3">
-                <Image
-                  src={active.src}
-                  alt={active.label}
-                  fill
-                  priority
-                  className={
-                    activeIndex <= 1 ? 'object-contain p-4' : 'object-cover object-center'
-                  }
-                  sizes="100vw"
-                />
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {gallery.map((img, i) => (
-                  <button
-                    key={img.src}
-                    type="button"
-                    onClick={() => setActiveIndex(i)}
-                    className={`relative flex-shrink-0 w-16 h-20 overflow-hidden border-2 transition-colors ${
-                      i === activeIndex ? 'border-black' : 'border-transparent'
-                    }`}
-                  >
-                    <Image src={img.src} alt={img.label} fill className="object-cover" sizes="64px" />
-                  </button>
-                ))}
-              </div>
+            <div className="lg:hidden px-4 pt-4 space-y-3">
+              {gallery.map((img) => (
+                <div
+                  key={img.src}
+                  className="relative aspect-[4/5] bg-[#f7f7f7] overflow-hidden rounded-2xl"
+                >
+                  <Image
+                    src={img.src}
+                    alt={`${product.name} — ${img.label}`}
+                    fill
+                    className="object-contain p-6"
+                    sizes="100vw"
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Purchase panel */}
           <div className="lg:sticky lg:top-[88px] lg:self-start px-4 md:px-8 lg:px-0 py-8 lg:py-12 lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto">
             <div className="text-center mb-6">
-              <h1 className="text-xl md:text-2xl font-normal font-serif uppercase tracking-[0.12em] leading-snug">
-                {titleLine1}
+              <h1 className="text-lg md:text-xl font-normal font-serif uppercase tracking-[0.1em] leading-snug">
+                {product.name}
               </h1>
-              {titleRest && (
-                <p className="text-sm text-neutral-500 mt-2 uppercase tracking-wider">{titleRest}</p>
-              )}
-              <p className="text-xs text-neutral-400 mt-2">{product.tagline}</p>
+              <p className="text-xs text-neutral-400 mt-3">{product.tagline}</p>
             </div>
 
             <div className="flex items-baseline justify-center lg:justify-start gap-3 mb-8">
@@ -219,7 +176,7 @@ export default function ProductDetail({ product }: Props) {
                       key={v.color}
                       type="button"
                       onClick={() => selectVariant(v)}
-                      className={`relative w-14 h-16 border overflow-hidden ${
+                      className={`relative w-14 h-16 border overflow-hidden rounded-xl ${
                         variant.color === v.color ? 'border-black' : 'border-neutral-200'
                       }`}
                     >
@@ -240,7 +197,7 @@ export default function ProductDetail({ product }: Props) {
                     key={size}
                     type="button"
                     onClick={() => setSelectedSize(size)}
-                    className={`min-w-[52px] h-11 text-sm border transition-all ${
+                    className={`min-w-[52px] h-11 text-sm border rounded-full transition-all ${
                       selectedSize === size
                         ? 'border-black bg-black text-white'
                         : 'border-neutral-300 hover:border-black'
@@ -260,7 +217,7 @@ export default function ProductDetail({ product }: Props) {
             </div>
 
             <div className="mb-8 flex justify-center lg:justify-start">
-              <div className="inline-flex items-center border border-neutral-300">
+              <div className="inline-flex items-center border border-neutral-300 rounded-full overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -286,7 +243,7 @@ export default function ProductDetail({ product }: Props) {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={!selectedSize}
-                className="w-full h-12 bg-neutral-900 text-white text-sm flex items-center justify-between px-5 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-full h-12 bg-neutral-900 text-white text-sm flex items-center justify-between px-5 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed transition-colors rounded-full"
               >
                 <span className="uppercase tracking-[0.12em]">
                   {added ? t.product.added : t.product.addToCart}
@@ -298,7 +255,7 @@ export default function ProductDetail({ product }: Props) {
                 type="button"
                 onClick={handleCheckout}
                 disabled={!selectedSize || checkoutLoading}
-                className="w-full h-11 border border-neutral-900 text-sm uppercase tracking-[0.12em] hover:bg-neutral-50 disabled:opacity-40"
+                className="w-full h-11 border border-neutral-900 text-sm uppercase tracking-[0.12em] hover:bg-neutral-50 disabled:opacity-40 rounded-full"
               >
                 {checkoutLoading ? t.product.redirecting : t.product.payNow}
               </button>
@@ -331,11 +288,17 @@ export default function ProductDetail({ product }: Props) {
                   </button>
                 ))}
               </div>
-              <div className="py-4 text-sm text-neutral-600 leading-relaxed">
+              <div className="py-4 text-sm text-neutral-600 leading-relaxed space-y-3">
                 {tab === 'description' && (
                   <>
-                    <p className="mb-3">{product.description}</p>
+                    <p>{product.description}</p>
+                    {product.descriptionExtra && <p>{product.descriptionExtra}</p>}
                     <ul className="list-disc pl-4 space-y-1">
+                      {product.details.map((d) => (
+                        <li key={d}>{d}</li>
+                      ))}
+                    </ul>
+                    <ul className="list-disc pl-4 space-y-1 text-neutral-500">
                       {product.material.map((m) => (
                         <li key={m}>{m}</li>
                       ))}

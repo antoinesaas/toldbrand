@@ -5,6 +5,7 @@ import SiteHeader from '@/components/layout/SiteHeader'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import LocaleSync from '@/components/layout/LocaleSync'
+import VercelAnalytics from '@/components/analytics/VercelAnalytics'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="min-h-screen">{children}</main>
         <Footer />
         <CartDrawer />
+        <VercelAnalytics />
       </body>
     </html>
   )

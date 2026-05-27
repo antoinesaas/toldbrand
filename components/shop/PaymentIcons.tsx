@@ -14,7 +14,7 @@ export default function PaymentIcons({ className = '' }: { className?: string })
       {ICONS.map((m) => (
         <span
           key={m.name}
-          className="inline-flex items-center justify-center h-7 px-2 border border-neutral-200 bg-white rounded-[2px] text-[9px] font-semibold uppercase tracking-wider text-neutral-500"
+          className="inline-flex items-center justify-center h-7 px-2 border border-neutral-200 bg-white rounded-lg text-[9px] font-semibold uppercase tracking-wider text-neutral-500"
           title={m.name}
         >
           {/* Lightweight “logo-like” marks */}

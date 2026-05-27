@@ -24,6 +24,7 @@ export interface Product {
   isNew: boolean
   isBestseller: boolean
   description: string
+  descriptionExtra?: string
   details: string[]
   material: string[]
 }

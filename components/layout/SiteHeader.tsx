@@ -64,7 +64,7 @@ export default function SiteHeader() {
             </Link>
 
             <div className={`justify-self-end flex items-center gap-4 md:gap-6 ${textClass}`}>
-              <RegionSelector compact />
+              <RegionSelector compact light={lightOnDark} />
               <button
                 type="button"
                 onClick={toggleCart}

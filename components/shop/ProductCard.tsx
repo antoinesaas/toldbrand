@@ -16,7 +16,7 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
-      <div className="relative aspect-[3/4] overflow-hidden bg-white mb-4">
+      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-4 rounded-2xl">
         <Image
           src={variant.back}
           alt={product.name}

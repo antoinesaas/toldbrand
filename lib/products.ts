@@ -10,7 +10,7 @@ const eatFrenchVariants: ProductVariant[] = [
     hex: '#E91E8C',
     front: '/images/products/eat-french/pink/front.jpg',
     back: '/images/products/eat-french/pink/back.jpg',
-    lifestyle: '/images/products/eat-french/pink/lifestyle.jpg',
+    lifestyle: '/images/products/eat-french/pink/back.jpg',
     gelatoProductUid: gelatoUid('EAT_FRENCH_PINK'),
   },
   {
@@ -19,7 +19,7 @@ const eatFrenchVariants: ProductVariant[] = [
     hex: '#4FC3F7',
     front: '/images/products/eat-french/blue/front.jpg',
     back: '/images/products/eat-french/blue/back.jpg',
-    lifestyle: '/images/products/eat-french/blue/lifestyle.jpg',
+    lifestyle: '/images/products/eat-french/blue/back.jpg',
     gelatoProductUid: gelatoUid('EAT_FRENCH_BLUE'),
   },
   {
@@ -28,7 +28,7 @@ const eatFrenchVariants: ProductVariant[] = [
     hex: '#1A1A18',
     front: '/images/products/eat-french/black/front.jpg',
     back: '/images/products/eat-french/black/back.jpg',
-    lifestyle: '/images/products/eat-french/black/lifestyle.jpg',
+    lifestyle: '/images/products/eat-french/black/back.jpg',
     gelatoProductUid: gelatoUid('EAT_FRENCH_BLACK'),
   },
 ]
@@ -39,7 +39,7 @@ const kissMeVariant: ProductVariant = {
   hex: '#FFFFFF',
   front: '/images/products/just-kiss-me/front.jpg',
   back: '/images/products/just-kiss-me/back.jpg',
-  lifestyle: '/images/products/just-kiss-me/lifestyle.jpg',
+  lifestyle: '/images/products/just-kiss-me/back.jpg',
   gelatoProductUid: gelatoUid('JUST_KISS_ME'),
 }
 
@@ -57,18 +57,25 @@ export const PRODUCTS: Product[] = [
     isNew: false,
     isBestseller: true,
     description:
-      'T-shirt oversize unisexe. 100 % coton, lavage doux, 220 gsm. Impression haute qualité.',
-    details: ['Front: TOLD logo', 'Back: Bold typographic print'],
+      'Le t-shirt statement de la maison TOLD. Typographie audacieuse au dos, logo discret face. Une pièce qui assume son humour européen sans compromis sur la qualité.',
+    descriptionExtra:
+      'Coupe oversize unisexe, tombé relax et épaules légèrement tombantes. 100 % coton peigné, 220 gsm, lavé pour un toucher doux dès la première mise. Coutures renforcées, col rib 1×1. Impression haute définition, résistante aux lavages.',
+    details: [
+      'Face : logo TOLD brodé / imprimé',
+      'Dos : message typographique EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
+      '3 coloris : rose, bleu ciel, noir',
+    ],
     material: [
-      '100% cotton',
-      'Heavyweight, soft-washed',
-      'Relaxed unisex fit with durable stitching',
+      '100 % coton peigné, 220 gsm',
+      'Coupe relax unisexe',
+      'Lavage doux, toucher premium',
+      'Impression haute qualité',
     ],
   },
   {
     id: 'just-kiss-me',
     slug: 'just-kiss-me-we-can-talk-later',
-    name: 'JUST KISS ME',
+    name: 'JUST KISS ME — WE CAN TALK LATER',
     tagline: 'We can talk later.',
     phrase: ['JUST KISS ME', 'WE CAN TALK LATER'],
     price: 2995,
@@ -78,12 +85,19 @@ export const PRODUCTS: Product[] = [
     isNew: true,
     isBestseller: false,
     description:
-      'T-shirt oversize unisexe. 100 % coton, lavage doux, 220 gsm. Impression haute qualité.',
-    details: ['Front: TOLD logo', 'Back: Bold text print'],
+      'Un message direct, un peu impertinent, beaucoup de style. Le tee Just Kiss Me est pensé pour ceux qui préfèrent l’action aux longues discussions.',
+    descriptionExtra:
+      'Blanc éclatant, impression rouge profond au dos. Même exigence TOLD : coton lourd, coupe confortable, finitions soignées. À porter seul avec un jean ou sous une veste structurée.',
+    details: [
+      'Face : logo TOLD',
+      'Dos : JUST KISS ME — WE CAN TALK LATER',
+      'Coloris : blanc / imprimé rouge',
+    ],
     material: [
-      '100% cotton',
-      'Heavyweight, soft-washed',
-      'Relaxed unisex fit with durable stitching',
+      '100 % coton peigné, 220 gsm',
+      'Coupe relax unisexe',
+      'Lavage doux',
+      'Impression haute qualité',
     ],
   },
 ]
