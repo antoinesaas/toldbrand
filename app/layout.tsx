@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: 'TOLD',
   },
   verification: {
-    google: 'F0LzBfE3PfC9I5I2c7I1-HJq67dJAPKmK8_r4OvsW80',
+    google: 'google2c6c5ad20bcf8da6',
   },
 }
 
