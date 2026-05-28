@@ -33,6 +33,7 @@ export default function ProductDetail({ product }: Props) {
     () => [
       { src: variant.front, label: 'Face' },
       { src: variant.back, label: 'Dos' },
+      { src: variant.lifestyle, label: 'Porté' },
     ],
     [variant]
   )
@@ -122,7 +123,11 @@ export default function ProductDetail({ product }: Props) {
                     src={img.src}
                     alt={`${product.name} — ${img.label}`}
                     fill
-                    className="object-contain p-8"
+                    className={
+                      img.label === 'Porté'
+                        ? 'object-cover object-center'
+                        : 'object-contain p-8'
+                    }
                     sizes="50vw"
                   />
                 </div>
@@ -139,7 +144,11 @@ export default function ProductDetail({ product }: Props) {
                     src={img.src}
                     alt={`${product.name} — ${img.label}`}
                     fill
-                    className="object-contain p-6"
+                    className={
+                      img.label === 'Porté'
+                        ? 'object-cover object-center'
+                        : 'object-contain p-6'
+                    }
                     sizes="100vw"
                   />
                 </div>

@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     siteName: 'TOLD',
   },
+  verification: {
+    google: 'F0LzBfE3PfC9I5I2c7I1-HJq67dJAPKmK8_r4OvsW80',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

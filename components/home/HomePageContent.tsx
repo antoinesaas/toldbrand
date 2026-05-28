@@ -6,69 +6,39 @@ import { PRODUCTS } from '@/lib/products'
 import ProductCard from '@/components/shop/ProductCard'
 import { useI18n } from '@/lib/i18n/use-i18n'
 
-const SITUATIONS = [
-  {
-    productId: 'eat-french',
-    src: '/images/products/eat-french/black/back.jpg',
-    subtitleKey: 'night' as const,
-  },
-  {
-    productId: 'eat-french',
-    src: '/images/products/eat-french/pink/back.jpg',
-    subtitleKey: 'pop' as const,
-  },
-  {
-    productId: 'eat-french',
-    src: '/images/products/eat-french/blue/back.jpg',
-    subtitleKey: 'evening' as const,
-  },
+const LANDING_SHOTS = [
   {
     productId: 'just-kiss-me',
-    src: '/images/products/just-kiss-me/back.jpg',
-    subtitleKey: 'street' as const,
+    src: '/images/landing/just-kiss-me.png',
+    subtitleKey: 'kiss' as const,
   },
   {
-    productId: 'just-kiss-me',
-    src: '/images/products/just-kiss-me/front.jpg',
-    subtitleKey: 'detail' as const,
+    productId: 'eat-french',
+    src: '/images/landing/eat-french-pink.png',
+    subtitleKey: 'pink' as const,
   },
 ]
 
 const SUBTITLE: Record<string, Record<string, string>> = {
   fr: {
-    night: 'Noir — impression premium',
-    pop: 'Rose — édition pop',
-    evening: 'Bleu — édition ciel',
-    street: 'Dos — message signature',
-    detail: 'Face — logo TOLD',
+    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   en: {
-    night: 'Black — premium print',
-    pop: 'Pink — pop edition',
-    evening: 'Blue — sky edition',
-    street: 'Back — signature message',
-    detail: 'Front — TOLD logo',
+    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   de: {
-    night: 'Schwarz — Premium-Druck',
-    pop: 'Rosa — Pop-Edition',
-    evening: 'Blau — Himmel-Edition',
-    street: 'Rücken — Signature',
-    detail: 'Vorne — TOLD Logo',
+    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   it: {
-    night: 'Nero — stampa premium',
-    pop: 'Rosa — edizione pop',
-    evening: 'Blu — edizione cielo',
-    street: 'Retro — messaggio',
-    detail: 'Fronte — logo TOLD',
+    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   es: {
-    night: 'Negro — impresión premium',
-    pop: 'Rosa — edición pop',
-    evening: 'Azul — edición cielo',
-    street: 'Espalda — mensaje',
-    detail: 'Frente — logo TOLD',
+    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
 }
 
@@ -89,7 +59,7 @@ export default function HomePageContent() {
           loop
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          poster="/images/products/eat-french/black/front.jpg"
+          poster="/images/landing/just-kiss-me.png"
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
@@ -116,13 +86,14 @@ export default function HomePageContent() {
           {t.home.inSituation}
         </h2>
 
-        <div className="max-w-[1400px] mx-auto space-y-16">
-          {SITUATIONS.map((item, idx) => {
+        <div className="max-w-[1400px] mx-auto space-y-20">
+          {LANDING_SHOTS.map((item, idx) => {
             const left = idx % 2 === 0
             const title = productName(item.productId)
+            const slug = PRODUCTS.find((p) => p.id === item.productId)?.slug
 
             return (
-              <div key={`${item.productId}-${item.src}`} className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div key={item.src} className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                 {left && (
                   <div className="order-1 md:order-1">
                     <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100 rounded-2xl">
@@ -130,7 +101,7 @@ export default function HomePageContent() {
                         src={item.src}
                         alt={title}
                         fill
-                        className="object-contain p-6"
+                        className="object-cover object-center"
                         sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
@@ -141,15 +112,15 @@ export default function HomePageContent() {
                   <h3 className="font-serif text-xl md:text-2xl font-normal uppercase tracking-[0.08em] leading-snug">
                     {title}
                   </h3>
-                  <p className="mt-4 text-xs tracking-[0.25em] uppercase text-neutral-500">
-                    {subs[item.subtitleKey]}
-                  </p>
-                  <Link
-                    href={`/shop/${PRODUCTS.find((p) => p.id === item.productId)?.slug}`}
-                    className="inline-block mt-6 text-[10px] tracking-[0.2em] uppercase text-neutral-400 hover:text-black underline-offset-4 hover:underline"
-                  >
-                    {t.home.viewAll}
-                  </Link>
+                  <p className="mt-4 text-xs tracking-[0.2em] uppercase text-neutral-500">{subs[item.subtitleKey]}</p>
+                  {slug && (
+                    <Link
+                      href={`/shop/${slug}`}
+                      className="inline-block mt-6 text-[10px] tracking-[0.2em] uppercase text-neutral-400 hover:text-black underline-offset-4 hover:underline"
+                    >
+                      {t.hero.cta}
+                    </Link>
+                  )}
                 </div>
 
                 {!left && (
@@ -159,7 +130,7 @@ export default function HomePageContent() {
                         src={item.src}
                         alt={title}
                         fill
-                        className="object-contain p-6"
+                        className="object-cover object-center"
                         sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
