@@ -2,6 +2,9 @@
 
 Projet : [befyczgottbemittzpop](https://supabase.com/dashboard/project/befyczgottbemittzpop)
 
+> **MCP Cursor** : le serveur Supabase doit être lié à `befyczgottbemittzpop`.  
+> Voir [`SUPABASE-MCP-README.md`](./SUPABASE-MCP-README.md) et [`configure-supabase-auth.ps1`](./configure-supabase-auth.ps1).
+
 ## 1. Base de données
 
 1. Ouvrir **SQL Editor** dans le dashboard

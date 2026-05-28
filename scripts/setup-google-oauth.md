@@ -1,6 +1,6 @@
 # Google OAuth — TOLD Brand (Supabase)
 
-Projet Supabase : `befyczgottbemittzpop`  
+Projet Supabase (MCP + prod) : `elwqdulkxprjmkejwcai`  
 Site : `https://toldbrand.fr`
 
 ## 1. Google Cloud Console
@@ -24,7 +24,7 @@ http://localhost:3000
 Cliquer **+ Ajouter un URI** :
 
 ```
-https://befyczgottbemittzpop.supabase.co/auth/v1/callback
+https://elwqdulkxprjmkejwcai.supabase.co/auth/v1/callback
 ```
 
 > Important : c’est l’URL **Supabase**, pas `https://toldbrand.fr/auth/callback`.  
@@ -42,7 +42,7 @@ https://befyczgottbemittzpop.supabase.co/auth/v1/callback
 
 ## 2. Supabase
 
-[Dashboard → Authentication → Providers → Google](https://supabase.com/dashboard/project/befyczgottbemittzpop/auth/providers)
+[Dashboard → Authentication → Providers → Google](https://supabase.com/dashboard/project/elwqdulkxprjmkejwcai/auth/providers)
 
 - Activer **Google**
 - Coller **Client ID** et **Client Secret** depuis Google Cloud
@@ -50,7 +50,7 @@ https://befyczgottbemittzpop.supabase.co/auth/v1/callback
 
 ### URLs de redirection (déjà requis pour le site)
 
-[Authentication → URL Configuration](https://supabase.com/dashboard/project/befyczgottbemittzpop/auth/url-configuration)
+[Authentication → URL Configuration](https://supabase.com/dashboard/project/elwqdulkxprjmkejwcai/auth/url-configuration)
 
 | Champ | Valeur |
 |-------|--------|
