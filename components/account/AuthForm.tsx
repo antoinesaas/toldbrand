@@ -22,6 +22,9 @@ function mapAuthError(message: string): string {
   if (m.includes('email not confirmed')) {
     return 'Confirmez votre e-mail avant de vous connecter (vérifiez vos spams).'
   }
+  if (m.includes('invalid api key')) {
+    return 'Configuration Supabase incorrecte sur le serveur (clé API). Contactez le support.'
+  }
   if (m.includes('redirect_uri_mismatch')) {
     return 'Connexion Google mal configurée (URI de redirection).'
   }
