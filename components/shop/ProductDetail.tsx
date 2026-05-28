@@ -6,6 +6,7 @@ import type { Product, ProductSize } from '@/types'
 import { PRODUCTS } from '@/lib/products'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
 import { useI18n } from '@/lib/i18n/use-i18n'
+import { useCheckoutUserId } from '@/lib/use-checkout-user'
 import { useFormatPrice } from '@/lib/use-format-price'
 import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
@@ -27,6 +28,7 @@ export default function ProductDetail({ product }: Props) {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const { addItem, openCart, items } = useCartStore()
   const { t, currency, country, language } = useI18n()
+  const userId = useCheckoutUserId()
   const formatPrice = useFormatPrice()
 
   const gallery: GalleryImage[] = useMemo(
@@ -35,7 +37,7 @@ export default function ProductDetail({ product }: Props) {
       { src: variant.back, label: 'Dos' },
       { src: variant.lifestyle, label: 'Porté' },
     ],
-    [variant]
+    [variant.front, variant.back, variant.lifestyle]
   )
 
   const related = PRODUCTS.filter((p) => p.id !== product.id)
@@ -48,7 +50,7 @@ export default function ProductDetail({ product }: Props) {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: checkoutItems, currency, country, language }),
+      body: JSON.stringify({ items: checkoutItems, currency, country, language, userId }),
     })
     const data = await res.json()
     if (data.url) {

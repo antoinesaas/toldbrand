@@ -40,6 +40,7 @@ export default function MenuDrawer({ open, onClose }: Props) {
   const NAV_LINKS = [
     { href: '/', label: t.nav.home },
     { href: '/shop', label: t.nav.shirts },
+    { href: '/account/orders', label: 'Mon compte' },
     { href: 'mailto:antoine08.pro@gmail.com', label: t.nav.contact, external: true },
   ]
 

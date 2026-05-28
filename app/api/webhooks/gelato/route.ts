@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { updateOrderFromGelatoWebhook } from '@/lib/orders'
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
+  let body: Record<string, unknown>
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
 
-  // Gelato sends order status updates — log them for now
-  const { event, order } = body as { event?: string; order?: { id?: string; status?: string } }
-
-  console.log(`Gelato webhook: ${event} — order ${order?.id} → ${order?.status}`)
-
-  // Future: update order status in your database, send shipping emails, etc.
-
-  return NextResponse.json({ received: true })
+  try {
+    const updated = await updateOrderFromGelatoWebhook(body)
+    console.log('Gelato webhook processed:', body.event ?? 'status_update', updated?.id)
+    return NextResponse.json({ received: true, orderId: updated?.id })
+  } catch (err) {
+    console.error('Gelato webhook error:', err)
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Update failed' },
+      { status: 500 }
+    )
+  }
 }

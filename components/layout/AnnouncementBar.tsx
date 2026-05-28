@@ -6,8 +6,23 @@ interface Props {
   light?: boolean
 }
 
+function MessageStrip({ messages }: { messages: readonly string[]; light?: boolean }) {
+  return (
+    <>
+      {messages.map((msg) => (
+        <span
+          key={msg}
+          className="inline-flex items-center shrink-0 text-[10px] tracking-[0.25em] uppercase mx-8"
+        >
+          {msg}
+        </span>
+      ))}
+    </>
+  )
+}
+
 export default function AnnouncementBar({ light = false }: Props) {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
   const messages = t.announcement
 
   return (
@@ -16,12 +31,13 @@ export default function AnnouncementBar({ light = false }: Props) {
         light ? 'bg-black/30 text-white/80' : 'bg-black text-white/70'
       }`}
     >
-      <div className="flex whitespace-nowrap animate-marquee">
-        {[...messages, ...messages].map((msg, i) => (
-          <span key={i} className="text-[10px] tracking-[0.25em] uppercase mx-12">
-            {msg}
-          </span>
-        ))}
+      <div key={language} className="flex w-max animate-marquee will-change-transform">
+        <div className="flex shrink-0 items-center">
+          <MessageStrip messages={messages} light={light} />
+        </div>
+        <div className="flex shrink-0 items-center" aria-hidden>
+          <MessageStrip messages={messages} light={light} />
+        </div>
       </div>
     </div>
   )

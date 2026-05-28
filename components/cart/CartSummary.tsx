@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useCartStore } from '@/lib/cart-store'
 import { useI18n } from '@/lib/i18n/use-i18n'
+import { useCheckoutUserId } from '@/lib/use-checkout-user'
 import { useFormatPrice } from '@/lib/use-format-price'
 import CartItem from './CartItem'
 import PaymentIcons from '@/components/shop/PaymentIcons'
@@ -12,6 +13,7 @@ const FREE_SHIPPING_THRESHOLD = 6000
 export default function CartSummary() {
   const { items, total } = useCartStore()
   const { t, currency, country, language } = useI18n()
+  const userId = useCheckoutUserId()
   const formatPrice = useFormatPrice()
   const cartTotal = total()
   const freeShipping = cartTotal >= FREE_SHIPPING_THRESHOLD
@@ -20,7 +22,7 @@ export default function CartSummary() {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, currency, country, language }),
+      body: JSON.stringify({ items, currency, country, language, userId }),
     })
     const data = await res.json()
     if (data.url) window.location.href = data.url

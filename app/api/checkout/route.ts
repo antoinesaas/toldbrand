@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
     currency?: Currency
     country?: CountryCode
     language?: Language
+    userId?: string
   }
 
   try {
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 
-  const { items, currency = 'EUR', country = 'FR', language: bodyLanguage } = body
+  const { items, currency = 'EUR', country = 'FR', language: bodyLanguage, userId } = body
 
   if (!items?.length) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
@@ -127,6 +128,7 @@ export async function POST(req: NextRequest) {
         country,
         language,
         freeShipping: freeShipping ? 'yes' : 'no',
+        supabase_user_id: userId ?? '',
       },
     })
 

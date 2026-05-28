@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { createGelatoOrder } from '@/lib/gelato'
+import { saveOrderFromStripeSession } from '@/lib/orders'
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -32,12 +33,23 @@ export async function POST(req: NextRequest) {
       const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
         expand: ['line_items.data.price.product'],
       })
-      const gelatoOrder = await createGelatoOrder(fullSession)
-      console.log('Gelato order created:', gelatoOrder)
+
+      const userId = fullSession.metadata?.supabase_user_id || null
+
+      await saveOrderFromStripeSession(fullSession, { userId })
+
+      const gelatoResult = (await createGelatoOrder(fullSession)) as { id?: string }
+      const gelatoOrderId = gelatoResult?.id
+
+      if (gelatoOrderId) {
+        await saveOrderFromStripeSession(fullSession, { userId, gelatoOrderId })
+      }
+
+      console.log('Order saved:', session.id, 'Gelato:', gelatoOrderId)
     } catch (err) {
-      console.error('Failed to create Gelato order:', err)
+      console.error('Failed to process order:', err)
       return NextResponse.json(
-        { error: err instanceof Error ? err.message : 'Gelato order failed' },
+        { error: err instanceof Error ? err.message : 'Order processing failed' },
         { status: 500 }
       )
     }

@@ -63,7 +63,13 @@ export default function SiteHeader() {
               />
             </Link>
 
-            <div className={`justify-self-end flex items-center gap-4 md:gap-6 ${textClass}`}>
+            <div className={`justify-self-end flex items-center gap-3 md:gap-5 ${textClass}`}>
+              <Link
+                href="/account/orders"
+                className="hidden sm:inline text-xs tracking-[0.15em] uppercase hover:opacity-70"
+              >
+                Compte
+              </Link>
               <RegionSelector compact light={lightOnDark} />
               <button
                 type="button"
