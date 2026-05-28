@@ -33,12 +33,16 @@ vercel deploy --prod
   - `https://toldbrand.fr/auth/callback`
   - `http://localhost:3000/auth/callback`
 
-## 4. OAuth Google & Apple
+## 4. OAuth Google
 
-**Authentication → Providers** :
+Voir le guide détaillé : [`setup-google-oauth.md`](./setup-google-oauth.md)
 
-- Activer **Google** (Client ID + Secret depuis Google Cloud Console)
-- Activer **Apple** (Service ID + clé depuis Apple Developer)
+Résumé des URI à saisir dans Google Cloud (client OAuth « Application Web ») :
+
+- **Origines JavaScript** : `https://toldbrand.fr`, `http://localhost:3000`
+- **URI de redirection** : `https://befyczgottbemittzpop.supabase.co/auth/v1/callback`
+
+Puis activer **Google** dans Supabase → Providers avec l’ID client et le secret.
 
 ## 5. Email (inscription)
 

@@ -65,7 +65,6 @@ export const ACCOUNT_COPY: Record<
     signUp: string
     signOut: string
     google: string
-    apple: string
     myOrders: string
     noOrders: string
     orderNumber: string
@@ -86,7 +85,6 @@ export const ACCOUNT_COPY: Record<
     signUp: "S'inscrire",
     signOut: 'Déconnexion',
     google: 'Continuer avec Google',
-    apple: 'Continuer avec Apple',
     myOrders: 'Mes commandes',
     noOrders: 'Aucune commande pour le moment.',
     orderNumber: 'Commande',
@@ -106,7 +104,6 @@ export const ACCOUNT_COPY: Record<
     signUp: 'Sign up',
     signOut: 'Sign out',
     google: 'Continue with Google',
-    apple: 'Continue with Apple',
     myOrders: 'My orders',
     noOrders: 'No orders yet.',
     orderNumber: 'Order',
@@ -126,7 +123,6 @@ export const ACCOUNT_COPY: Record<
     signUp: 'Registrieren',
     signOut: 'Abmelden',
     google: 'Mit Google fortfahren',
-    apple: 'Mit Apple fortfahren',
     myOrders: 'Meine Bestellungen',
     noOrders: 'Noch keine Bestellungen.',
     orderNumber: 'Bestellung',
@@ -146,7 +142,6 @@ export const ACCOUNT_COPY: Record<
     signUp: 'Registrati',
     signOut: 'Esci',
     google: 'Continua con Google',
-    apple: 'Continua con Apple',
     myOrders: 'I miei ordini',
     noOrders: 'Nessun ordine al momento.',
     orderNumber: 'Ordine',
@@ -166,7 +161,6 @@ export const ACCOUNT_COPY: Record<
     signUp: 'Registrarse',
     signOut: 'Cerrar sesión',
     google: 'Continuar con Google',
-    apple: 'Continuar con Apple',
     myOrders: 'Mis pedidos',
     noOrders: 'Aún no hay pedidos.',
     orderNumber: 'Pedido',
