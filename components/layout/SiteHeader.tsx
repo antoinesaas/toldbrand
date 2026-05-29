@@ -41,40 +41,42 @@ export default function SiteHeader() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <AnnouncementBar light={lightOnDark} />
         <div className={`transition-colors duration-300 ${navBg}`}>
-          <nav className="max-w-[1400px] mx-auto h-14 md:h-16 grid grid-cols-3 items-center px-4 md:px-8">
+          <nav className="max-w-[1400px] mx-auto h-14 md:h-16 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 min-w-0">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className={`flex flex-col gap-1.5 p-2 -ml-2 ${textClass}`}
+              className={`flex flex-col gap-1.5 p-2 -ml-1 shrink-0 ${textClass}`}
               aria-label="Ouvrir le menu"
             >
               <span className={`block w-5 h-px ${lightOnDark ? 'bg-white' : 'bg-black'}`} />
               <span className={`block w-5 h-px ${lightOnDark ? 'bg-white' : 'bg-black'}`} />
             </button>
 
-            <Link href="/" className="justify-self-center">
+            <Link href="/" className="justify-self-center shrink-0 px-1">
               <Image
                 src="/branding/logo.png"
                 alt="TOLD"
                 width={120}
                 height={32}
-                className={`h-6 md:h-7 w-auto object-contain ${lightOnDark ? 'brightness-0 invert' : ''}`}
+                className={`h-5 sm:h-6 md:h-7 w-auto max-w-[92px] sm:max-w-[120px] object-contain ${lightOnDark ? 'brightness-0 invert' : ''}`}
                 priority
               />
             </Link>
 
-            <div className={`justify-self-end flex items-center gap-3 md:gap-5 ${textClass}`}>
+            <div className={`justify-self-end flex items-center justify-end gap-1.5 sm:gap-2 md:gap-5 min-w-0 shrink-0 ${textClass}`}>
               <Link
                 href="/account/orders"
-                className="hidden sm:inline text-xs tracking-[0.15em] uppercase hover:opacity-70"
+                className="hidden md:inline text-xs tracking-[0.15em] uppercase hover:opacity-70 whitespace-nowrap"
               >
                 Compte
               </Link>
-              <RegionSelector compact light={lightOnDark} />
+              <div className="hidden sm:block shrink-0">
+                <RegionSelector compact light={lightOnDark} />
+              </div>
               <button
                 type="button"
                 onClick={toggleCart}
-                className="text-xs tracking-[0.15em] uppercase flex items-center gap-2"
+                className="text-[10px] sm:text-xs tracking-[0.12em] sm:tracking-[0.15em] uppercase flex items-center gap-1.5 shrink-0 whitespace-nowrap"
                 aria-label="Panier"
               >
                 {t.nav.cart}

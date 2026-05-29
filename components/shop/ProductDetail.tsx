@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import type { Product, ProductSize } from '@/types'
 import { PRODUCTS } from '@/lib/products'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
 import { useI18n } from '@/lib/i18n/use-i18n'
-import { useCheckoutUserId } from '@/lib/use-checkout-user'
+import { requireAuthForCheckout } from '@/lib/require-auth-checkout'
 import { useFormatPrice } from '@/lib/use-format-price'
 import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
@@ -28,7 +29,7 @@ export default function ProductDetail({ product }: Props) {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const { addItem, openCart, items } = useCartStore()
   const { t, currency, country, language } = useI18n()
-  const userId = useCheckoutUserId()
+  const pathname = usePathname()
   const formatPrice = useFormatPrice()
 
   const gallery: GalleryImage[] = useMemo(
@@ -47,12 +48,18 @@ export default function ProductDetail({ product }: Props) {
   }
 
   async function checkoutWithItems(checkoutItems: typeof items) {
+    const userId = await requireAuthForCheckout(pathname)
+    if (!userId) return
+
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items: checkoutItems, currency, country, language, userId }),
     })
     const data = await res.json()
+    if (data.loginRequired) {
+      return
+    }
     if (data.url) {
       window.location.href = data.url
       return

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
+import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
 import type { CartItem } from '@/types'
 import { REGIONS, type CountryCode, type Currency } from '@/lib/locale-store'
@@ -43,11 +44,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 
-  const { items, currency = 'EUR', country = 'FR', language: bodyLanguage, userId } = body
+  const { items, currency = 'EUR', country = 'FR', language: bodyLanguage } = body
 
   if (!items?.length) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
   }
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json(
+      { error: 'Connexion requise pour payer et suivre votre commande.', loginRequired: true },
+      { status: 401 }
+    )
+  }
+
+  const userId = user.id
 
   const region = REGIONS.find((r) => r.country === country) ?? REGIONS[0]
   const language = bodyLanguage ?? region.language
