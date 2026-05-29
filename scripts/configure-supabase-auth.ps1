@@ -1,4 +1,4 @@
-# Configure Supabase Auth for TOLD Brand (project elwqdulkxprjmkejwcai — MCP / Vercel)
+# Configure Supabase Auth for TOLD Brand (project befyczgottbemittzpop)
 # Requires: Supabase Personal Access Token → https://supabase.com/dashboard/account/tokens
 #
 # Usage:
@@ -8,7 +8,7 @@
 #   .\scripts\configure-supabase-auth.ps1
 
 $ErrorActionPreference = "Stop"
-$ProjectRef = "elwqdulkxprjmkejwcai"
+$ProjectRef = "befyczgottbemittzpop"
 
 if (-not $env:SUPABASE_ACCESS_TOKEN) {
   Write-Host "Set SUPABASE_ACCESS_TOKEN (https://supabase.com/dashboard/account/tokens)" -ForegroundColor Red
