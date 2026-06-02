@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { updateOrderFromGelatoWebhook } from '@/lib/orders'
+import {
+  isGelatoDashboardTestPayload,
+  updateOrderFromGelatoWebhook,
+} from '@/lib/orders'
 
+/** Gelato requires HTTP 2xx — including dashboard test payloads with {{MyOrderId}}. */
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
   try {
@@ -9,15 +13,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
+  const isTest = isGelatoDashboardTestPayload(body)
+
   try {
-    const updated = await updateOrderFromGelatoWebhook(body)
-    console.log('Gelato webhook processed:', body.event ?? 'status_update', updated?.id)
-    return NextResponse.json({ received: true, orderId: updated?.id })
+    const result = await updateOrderFromGelatoWebhook(body)
+    console.log('Gelato webhook:', body.event, 'matched:', result.matched, result.orderId ?? '—')
+    return NextResponse.json({
+      received: true,
+      matched: result.matched,
+      orderId: result.orderId ?? null,
+      test: isTest || undefined,
+    })
   } catch (err) {
-    console.error('Gelato webhook error:', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Update failed' },
-      { status: 500 }
-    )
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('Gelato webhook error:', message, body)
+
+    if (isTest) {
+      return NextResponse.json({
+        received: true,
+        matched: false,
+        test: true,
+        note: 'Test payload acknowledged (no order in database)',
+      })
+    }
+
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

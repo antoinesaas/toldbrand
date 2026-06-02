@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { ensureOrderFromStripeSession } from '@/lib/ensure-order'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('session_id')
@@ -9,23 +9,19 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId)
-    if (session.payment_status !== 'paid') {
-      return NextResponse.json({ error: 'Payment not completed' }, { status: 402 })
-    }
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    const admin = createAdminClient()
-    const { data: order, error } = await admin
-      .from('orders')
-      .select('*, order_items(*)')
-      .eq('stripe_session_id', sessionId)
-      .maybeSingle()
+    const { order, gelatoOrderId, gelatoError } = await ensureOrderFromStripeSession(sessionId, {
+      userId: user?.id ?? null,
+    })
 
-    if (error) throw error
-
-    return NextResponse.json({ order })
+    return NextResponse.json({ order, gelatoOrderId, gelatoError })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to load order'
+    console.error('orders/confirm:', message)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

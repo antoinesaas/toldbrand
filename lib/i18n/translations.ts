@@ -16,6 +16,11 @@ export const translations = {
       benefitShippingSub: 'Dès 60 €',
       benefitFast: 'Expédition rapide',
       benefitFastSub: '24–48 h',
+      brandStoryLabel: 'La marque',
+      brandStoryTitle: 'Née à Milan',
+      brandStoryBody:
+        'TOLD est née à Milan — là où l’idée a pris forme, entre rues en pierre et ironie italienne. Des tees qui disent ce que vous pensez, sans filtre, avec la même exigence de qualité depuis le premier jour.',
+      brandStoryMilan: 'Milano · Est. 2023',
     },
     product: {
       otherColors: 'Autres coloris',
@@ -24,7 +29,7 @@ export const translations = {
       addToCart: 'Ajouter au panier',
       added: 'Ajouté',
       payNow: 'Payer maintenant',
-      shippingNote: 'Livraison offerte dès 60 €. Expédition sous 24–48 h. Retours sous 30 jours.',
+      shippingNote: 'Livraison offerte (promo). Expédition sous 24–48 h. Retours : contactez-nous sous 14 jours.',
       description: 'Description',
       shipping: 'Livraison',
       sizeTab: 'Taille',
@@ -58,7 +63,12 @@ export const translations = {
     region: { label: 'Pays / devise' },
     success: {
       title: 'Merci',
-      message: 'Votre commande est confirmée. Nous préparons votre envoi et vous enverrons le suivi par e-mail.',
+      message:
+        'Votre commande est confirmée. Connectez-vous avec le même e-mail que sur Stripe pour la retrouver dans Mon compte.',
+      messageLoggedIn:
+        'Votre commande est confirmée. Retrouvez-la dans Mon compte — nous vous enverrons le suivi par e-mail.',
+      emailNote:
+        'Un reçu Stripe peut arriver séparément. L’e-mail TOLD part dès que la commande est enregistrée.',
       cta: 'Continuer vos achats',
     },
   },
@@ -77,6 +87,11 @@ export const translations = {
       benefitShippingSub: 'Over €60',
       benefitFast: 'Fast dispatch',
       benefitFastSub: '24–48 h',
+      brandStoryLabel: 'The brand',
+      brandStoryTitle: 'Born in Milan',
+      brandStoryBody:
+        'TOLD was born in Milan — where the idea took shape, between stone streets and Italian irony. Tees that say what you mean, no filter, with the same quality standards from day one.',
+      brandStoryMilan: 'Milano · Est. 2023',
     },
     product: {
       otherColors: 'Other colors',
@@ -119,7 +134,11 @@ export const translations = {
     region: { label: 'Country / currency' },
     success: {
       title: 'Thank you',
-      message: 'Your order is confirmed. We are preparing your shipment and will email tracking details soon.',
+      message:
+        'Your order is confirmed. Sign in with the same email used at checkout to see it in your account.',
+      messageLoggedIn:
+        'Your order is confirmed. Find it in My orders — we will email tracking when it ships.',
+      emailNote: 'A Stripe receipt may arrive separately. The TOLD confirmation is sent once the order is saved.',
       cta: 'Continue shopping',
     },
   },
@@ -138,6 +157,11 @@ export const translations = {
       benefitShippingSub: 'Ab 60 €',
       benefitFast: 'Schneller Versand',
       benefitFastSub: '24–48 h',
+      brandStoryLabel: 'Die Marke',
+      brandStoryTitle: 'Geboren in Mailand',
+      brandStoryBody:
+        'TOLD entstand in Mailand — dort, wo die Idee Form annahm, zwischen Steinstraßen und italienischem Humor. Shirts, die sagen, was du denkst, ohne Filter, mit derselben Qualität vom ersten Tag an.',
+      brandStoryMilan: 'Milano · Est. 2023',
     },
     product: {
       otherColors: 'Andere Farben',
@@ -180,7 +204,11 @@ export const translations = {
     region: { label: 'Land / Währung' },
     success: {
       title: 'Danke',
-      message: 'Ihre Bestellung ist bestätigt. Wir bereiten den Versand vor und senden Ihnen die Sendungsverfolgung per E-Mail.',
+      message:
+        'Ihre Bestellung ist bestätigt. Melden Sie sich mit derselben E-Mail wie bei Stripe an.',
+      messageLoggedIn:
+        'Ihre Bestellung ist bestätigt. Finden Sie sie unter Meine Bestellungen.',
+      emailNote: 'Ein Stripe-Beleg kann separat eintreffen.',
       cta: 'Weiter einkaufen',
     },
   },
@@ -199,6 +227,11 @@ export const translations = {
       benefitShippingSub: 'Da 60 €',
       benefitFast: 'Spedizione rapida',
       benefitFastSub: '24–48 h',
+      brandStoryLabel: 'Il brand',
+      brandStoryTitle: 'Nata a Milano',
+      brandStoryBody:
+        'TOLD è nata a Milano — dove l’idea ha preso forma, tra strade di pietra e ironia italiana. Magliette che dicono ciò che pensi, senza filtri, con la stessa cura per la qualità dal primo giorno.',
+      brandStoryMilan: 'Milano · Est. 2023',
     },
     product: {
       otherColors: 'Altri colori',
@@ -241,7 +274,9 @@ export const translations = {
     region: { label: 'Paese / valuta' },
     success: {
       title: 'Grazie',
-      message: 'Il tuo ordine è confermato. Prepareremo la spedizione e ti invieremo il tracking via e-mail.',
+      message: 'Il tuo ordine è confermato. Accedi con la stessa e-mail usata al checkout.',
+      messageLoggedIn: 'Il tuo ordine è confermato. Lo trovi in I miei ordini.',
+      emailNote: 'Potresti ricevere una ricevuta Stripe separatamente.',
       cta: 'Continua lo shopping',
     },
   },
@@ -260,6 +295,11 @@ export const translations = {
       benefitShippingSub: 'Desde 60 €',
       benefitFast: 'Envío rápido',
       benefitFastSub: '24–48 h',
+      brandStoryLabel: 'La marca',
+      brandStoryTitle: 'Nacida en Milán',
+      brandStoryBody:
+        'TOLD nació en Milán — donde la idea tomó forma, entre calles de piedra e ironía italiana. Camisetas que dicen lo que piensas, sin filtro, con la misma exigencia de calidad desde el primer día.',
+      brandStoryMilan: 'Milano · Est. 2023',
     },
     product: {
       otherColors: 'Otros colores',
@@ -302,7 +342,9 @@ export const translations = {
     region: { label: 'País / moneda' },
     success: {
       title: 'Gracias',
-      message: 'Tu pedido está confirmado. Prepararemos el envío y te enviaremos el seguimiento por correo.',
+      message: 'Tu pedido está confirmado. Inicia sesión con el mismo correo del pago.',
+      messageLoggedIn: 'Tu pedido está confirmado. Encuéntralo en Mis pedidos.',
+      emailNote: 'Puede llegar un recibo de Stripe por separado.',
       cta: 'Seguir comprando',
     },
   },

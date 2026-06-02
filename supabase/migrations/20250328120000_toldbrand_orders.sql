@@ -95,3 +95,5 @@ DROP TRIGGER IF EXISTS on_auth_user_link_orders ON auth.users;
 CREATE TRIGGER on_auth_user_link_orders
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.link_orders_to_user();
+
+NOTIFY pgrst, 'reload schema';

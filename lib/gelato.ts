@@ -1,6 +1,9 @@
 import Stripe from 'stripe'
+import { getCheckoutLineItems } from '@/lib/stripe-session'
+import { getCheckoutShipping } from '@/lib/stripe-shipping'
+import { gelatoUidForSize } from '@/lib/gelato-product-uid'
 import { resolveOrderItem } from '@/lib/resolve-order-item'
-import type { CartItem } from '@/types'
+import type { CartItem, ProductSize } from '@/types'
 
 const GELATO_ORDER_BASE = 'https://order.gelatoapis.com'
 const GELATO_CONNECT_BASE = 'https://connect.gelatoapis.com'
@@ -26,12 +29,16 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
     throw new Error('GELATO_API_KEY is not configured')
   }
 
-  const shipping = stripeSession.shipping_details
+  const shipping = getCheckoutShipping(stripeSession)
   const customer = stripeSession.customer_details
-  const lineItems = (stripeSession.line_items as Stripe.ApiList<Stripe.LineItem>)?.data ?? []
+  const lineItems = await getCheckoutLineItems(stripeSession)
 
   if (!shipping?.address) {
-    throw new Error('Stripe session missing shipping details')
+    throw new Error('Stripe session missing shipping address (collected_information.shipping_details)')
+  }
+
+  if (!lineItems.length) {
+    throw new Error('Stripe session has no line items')
   }
 
   const gelatoItems = lineItems.map((item, idx) => {
@@ -72,9 +79,13 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
       throw new Error(`Missing print files for item ${idx}`)
     }
 
+    const size = (meta.size as ProductSize) ?? 'M'
+    const baseUid = (meta.gelatoProductUid as string) || resolved.productUid
+    const productUid = gelatoUidForSize(baseUid, size)
+
     return {
       itemReferenceId: `item-${stripeSession.id}-${idx}`,
-      productUid: meta.gelatoProductUid || resolved.productUid,
+      productUid,
       quantity: item.quantity ?? 1,
       files: [
         { type: 'default' as const, url: printFront },

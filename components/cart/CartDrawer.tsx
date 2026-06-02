@@ -7,6 +7,8 @@ import { useFormatPrice } from '@/lib/use-format-price'
 import CartItem from './CartItem'
 import PaymentIcons from '@/components/shop/PaymentIcons'
 
+import { isCheckoutFreeShipping } from '@/lib/shipping-config'
+
 const FREE_SHIPPING_THRESHOLD = 6000
 
 export default function CartDrawer() {
@@ -15,7 +17,7 @@ export default function CartDrawer() {
   const formatPrice = useFormatPrice()
   const cartTotal = total()
   const cartCount = count()
-  const freeShipping = cartTotal >= FREE_SHIPPING_THRESHOLD
+  const freeShipping = isCheckoutFreeShipping(cartTotal)
 
   async function handleCheckout() {
     const userId = await requireAuthForCheckout('/cart')

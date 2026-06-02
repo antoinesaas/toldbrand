@@ -2,6 +2,8 @@
 
 Projet : [befyczgottbemittzpop](https://supabase.com/dashboard/project/befyczgottbemittzpop)
 
+> **Attention** : le site **toldbrand.fr** utilise le projet **`befyczgottbemittzpop`**, pas un autre projet Supabase (ex. « totalbread » affiché dans la sidebar). Si vous ouvrez le mauvais projet, vous verrez « No tables » alors que le site écrit ailleurs — ou l’inverse. Vérifiez : `https://toldbrand.fr/api/health/db` → champ `supabaseProjectRef` doit être `befyczgottbemittzpop`.
+
 > **MCP Cursor** : le serveur Supabase doit être lié à `befyczgottbemittzpop`.  
 > Voir [`SUPABASE-MCP-README.md`](./SUPABASE-MCP-README.md) et [`configure-supabase-auth.ps1`](./configure-supabase-auth.ps1).
 

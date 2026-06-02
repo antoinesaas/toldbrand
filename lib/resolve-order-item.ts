@@ -1,9 +1,9 @@
+import { GELATO_CATALOG } from '@/lib/gelato-catalog'
 import { PRODUCTS } from '@/lib/products'
 import type { CartItem } from '@/types'
 
 const DEFAULT_GELATO_UID =
-  process.env.GELATO_DEFAULT_PRODUCT_UID ||
-  'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_classic_gsi_m_gco_white_gpr_4-4'
+  process.env.GELATO_DEFAULT_PRODUCT_UID?.trim() || GELATO_CATALOG.CLASSIC_TEE_WHITE
 
 export function baseUrl() {
   return (process.env.NEXT_PUBLIC_URL ?? 'https://toldbrand.fr').replace(/\s/g, '')

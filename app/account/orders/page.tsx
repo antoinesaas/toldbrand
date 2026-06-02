@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import OrderStatusBadge from '@/components/account/OrderStatusBadge'
 import type { OrderStatus } from '@/lib/orders'
+import { getOrdersForUser } from '@/lib/get-user-orders'
+import { linkOrdersToUser } from '@/lib/orders'
 import AccountHeader from '@/components/account/AccountHeader'
 
 export const dynamic = 'force-dynamic'
@@ -16,10 +18,16 @@ export default async function OrdersPage() {
 
   if (!user) redirect('/account/login')
 
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('*, order_items(*)')
-    .order('created_at', { ascending: false })
+  if (user.email) {
+    await linkOrdersToUser(user.id, user.email)
+  }
+
+  let orders: Awaited<ReturnType<typeof getOrdersForUser>> = []
+  try {
+    orders = await getOrdersForUser(user.id, user.email ?? '')
+  } catch (err) {
+    console.error('getOrdersForUser:', err)
+  }
 
   return (
     <div className="pt-28 pb-20 px-4 md:px-8 min-h-screen max-w-3xl mx-auto">

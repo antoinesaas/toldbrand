@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { PRODUCTS } from '@/lib/products'
@@ -8,9 +9,14 @@ import { useI18n } from '@/lib/i18n/use-i18n'
 
 const LANDING_SHOTS = [
   {
-    productId: 'just-kiss-me',
-    src: '/images/landing/just-kiss-me.png',
-    subtitleKey: 'kiss' as const,
+    productId: 'job-unemployed',
+    src: '/images/products/job-unemployed/blue/lifestyle.png',
+    subtitleKey: 'job' as const,
+  },
+  {
+    productId: 'cry-better-lamborghini',
+    src: '/images/landing/cry-better-lamborghini.png',
+    subtitleKey: 'lambo' as const,
   },
   {
     productId: 'eat-french',
@@ -21,23 +27,28 @@ const LANDING_SHOTS = [
 
 const SUBTITLE: Record<string, Record<string, string>> = {
   fr: {
-    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    job: 'JOB : UNEMPLOYED — SOURCE OF INCOME : UNKNOWN',
+    lambo: 'WE CRY BETTER IN LAMBORGHINI',
     pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   en: {
-    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    job: 'JOB : UNEMPLOYED — SOURCE OF INCOME : UNKNOWN',
+    lambo: 'WE CRY BETTER IN LAMBORGHINI',
     pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   de: {
-    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    job: 'JOB : UNEMPLOYED — SOURCE OF INCOME : UNKNOWN',
+    lambo: 'WE CRY BETTER IN LAMBORGHINI',
     pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   it: {
-    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    job: 'JOB : UNEMPLOYED — SOURCE OF INCOME : UNKNOWN',
+    lambo: 'WE CRY BETTER IN LAMBORGHINI',
     pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
   es: {
-    kiss: 'JUST KISS ME — WE CAN TALK LATER',
+    job: 'JOB : UNEMPLOYED — SOURCE OF INCOME : UNKNOWN',
+    lambo: 'WE CRY BETTER IN LAMBORGHINI',
     pink: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
   },
 }
@@ -45,6 +56,19 @@ const SUBTITLE: Record<string, Record<string, string>> = {
 export default function HomePageContent() {
   const { t, language } = useI18n()
   const subs = SUBTITLE[language] ?? SUBTITLE.fr
+  const heroVideoRef = useRef<HTMLVideoElement>(null)
+  const [heroVideoReady, setHeroVideoReady] = useState(false)
+
+  const onHeroVideoReady = useCallback(() => {
+    setHeroVideoReady(true)
+  }, [])
+
+  useEffect(() => {
+    const video = heroVideoRef.current
+    if (video && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      setHeroVideoReady(true)
+    }
+  }, [])
 
   function productName(id: string) {
     return PRODUCTS.find((p) => p.id === id)?.name ?? id
@@ -54,12 +78,17 @@ export default function HomePageContent() {
     <>
       <section className="relative w-full h-[100svh] min-h-[600px] overflow-hidden bg-black rounded-b-3xl">
         <video
+          ref={heroVideoRef}
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          poster="/images/landing/just-kiss-me.png"
+          preload="auto"
+          onLoadedData={onHeroVideoReady}
+          onCanPlay={onHeroVideoReady}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
+            heroVideoReady ? 'opacity-100' : 'opacity-0'
+          }`}
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
@@ -156,6 +185,17 @@ export default function HomePageContent() {
           {PRODUCTS.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
+        </div>
+      </section>
+
+      <section className="py-20 md:py-28 px-6 md:px-16 bg-neutral-50">
+        <div className="max-w-[720px] mx-auto text-center">
+          <p className="text-[10px] tracking-[0.35em] uppercase text-neutral-400 mb-4">{t.home.brandStoryLabel}</p>
+          <h2 className="font-serif text-2xl md:text-3xl font-normal uppercase tracking-[0.08em] leading-snug">
+            {t.home.brandStoryTitle}
+          </h2>
+          <p className="mt-6 text-sm md:text-base text-neutral-600 leading-relaxed">{t.home.brandStoryBody}</p>
+          <p className="mt-4 text-xs tracking-[0.25em] uppercase text-neutral-400">{t.home.brandStoryMilan}</p>
         </div>
       </section>
 

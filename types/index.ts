@@ -1,4 +1,4 @@
-export type ProductColor = 'pink' | 'blue' | 'black' | 'white'
+export type ProductColor = 'pink' | 'blue' | 'black' | 'white' | 'red'
 export type ProductSize = 'S' | 'M' | 'L' | 'XL' | '2XL'
 
 export interface ProductVariant {

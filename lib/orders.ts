@@ -1,5 +1,7 @@
 import type Stripe from 'stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getCheckoutLineItems } from '@/lib/stripe-session'
+import { getCheckoutShipping } from '@/lib/stripe-shipping'
 
 export type OrderStatus =
   | 'pending'
@@ -30,8 +32,8 @@ export async function saveOrderFromStripeSession(
   opts?: { userId?: string | null; gelatoOrderId?: string }
 ) {
   const admin = createAdminClient()
-  const lineItems = (session.line_items as Stripe.ApiList<Stripe.LineItem>)?.data ?? []
-  const shipping = session.shipping_details
+  const lineItems = await getCheckoutLineItems(session)
+  const shipping = getCheckoutShipping(session)
   const customer = session.customer_details
   const email = customer?.email
 
@@ -121,43 +123,107 @@ export async function saveOrderFromStripeSession(
   return orderId
 }
 
-export async function updateOrderFromGelatoWebhook(payload: Record<string, unknown>) {
+export function isGelatoDashboardTestPayload(payload: Record<string, unknown>): boolean {
+  const ref = String(payload.orderReferenceId ?? '')
+  const itemRef = String(
+    (payload.items as Array<{ itemReferenceId?: string }> | undefined)?.[0]?.itemReferenceId ?? ''
+  )
+  return (
+    ref.includes('{{') ||
+    ref.includes('MyOrderId') ||
+    itemRef.includes('{{') ||
+    itemRef.includes('MyItemId')
+  )
+}
+
+export type GelatoWebhookResult = { matched: boolean; orderId?: string }
+
+export async function updateOrderFromGelatoWebhook(
+  payload: Record<string, unknown>
+): Promise<GelatoWebhookResult> {
+  if (isGelatoDashboardTestPayload(payload)) {
+    return { matched: false }
+  }
+
   const admin = createAdminClient()
 
-  const orderPayload = (payload.order ?? payload) as Record<string, unknown>
-  const gelatoOrderId = String(orderPayload.id ?? payload.id ?? '')
+  const orderPayload = (payload.order ?? null) as Record<string, unknown> | null
+  const items = (payload.items ?? orderPayload?.items) as
+    | Array<{ fulfillments?: Array<{ trackingUrl?: string; trackingCode?: string }> }>
+    | undefined
+  const firstFulfillment = items?.[0]?.fulfillments?.[0]
+
+  const eventId = String(payload.id ?? '')
+  const gelatoOrderId = String(payload.orderId ?? orderPayload?.id ?? '').trim()
   const orderReferenceId = String(
-    orderPayload.orderReferenceId ?? payload.orderReferenceId ?? ''
+    payload.orderReferenceId ?? orderPayload?.orderReferenceId ?? ''
+  ).trim()
+  const gelatoStatus = String(
+    payload.fulfillmentStatus ??
+      payload.status ??
+      orderPayload?.status ??
+      orderPayload?.fulfillmentStatus ??
+      'processing'
   )
-  const gelatoStatus = String(orderPayload.status ?? payload.status ?? 'processing')
 
   const tracking =
-    (orderPayload.tracking as Record<string, unknown>) ??
-    (Array.isArray(orderPayload.packages) ? (orderPayload.packages[0] as Record<string, unknown>) : null)
+    (orderPayload?.tracking as Record<string, unknown> | undefined) ??
+    (Array.isArray(orderPayload?.packages)
+      ? (orderPayload.packages[0] as Record<string, unknown>)
+      : null)
 
-  const trackingUrl = String(tracking?.url ?? tracking?.trackingUrl ?? '')
-  const trackingNumber = String(tracking?.number ?? tracking?.trackingNumber ?? '')
+  const trackingUrl = String(
+    firstFulfillment?.trackingUrl ??
+      tracking?.url ??
+      tracking?.trackingUrl ??
+      payload.trackingUrl ??
+      ''
+  )
+  const trackingNumber = String(
+    firstFulfillment?.trackingCode ??
+      tracking?.number ??
+      tracking?.trackingNumber ??
+      payload.trackingCode ??
+      ''
+  )
 
   const status = mapGelatoStatus(gelatoStatus)
 
-  let query = admin.from('orders').update({
+  const patch = {
     gelato_status: gelatoStatus,
     status,
     ...(trackingUrl ? { tracking_url: trackingUrl } : {}),
     ...(trackingNumber ? { tracking_number: trackingNumber } : {}),
-  })
-
-  if (gelatoOrderId) {
-    query = query.eq('gelato_order_id', gelatoOrderId)
-  } else if (orderReferenceId) {
-    query = query.eq('stripe_session_id', orderReferenceId)
-  } else {
-    return null
   }
 
-  const { data, error } = await query.select('id').maybeSingle()
-  if (error) throw error
-  return data
+  async function updateBy(column: 'gelato_order_id' | 'stripe_session_id', value: string) {
+    if (!value || value === eventId) return null
+
+    const { data, error } = await admin
+      .from('orders')
+      .update(patch)
+      .eq(column, value)
+      .select('id')
+      .maybeSingle()
+
+    if (error) {
+      throw new Error(error.message ?? 'Supabase update failed')
+    }
+    return data
+  }
+
+  const byGelatoId =
+    gelatoOrderId && !gelatoOrderId.startsWith('os_')
+      ? await updateBy('gelato_order_id', gelatoOrderId)
+      : null
+  if (byGelatoId?.id) return { matched: true, orderId: byGelatoId.id }
+
+  if (orderReferenceId && !orderReferenceId.includes('{{')) {
+    const byStripe = await updateBy('stripe_session_id', orderReferenceId)
+    if (byStripe?.id) return { matched: true, orderId: byStripe.id }
+  }
+
+  return { matched: false }
 }
 
 export async function linkOrdersToUser(userId: string, email: string) {

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { getOrderForUser } from '@/lib/get-user-orders'
 import { redirect, notFound } from 'next/navigation'
 import OrderStatusBadge from '@/components/account/OrderStatusBadge'
 import OrderTimeline from '@/components/account/OrderTimeline'
@@ -17,11 +18,12 @@ export default async function OrderDetailPage({ params }: { params: { id: string
 
   if (!user) redirect('/account/login')
 
-  const { data: order } = await supabase
-    .from('orders')
-    .select('*, order_items(*)')
-    .eq('id', params.id)
-    .maybeSingle()
+  let order = null
+  try {
+    order = await getOrderForUser(params.id, user.id, user.email ?? '')
+  } catch (err) {
+    console.error('getOrderForUser:', err)
+  }
 
   if (!order) notFound()
 

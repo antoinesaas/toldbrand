@@ -90,56 +90,28 @@ export default function AuthForm({ mode, redirectTo = '/account/orders', initial
     setError(null)
     setSuccess(null)
 
-    if (mode === 'register') {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
-        },
-      })
-      if (signUpError) {
-        setError(mapAuthError(signUpError.message))
-        setLoading(false)
-        return
-      }
-      if (data.user?.email) {
-        try {
-          await fetch('/api/account/link-orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: data.user.email }),
-          })
-        } catch {
-          /* non-blocking */
-        }
-      }
-      if (data.session) {
-        window.location.href = redirectTo
-        return
-      }
-      setSuccess('Compte créé. Vérifiez votre boîte mail pour confirmer votre inscription.')
+    const endpoint = mode === 'register' ? '/api/auth/register' : '/api/auth/login'
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include',
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      setError(mapAuthError(data.error ?? 'Erreur de connexion'))
       setLoading(false)
       return
     }
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-    if (signInError) {
-      setError(mapAuthError(signInError.message))
+    if (mode === 'register' && data.needsEmailConfirmation) {
+      setSuccess(
+        data.message ??
+          'Compte créé. Vérifiez votre boîte mail pour confirmer votre inscription.'
+      )
       setLoading(false)
       return
-    }
-
-    if (data.user?.email) {
-      try {
-        await fetch('/api/account/link-orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: data.user.email }),
-        })
-      } catch {
-        /* non-blocking */
-      }
     }
 
     window.location.href = redirectTo

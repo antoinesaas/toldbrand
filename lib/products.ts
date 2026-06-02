@@ -1,7 +1,7 @@
 import type { Product, ProductVariant } from '@/types'
+import { GELATO_CATALOG, gelatoUidFromEnv } from '@/lib/gelato-catalog'
 
-const gelatoUid = (key: string) =>
-  process.env[`GELATO_UID_${key}`] ?? process.env.GELATO_DEFAULT_PRODUCT_UID ?? ''
+const gelatoUid = (key: string, fallback: string) => gelatoUidFromEnv(key, fallback)
 
 const eatFrenchVariants: ProductVariant[] = [
   {
@@ -11,7 +11,7 @@ const eatFrenchVariants: ProductVariant[] = [
     front: '/images/products/eat-french/pink/front.png',
     back: '/images/products/eat-french/pink/back.png',
     lifestyle: '/images/products/eat-french/pink/lifestyle.png',
-    gelatoProductUid: gelatoUid('EAT_FRENCH_PINK'),
+    gelatoProductUid: gelatoUid('EAT_FRENCH_PINK', GELATO_CATALOG.CLASSIC_TEE_WHITE),
   },
   {
     color: 'blue',
@@ -20,7 +20,7 @@ const eatFrenchVariants: ProductVariant[] = [
     front: '/images/products/eat-french/blue/front.png',
     back: '/images/products/eat-french/blue/back.png',
     lifestyle: '/images/products/eat-french/blue/lifestyle.png',
-    gelatoProductUid: gelatoUid('EAT_FRENCH_BLUE'),
+    gelatoProductUid: gelatoUid('EAT_FRENCH_BLUE', GELATO_CATALOG.CLASSIC_TEE_ROYAL_BLUE),
   },
   {
     color: 'black',
@@ -29,19 +29,49 @@ const eatFrenchVariants: ProductVariant[] = [
     front: '/images/products/eat-french/black/front.png',
     back: '/images/products/eat-french/black/back.png',
     lifestyle: '/images/products/eat-french/black/lifestyle.png',
-    gelatoProductUid: gelatoUid('EAT_FRENCH_BLACK'),
+    gelatoProductUid: gelatoUid('EAT_FRENCH_BLACK', GELATO_CATALOG.CLASSIC_TEE_BLACK),
   },
 ]
 
-const kissMeVariant: ProductVariant = {
+const cryBetterLamborghiniVariant: ProductVariant = {
   color: 'white',
-  label: 'White / Red print',
+  label: 'Blanc / Jaune',
   hex: '#FFFFFF',
-  front: '/images/products/just-kiss-me/front.png',
-  back: '/images/products/just-kiss-me/back.png',
-  lifestyle: '/images/products/just-kiss-me/lifestyle.png',
-  gelatoProductUid: gelatoUid('JUST_KISS_ME'),
+  front: '/images/products/cry-better-lamborghini/white/front.png',
+  back: '/images/products/cry-better-lamborghini/white/back.png',
+  lifestyle: '/images/products/cry-better-lamborghini/white/lifestyle.png',
+  gelatoProductUid: gelatoUid('CRY_BETTER_LAMBORGHINI', GELATO_CATALOG.CLASSIC_TEE_WHITE),
 }
+
+const jobUnemployedVariants: ProductVariant[] = [
+  {
+    color: 'white',
+    label: 'Blanc / Noir',
+    hex: '#F5F5F0',
+    front: '/images/products/job-unemployed/white/front.png',
+    back: '/images/products/job-unemployed/white/back.png',
+    lifestyle: '/images/products/job-unemployed/white/lifestyle.png',
+    gelatoProductUid: gelatoUid('JOB_UNEMPLOYED_WHITE', GELATO_CATALOG.CLASSIC_TEE_WHITE),
+  },
+  {
+    color: 'blue',
+    label: 'Bleu / Blanc',
+    hex: '#1E5FAD',
+    front: '/images/products/job-unemployed/blue/front.png',
+    back: '/images/products/job-unemployed/blue/back.png',
+    lifestyle: '/images/products/job-unemployed/blue/lifestyle.png',
+    gelatoProductUid: gelatoUid('JOB_UNEMPLOYED_BLUE', GELATO_CATALOG.CLASSIC_TEE_ROYAL_BLUE),
+  },
+  {
+    color: 'red',
+    label: 'Rouge / Blanc',
+    hex: '#C41E3A',
+    front: '/images/products/job-unemployed/red/front.png',
+    back: '/images/products/job-unemployed/red/back.png',
+    lifestyle: '/images/products/job-unemployed/red/lifestyle.png',
+    gelatoProductUid: gelatoUid('JOB_UNEMPLOYED_RED', GELATO_CATALOG.CLASSIC_TEE_RED),
+  },
+]
 
 export const PRODUCTS: Product[] = [
   {
@@ -73,25 +103,53 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
-    id: 'just-kiss-me',
-    slug: 'just-kiss-me-we-can-talk-later',
-    name: 'JUST KISS ME — WE CAN TALK LATER',
-    tagline: 'We can talk later.',
-    phrase: ['JUST KISS ME', 'WE CAN TALK LATER'],
+    id: 'cry-better-lamborghini',
+    slug: 'we-cry-better-in-lamborghini',
+    name: 'WE CRY BETTER IN LAMBORGHINI',
+    tagline: 'Luxury tears only.',
+    phrase: ['WE CRY BETTER', 'IN LAMBORGHINI'],
     price: 2995,
     compareAtPrice: 3995,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    variants: [kissMeVariant],
+    variants: [cryBetterLamborghiniVariant],
     isNew: true,
     isBestseller: false,
     description:
-      'Un message direct, un peu impertinent, beaucoup de style. Le tee Just Kiss Me est pensé pour ceux qui préfèrent l’action aux longues discussions.',
+      'Ironie italienne, typo jaune marker et Countach au dos. Un tee statement pour ceux qui assument l’excès — même les larmes voyagent en supercar.',
     descriptionExtra:
-      'Blanc éclatant, impression rouge profond au dos. Même exigence TOLD : coton lourd, coupe confortable, finitions soignées. À porter seul avec un jean ou sous une veste structurée.',
+      'Face sobre TOLD · EST. 2023, dos « WE CRY BETTER IN LAMBORGHINI » avec illustration Lamborghini. Coton peigné 220 gsm, coupe relax unisexe, finitions TOLD.',
     details: [
-      'Face : logo TOLD',
-      'Dos : JUST KISS ME — WE CAN TALK LATER',
-      'Coloris : blanc / imprimé rouge',
+      'Face : TOLD · EST. 2023',
+      'Dos : WE CRY BETTER IN LAMBORGHINI + Countach',
+      'Coloris : blanc / imprimé jaune',
+    ],
+    material: [
+      '100 % coton peigné, 220 gsm',
+      'Coupe relax unisexe',
+      'Lavage doux',
+      'Impression haute qualité',
+    ],
+  },
+  {
+    id: 'job-unemployed',
+    slug: 'job-unemployed-source-of-income-unknown',
+    name: 'JOB : UNEMPLOYED — SOURCE OF INCOME : UNKNOWN',
+    tagline: 'Honesty, printed.',
+    phrase: ['JOB', 'UNEMPLOYED', 'SOURCE OF INCOME', 'UNKNOWN'],
+    price: 2995,
+    compareAtPrice: 3995,
+    sizes: ['S', 'M', 'L', 'XL', '2XL'],
+    variants: jobUnemployedVariants,
+    isNew: false,
+    isBestseller: false,
+    description:
+      'Le tee qui assume l’ironie sans filtre. Face TOLD · EST. 2023, dos typographique « JOB : UNEMPLOYED / SOURCE OF INCOME : UNKNOWN » — un statement sec, drôle et immédiatement lisible.',
+    descriptionExtra:
+      'Trois coloris de tee (blanc, bleu, rouge) avec contrastes d’impression adaptés. Même base TOLD : coton peigné 220 gsm, coupe relax unisexe, finitions soignées. Idéal pour un look streetwear assumé.',
+    details: [
+      'Face : TOLD · EST. 2023',
+      'Dos : JOB : UNEMPLOYED / SOURCE OF INCOME : UNKNOWN',
+      '3 coloris : blanc, bleu, rouge',
     ],
     material: [
       '100 % coton peigné, 220 gsm',

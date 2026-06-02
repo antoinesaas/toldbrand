@@ -66,6 +66,27 @@ export default function SiteHeader() {
             <div className={`justify-self-end flex items-center justify-end gap-1.5 sm:gap-2 md:gap-5 min-w-0 shrink-0 ${textClass}`}>
               <Link
                 href="/account/orders"
+                className="md:hidden p-2 -mr-1 shrink-0 hover:opacity-70"
+                aria-label="Mon compte"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="w-5 h-5"
+                  aria-hidden
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75H4.5v-.75z"
+                  />
+                </svg>
+              </Link>
+              <Link
+                href="/account/orders"
                 className="hidden md:inline text-xs tracking-[0.15em] uppercase hover:opacity-70 whitespace-nowrap"
               >
                 Compte

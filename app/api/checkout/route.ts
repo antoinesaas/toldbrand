@@ -7,9 +7,10 @@ import { REGIONS, type CountryCode, type Currency } from '@/lib/locale-store'
 import { resolveOrderItem, baseUrl } from '@/lib/resolve-order-item'
 import { getStripeLocale } from '@/lib/i18n/stripe-locale'
 import type { Language } from '@/lib/i18n/translations'
-
-const FREE_SHIPPING_THRESHOLD_CENTS = 6000
-const STANDARD_SHIPPING_CENTS = 495
+import {
+  isCheckoutFreeShipping,
+  STANDARD_SHIPPING_CENTS,
+} from '@/lib/shipping-config'
 
 const COUNTRY_SHIPPING: Record<string, string[]> = {
   EUR: ['FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'PT', 'AT', 'IE', 'PL', 'CH', 'LU'],
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
   const region = REGIONS.find((r) => r.country === country) ?? REGIONS[0]
   const language = bodyLanguage ?? region.language
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
-  const freeShipping = subtotal >= FREE_SHIPPING_THRESHOLD_CENTS
+  const freeShipping = isCheckoutFreeShipping(subtotal)
   const url = baseUrl()
   const shippingLabels = SHIPPING_LABELS[language]
 
@@ -76,6 +77,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const session = await stripe.checkout.sessions.create({
+      customer_email: user.email ?? undefined,
+      payment_intent_data: user.email
+        ? { receipt_email: user.email }
+        : undefined,
       line_items: items.map((item) => {
         const resolved = resolveOrderItem(item)
         return {

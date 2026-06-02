@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { ensureOrderFromStripeSession } from '@/lib/ensure-order'
 import { stripe } from '@/lib/stripe'
-import { createGelatoOrder } from '@/lib/gelato'
-import { saveOrderFromStripeSession } from '@/lib/orders'
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -30,22 +29,11 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session
 
     try {
-      const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-        expand: ['line_items.data.price.product'],
+      const userId = session.metadata?.supabase_user_id || null
+      const { gelatoOrderId, gelatoError } = await ensureOrderFromStripeSession(session.id, {
+        userId,
       })
-
-      const userId = fullSession.metadata?.supabase_user_id || null
-
-      await saveOrderFromStripeSession(fullSession, { userId })
-
-      const gelatoResult = (await createGelatoOrder(fullSession)) as { id?: string }
-      const gelatoOrderId = gelatoResult?.id
-
-      if (gelatoOrderId) {
-        await saveOrderFromStripeSession(fullSession, { userId, gelatoOrderId })
-      }
-
-      console.log('Order saved:', session.id, 'Gelato:', gelatoOrderId)
+      console.log('Order processed:', session.id, 'Gelato:', gelatoOrderId ?? gelatoError)
     } catch (err) {
       console.error('Failed to process order:', err)
       return NextResponse.json(
