@@ -21,48 +21,33 @@ function loadEnv(path) {
 const env = loadEnv(process.argv[2] || '.env.verify')
 
 async function checkGelato() {
-  const key = env.GELATO_API_KEY
+  const key = env.GELATO_API_KEY?.replace(/\r/g, '').trim()
   if (!key) {
     console.log('GELATO: missing API key')
     return
   }
-  const res = await fetch('https://order.gelatoapis.com/v4/orders', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-API-KEY': key },
-    body: JSON.stringify({
-      orderType: 'order',
-      orderReferenceId: `dry-run-${Date.now()}`,
-      currency: 'EUR',
-      items: [
-        {
-          itemReferenceId: 'test-1',
-          productUid: env.GELATO_UID_CRY_BETTER_LAMBORGHINI || env.GELATO_UID_JOB_UNEMPLOYED_WHITE,
-          quantity: 1,
-          files: [
-            {
-              type: 'default',
-              url: 'https://toldbrand.fr/images/products/cry-better-lamborghini/white/front.png',
-            },
-            {
-              type: 'back',
-              url: 'https://toldbrand.fr/images/products/cry-better-lamborghini/white/back.png',
-            },
-          ],
-        },
-      ],
-      shippingAddress: {
-        firstName: 'Test',
-        lastName: 'Validation',
-        addressLine1: '1 rue de Rivoli',
-        city: 'Paris',
-        postCode: '75001',
-        country: 'FR',
-        email: 'test-validation@toldbrand.fr',
-      },
-    }),
+  const res = await fetch('https://order.gelatoapis.com/v4/orders?limit=1', {
+    headers: { 'X-API-KEY': key },
   })
-  const text = await res.text()
-  console.log('GELATO_ORDER_TEST', res.status, text.slice(0, 400))
+  console.log(
+    'GELATO_API',
+    res.status,
+    res.status === 401 || res.status === 403 ? 'KEY_REJECTED' : 'KEY_OK'
+  )
+
+  const uidKeys = [
+    'GELATO_UID_EAT_FRENCH_PINK',
+    'GELATO_UID_EAT_FRENCH_BLUE',
+    'GELATO_UID_EAT_FRENCH_BLACK',
+    'GELATO_UID_CRY_BETTER_LAMBORGHINI',
+    'GELATO_UID_JOB_UNEMPLOYED_WHITE',
+    'GELATO_UID_JOB_UNEMPLOYED_BLUE',
+    'GELATO_UID_JOB_UNEMPLOYED_RED',
+  ]
+  for (const k of uidKeys) {
+    const v = env[k]?.replace(/\r/g, '').trim()
+    console.log(' ', k, v ? v.slice(0, 55) + (v.length > 55 ? '…' : '') : '(catalog fallback at build)')
+  }
 }
 
 async function checkStripe() {

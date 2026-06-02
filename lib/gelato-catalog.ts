@@ -9,12 +9,16 @@ export const GELATO_CATALOG = {
   CLASSIC_TEE_BLACK: `${CLASSIC_TEE_M}_gco_black_gpr_4-4`,
 } as const
 
+function cleanUid(value: string | undefined): string {
+  return (value ?? '').replace(/\r/g, '').trim()
+}
+
 export function gelatoUidFromEnv(
   key: string,
   fallback: string
 ): string {
-  const fromEnv = process.env[`GELATO_UID_${key}`]?.trim()
+  const fromEnv = cleanUid(process.env[`GELATO_UID_${key}`])
   if (fromEnv) return fromEnv
-  const defaultUid = process.env.GELATO_DEFAULT_PRODUCT_UID?.trim()
+  const defaultUid = cleanUid(process.env.GELATO_DEFAULT_PRODUCT_UID)
   return defaultUid || fallback
 }

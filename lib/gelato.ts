@@ -80,7 +80,7 @@ export async function createGelatoOrder(stripeSession: Stripe.Checkout.Session):
     }
 
     const size = (meta.size as ProductSize) ?? 'M'
-    const baseUid = (meta.gelatoProductUid as string) || resolved.productUid
+    const baseUid = ((meta.gelatoProductUid as string) || resolved.productUid).replace(/\r/g, '').trim()
     const productUid = gelatoUidForSize(baseUid, size)
 
     return {

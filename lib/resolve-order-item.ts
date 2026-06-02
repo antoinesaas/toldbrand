@@ -17,8 +17,11 @@ export function resolveOrderItem(item: CartItem) {
   const front = variant?.front ?? item.imageUrl
   const back = variant?.back ?? item.imageUrl
 
+  const rawUid = variant?.gelatoProductUid || item.gelatoProductUid || DEFAULT_GELATO_UID
+  const productUid = rawUid.replace(/\r/g, '').trim()
+
   return {
-    productUid: variant?.gelatoProductUid || item.gelatoProductUid || DEFAULT_GELATO_UID,
+    productUid,
     printFiles: [
       { type: 'default' as const, url: `${url}${front}` },
       { type: 'back' as const, url: `${url}${back}` },

@@ -80,7 +80,7 @@ export const PRODUCTS: Product[] = [
     name: 'EAT FRENCH · DRIVE GERMAN · DATE ITALIAN',
     tagline: 'European taste, one tee.',
     phrase: ['EAT', 'FRENCH', 'DRIVE', 'GERMAN', 'DATE', 'ITALIAN'],
-    price: 2995,
+    price: 3995,
     compareAtPrice: 3995,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
     variants: eatFrenchVariants,
