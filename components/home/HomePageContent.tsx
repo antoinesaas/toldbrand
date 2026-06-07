@@ -15,11 +15,17 @@ export default function HomePageContent() {
           </h1>
         </div>
 
-        {/* Grid — 10 produits */}
+        {/* Grid — promos en premier */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-5">
-          {PRODUCTS.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {[...PRODUCTS]
+            .sort((a, b) => {
+              const aPromo = a.compareAtPrice > a.price ? 1 : 0
+              const bPromo = b.compareAtPrice > b.price ? 1 : 0
+              return bPromo - aPromo
+            })
+            .map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
         </div>
       </div>
     </div>
