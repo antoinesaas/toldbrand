@@ -40,11 +40,11 @@ export default function SiteHeader() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <AnnouncementBar light={lightOnDark} />
         <div className={`transition-colors duration-300 ${navBg}`}>
-          <nav className="max-w-[1400px] mx-auto h-14 md:h-16 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 min-w-0">
+          <nav className="max-w-[1400px] mx-auto h-14 md:h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className={`flex flex-col gap-1.5 p-2 -ml-1 shrink-0 ${textClass}`}
+              className={`justify-self-start flex flex-col gap-1.5 p-2 -ml-1 ${textClass}`}
               aria-label="Ouvrir le menu"
             >
               <span className="block w-5 h-px bg-white" />
@@ -62,7 +62,7 @@ export default function SiteHeader() {
               />
             </Link>
 
-            <div className={`justify-self-end flex items-center justify-end gap-1.5 sm:gap-2 md:gap-5 min-w-0 shrink-0 ${textClass}`}>
+            <div className={`justify-self-end flex items-center justify-end gap-1.5 sm:gap-2 md:gap-5 ${textClass}`}>
               <Link
                 href="/account/orders"
                 className="md:hidden p-2 -mr-1 shrink-0 hover:opacity-70"

@@ -33,12 +33,16 @@ export default function ProductCard({ product }: Props) {
           className="object-cover object-top transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100"
           sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 22vw"
         />
-        {/* New badge */}
-        {product.isNew && (
+        {/* Badge */}
+        {product.compareAtPrice > product.price ? (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-bold uppercase px-2 py-0.5 tracking-widest">
+            PROMO
+          </span>
+        ) : product.isNew ? (
           <span className="absolute top-2 left-2 bg-white text-black text-[8px] font-bold uppercase px-2 py-0.5 tracking-widest">
             NEW
           </span>
-        )}
+        ) : null}
       </div>
 
       {/* Info */}
@@ -46,7 +50,14 @@ export default function ProductCard({ product }: Props) {
         <h3 className="text-white text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] leading-snug line-clamp-2">
           {product.name}
         </h3>
-        <p className="text-white/40 text-xs mt-1.5">{formatPrice(product.price)}</p>
+        {product.compareAtPrice > product.price ? (
+          <div className="flex items-baseline gap-2 mt-1.5">
+            <span className="text-red-400 text-xs font-semibold">{formatPrice(product.price)}</span>
+            <span className="text-white/30 text-[10px] line-through">{formatPrice(product.compareAtPrice)}</span>
+          </div>
+        ) : (
+          <p className="text-white/40 text-xs mt-1.5">{formatPrice(product.price)}</p>
+        )}
       </div>
     </Link>
   )

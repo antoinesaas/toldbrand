@@ -116,33 +116,45 @@ export const PRODUCTS: Product[] = [
     'Un pigeon. Des flammes. L\'eau. Un regard qui juge. Sybau — l\'art de ne rien comprendre et d\'y trouver de la beaute.',
     ['Face : TOLD · EST. 2025', 'Dos : Sybau', 'Coloris : blanc']
   ),
-  tee(
-    'THE_DON',
-    'the-don',
-    'THE DON',
-    'No caption needed.',
-    ['THE', 'DON'],
-    'Un geste. Toute une philosophie. The Don ne parle pas — il communique.',
-    ['Face : TOLD · EST. 2025', 'Dos : The Don', 'Coloris : blanc']
-  ),
-  tee(
-    'JEFFREY',
-    'jeffrey',
-    'JEFFREY',
-    "He didn't kill himself.",
-    ['JEFFREY'],
-    'Le sourire le plus celebre de l\'histoire recente. Jeffrey — une icone. Une legende. Un mystere.',
-    ['Face : TOLD · EST. 2025', 'Dos : Jeffrey', 'Coloris : blanc']
-  ),
-  tee(
-    'SHROCK',
-    'shrock',
-    'SHROCK',
-    'Zero explanation needed.',
-    ['SHROCK'],
-    'La moitie Shrek, la moitie Rock, cent pour cent inexplicable. SHROCK — quelque part dans le bayou.',
-    ['Face : TOLD · EST. 2025', 'Dos : Shrock', 'Coloris : blanc']
-  ),
+  {
+    ...tee(
+      'THE_DON',
+      'the-don',
+      'THE DON',
+      'No caption needed.',
+      ['THE', 'DON'],
+      'Un geste. Toute une philosophie. The Don ne parle pas — il communique.',
+      ['Face : TOLD · EST. 2025', 'Dos : The Don', 'Coloris : blanc']
+    ),
+    price: 1995,
+    compareAtPrice: 2995,
+  },
+  {
+    ...tee(
+      'JEFFREY',
+      'jeffrey',
+      'JEFFREY',
+      "He didn't kill himself.",
+      ['JEFFREY'],
+      "Le sourire le plus celebre de l'histoire recente. Jeffrey — une icone. Une legende. Un mystere.",
+      ['Face : TOLD · EST. 2025', 'Dos : Jeffrey', 'Coloris : blanc']
+    ),
+    price: 1995,
+    compareAtPrice: 2995,
+  },
+  {
+    ...tee(
+      'SHROCK',
+      'shrock',
+      'SHROCK',
+      'Zero explanation needed.',
+      ['SHROCK'],
+      'La moitie Shrek, la moitie Rock, cent pour cent inexplicable. SHROCK — quelque part dans le bayou.',
+      ['Face : TOLD · EST. 2025', 'Dos : Shrock', 'Coloris : blanc']
+    ),
+    price: 1995,
+    compareAtPrice: 2995,
+  },
 ]
 
 export function getProductBySlug(slug: string): Product | undefined {
