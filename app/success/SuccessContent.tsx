@@ -69,26 +69,26 @@ export default function SuccessContent() {
   const message = isLoggedIn ? t.success.messageLoggedIn : t.success.message
 
   return (
-    <div className="pt-32 min-h-screen bg-white px-6 pb-20">
+    <div className="pt-32 min-h-screen px-6 pb-20 bg-[#0a0a0a]">
       <div className="max-w-lg mx-auto text-center">
-        <h1 className="text-3xl font-bold uppercase tracking-tight mb-4">{t.success.title}</h1>
-        <p className="text-neutral-600 mb-4">{message}</p>
-        <p className="text-xs text-neutral-400 mb-8">{t.success.emailNote}</p>
+        <h1 className="text-3xl font-bold uppercase tracking-tight mb-4 text-white">{t.success.title}</h1>
+        <p className="text-white/60 mb-4">{message}</p>
+        <p className="text-xs text-white/30 mb-8">{t.success.emailNote}</p>
 
         {loading && (
-          <p className="text-sm text-neutral-400 animate-pulse mb-8">Enregistrement de votre commande…</p>
+          <p className="text-sm text-white/30 animate-pulse mb-8">Enregistrement de votre commande...</p>
         )}
 
         {syncError && (
-          <p className="text-sm text-amber-700 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-8">
-            {syncError} — contactez-nous à antoine08.pro@gmail.com avec votre preuve de paiement.
+          <p className="text-sm text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 mb-8">
+            {syncError} — contactez-nous avec votre preuve de paiement.
           </p>
         )}
 
         {gelatoError && !syncError && (
-          <div className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-8 text-left">
-            <p className="font-medium mb-1">Paiement reçu — envoi atelier en attente</p>
-            <p className="text-xs text-amber-700 mb-3">{gelatoError}</p>
+          <div className="text-sm text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 mb-8 text-left">
+            <p className="font-medium mb-1">Paiement recu — envoi atelier en attente</p>
+            <p className="text-xs text-amber-400/70 mb-3">{gelatoError}</p>
             {isLoggedIn && sessionId && (
               <button
                 type="button"
@@ -112,38 +112,38 @@ export default function SuccessContent() {
                     setRetryingGelato(false)
                   }
                 }}
-                className="text-xs uppercase tracking-wider underline disabled:opacity-50"
+                className="text-xs uppercase tracking-wider underline disabled:opacity-50 text-amber-400"
               >
-                {retryingGelato ? 'Envoi en cours…' : 'Réessayer l’envoi à l’atelier'}
+                {retryingGelato ? "Envoi en cours..." : "Reessayer l'envoi a l'atelier"}
               </button>
             )}
           </div>
         )}
 
         {order && (
-          <div className="text-left border border-neutral-100 rounded-2xl p-6 mb-8">
+          <div className="text-left border border-white/10 bg-[#111] rounded-2xl p-6 mb-8">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-xs uppercase tracking-[0.15em] text-neutral-500">Commande confirmée</span>
+              <span className="text-xs uppercase tracking-[0.15em] text-white/40">Commande confirmee</span>
               <OrderStatusBadge status={order.status} />
             </div>
             <ul className="space-y-3">
               {order.order_items?.map((item, i) => (
                 <li key={i} className="flex gap-3 items-center">
                   {item.image_url && (
-                    <div className="relative w-12 h-14 bg-neutral-50 rounded-lg shrink-0 overflow-hidden">
+                    <div className="relative w-12 h-14 bg-white/5 rounded-lg shrink-0 overflow-hidden">
                       <Image src={item.image_url} alt="" fill className="object-contain p-0.5" sizes="48px" />
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{item.product_name}</p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-sm font-medium truncate text-white">{item.product_name}</p>
+                    <p className="text-xs text-white/40">
                       {item.variant_label} · {item.size} · x{item.quantity}
                     </p>
                   </div>
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-sm font-medium text-right">
+            <p className="mt-4 text-sm font-medium text-right text-white">
               {(order.total_cents / 100).toLocaleString('fr-FR', {
                 style: 'currency',
                 currency: order.currency,
@@ -156,7 +156,7 @@ export default function SuccessContent() {
           {order?.id && (
             <Link
               href={`/account/orders/${order.id}`}
-              className="inline-block text-xs tracking-[0.2em] uppercase bg-black text-white px-8 py-3 rounded-full hover:bg-neutral-800"
+              className="inline-block text-xs tracking-[0.2em] uppercase bg-white text-black px-8 py-3 rounded-full hover:bg-white/90"
             >
               {account.successViewOrders}
             </Link>
@@ -165,14 +165,14 @@ export default function SuccessContent() {
           {isLoggedIn ? (
             <Link
               href="/account/orders"
-              className="inline-block text-xs tracking-[0.2em] uppercase border border-black px-8 py-3 rounded-full hover:bg-black hover:text-white"
+              className="inline-block text-xs tracking-[0.2em] uppercase border border-white/20 text-white px-8 py-3 rounded-full hover:bg-white/10"
             >
               {account.myOrders}
             </Link>
           ) : (
             <Link
               href={`/account/login?redirect=${encodeURIComponent('/account/orders')}`}
-              className="inline-block text-xs tracking-[0.2em] uppercase border border-black px-8 py-3 rounded-full hover:bg-black hover:text-white"
+              className="inline-block text-xs tracking-[0.2em] uppercase border border-white/20 text-white px-8 py-3 rounded-full hover:bg-white/10"
             >
               {account.createAccount}
             </Link>
@@ -180,7 +180,7 @@ export default function SuccessContent() {
 
           <Link
             href="/shop"
-            className="inline-block text-xs tracking-[0.2em] uppercase border border-neutral-300 px-8 py-3 rounded-full hover:border-black"
+            className="inline-block text-xs tracking-[0.2em] uppercase border border-white/10 text-white/60 px-8 py-3 rounded-full hover:border-white/40 hover:text-white"
           >
             {t.success.cta}
           </Link>

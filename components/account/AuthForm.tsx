@@ -149,18 +149,18 @@ export default function AuthForm({ mode, redirectTo = '/account/orders', initial
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={onEmailSubmit} className="space-y-4">
         <div>
-          <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500">{t.email}</label>
+          <label className="text-[10px] tracking-[0.2em] uppercase text-white/50">{t.email}</label>
           <input
             type="email"
             required
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black"
+            className="mt-1 w-full border border-white/20 bg-white/5 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/60 placeholder:text-white/20"
           />
         </div>
         <div>
-          <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500">{t.password}</label>
+          <label className="text-[10px] tracking-[0.2em] uppercase text-white/50">{t.password}</label>
           <div className="relative mt-1">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -169,12 +169,12 @@ export default function AuthForm({ mode, redirectTo = '/account/orders', initial
               autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-neutral-200 rounded-xl px-4 py-3 pr-12 text-sm focus:outline-none focus:border-black"
+              className="w-full border border-white/20 bg-white/5 text-white rounded-xl px-4 py-3 pr-12 text-sm focus:outline-none focus:border-white/60"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-neutral-400 hover:text-black"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/30 hover:text-white"
               aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
             >
               <EyeIcon open={showPassword} />
@@ -186,23 +186,23 @@ export default function AuthForm({ mode, redirectTo = '/account/orders', initial
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-12 bg-black text-white text-xs uppercase tracking-[0.15em] rounded-full hover:bg-neutral-800 disabled:opacity-50"
+          className="w-full h-12 bg-white text-black text-xs font-bold uppercase tracking-[0.15em] rounded-full hover:bg-white/90 disabled:opacity-40"
         >
           {mode === 'login' ? t.signIn : t.signUp}
         </button>
       </form>
 
       <div className="my-6 flex items-center gap-4">
-        <div className="flex-1 h-px bg-neutral-200" />
-        <span className="text-[10px] text-neutral-400 uppercase tracking-widest">ou</span>
-        <div className="flex-1 h-px bg-neutral-200" />
+        <div className="flex-1 h-px bg-white/10" />
+        <span className="text-[10px] text-white/30 uppercase tracking-widest">ou</span>
+        <div className="flex-1 h-px bg-white/10" />
       </div>
 
       <button
         type="button"
         onClick={onGoogleSignIn}
         disabled={loading}
-        className="w-full h-11 border border-neutral-200 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-neutral-50 disabled:opacity-50"
+        className="w-full h-11 border border-white/20 text-white/70 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-white/5 disabled:opacity-50"
       >
         {t.google}
       </button>
