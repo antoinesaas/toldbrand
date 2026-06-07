@@ -11,49 +11,42 @@ interface Props {
 
 export default function ProductCard({ product }: Props) {
   const variant = product.variants[0]
-  const onSale = product.compareAtPrice > product.price
   const formatPrice = useFormatPrice()
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
-      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-4 rounded-2xl">
+      {/* Image block: mockup default → lifestyle on hover */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#141414] rounded-xl mb-3">
+        {/* Mockup */}
         <Image
-          src={variant.back}
+          src={variant.front}
           alt={product.name}
           fill
-          className="object-contain object-center p-2 group-hover:opacity-95 transition-opacity duration-500"
-          sizes="(max-width: 768px) 50vw, 400px"
+          className="object-contain p-4 transition-opacity duration-500 ease-in-out group-hover:opacity-0"
+          sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 22vw"
         />
-        {onSale && (
-          <span className="absolute top-2 right-2 bg-black text-white text-[9px] font-medium uppercase px-2 py-0.5 tracking-wider">
-            Sale
+        {/* Lifestyle */}
+        <Image
+          src={variant.lifestyle}
+          alt={`${product.name} — lifestyle`}
+          fill
+          className="object-cover object-top transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100"
+          sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 22vw"
+        />
+        {/* New badge */}
+        {product.isNew && (
+          <span className="absolute top-2 left-2 bg-white text-black text-[8px] font-bold uppercase px-2 py-0.5 tracking-widest">
+            NEW
           </span>
         )}
       </div>
-      <div className="text-center">
-        <h3 className="text-[10px] font-medium uppercase tracking-[0.15em] text-black line-clamp-2">
+
+      {/* Info */}
+      <div className="px-1">
+        <h3 className="text-white text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] leading-snug line-clamp-2">
           {product.name}
         </h3>
-        <div className="flex items-center justify-center gap-2 mt-2">
-          <span className="text-sm">{formatPrice(product.price)}</span>
-          {onSale && (
-            <span className="text-xs text-neutral-400 line-through">
-              {formatPrice(product.compareAtPrice)}
-            </span>
-          )}
-        </div>
-        {product.variants.length > 1 && (
-          <div className="flex justify-center gap-1.5 mt-3">
-            {product.variants.map((v) => (
-              <span
-                key={v.color}
-                className="w-3 h-3 rounded-full border border-neutral-200"
-                style={{ backgroundColor: v.hex }}
-                title={v.label}
-              />
-            ))}
-          </div>
-        )}
+        <p className="text-white/40 text-xs mt-1.5">{formatPrice(product.price)}</p>
       </div>
     </Link>
   )

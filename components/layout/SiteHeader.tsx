@@ -30,11 +30,10 @@ export default function SiteHeader() {
     setMenuOpen(false)
   }, [pathname])
 
-  const textClass = lightOnDark ? 'text-white' : 'text-black'
-  const navBg =
-    scrolled || !isHome
-      ? 'bg-white/98 backdrop-blur border-b border-neutral-100'
-      : 'bg-transparent'
+  const textClass = 'text-white'
+  const navBg = scrolled
+    ? 'bg-[#0a0a0a]/95 backdrop-blur border-b border-white/10'
+    : 'bg-transparent'
 
   return (
     <>
@@ -48,8 +47,8 @@ export default function SiteHeader() {
               className={`flex flex-col gap-1.5 p-2 -ml-1 shrink-0 ${textClass}`}
               aria-label="Ouvrir le menu"
             >
-              <span className={`block w-5 h-px ${lightOnDark ? 'bg-white' : 'bg-black'}`} />
-              <span className={`block w-5 h-px ${lightOnDark ? 'bg-white' : 'bg-black'}`} />
+              <span className="block w-5 h-px bg-white" />
+              <span className="block w-5 h-px bg-white" />
             </button>
 
             <Link href="/" className="justify-self-center shrink-0 px-1">
@@ -58,7 +57,7 @@ export default function SiteHeader() {
                 alt="TOLD"
                 width={120}
                 height={32}
-                className={`h-5 sm:h-6 md:h-7 w-auto max-w-[92px] sm:max-w-[120px] object-contain ${lightOnDark ? 'brightness-0 invert' : ''}`}
+                className="h-5 sm:h-6 md:h-7 w-auto max-w-[92px] sm:max-w-[120px] object-contain brightness-0 invert"
                 priority
               />
             </Link>
@@ -103,9 +102,7 @@ export default function SiteHeader() {
                 {t.nav.cart}
                 {cartCount > 0 && (
                   <span
-                    className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] rounded-full ${
-                      lightOnDark ? 'bg-white text-black' : 'bg-black text-white'
-                    }`}
+                    className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] rounded-full bg-white text-black"
                   >
                     {cartCount}
                   </span>

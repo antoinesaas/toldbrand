@@ -29,11 +29,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? 'https://toldbrand.vercel.app'),
   title: {
-    default: 'TOLD — Statement Clothing',
-    template: '%s | TOLD',
+    default: 'TOLD— | Meme Couture',
+    template: '%s | TOLD—',
   },
   description:
-    'T-shirts statement premium. Coupe relax unisexe, coton bio. Dites ce que vous pensez.',
+    'T-shirts cursed. Culture meme, dark humour, qualité premium. Portez ce que vous ne devriez pas.',
   icons: {
     icon: '/branding/logo.png',
     apple: '/branding/logo.png',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${playfair.variable} ${dmSans.variable}`}>
-      <body className="font-sans bg-white text-black antialiased">
+      <body className="font-sans bg-[#0a0a0a] text-white antialiased">
         <LocaleSync />
         <SiteHeader />
         <main className="min-h-screen">{children}</main>

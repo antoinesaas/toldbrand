@@ -34,11 +34,10 @@ export default function ProductDetail({ product }: Props) {
 
   const gallery: GalleryImage[] = useMemo(
     () => [
-      { src: variant.front, label: 'Face' },
-      { src: variant.back, label: 'Dos' },
+      { src: variant.front, label: 'Mockup' },
       { src: variant.lifestyle, label: 'Porté' },
     ],
-    [variant.front, variant.back, variant.lifestyle]
+    [variant.front, variant.lifestyle]
   )
 
   const related = PRODUCTS.filter((p) => p.id !== product.id)
@@ -117,7 +116,7 @@ export default function ProductDetail({ product }: Props) {
   }
 
   return (
-    <div className="pt-[88px] min-h-screen bg-white">
+    <div className="pt-[88px] min-h-screen bg-[#0a0a0a]">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-0 lg:gap-12">
           {/* Gallery — vertical scroll (studio shots only, no watermarks) */}
@@ -126,7 +125,7 @@ export default function ProductDetail({ product }: Props) {
               {gallery.map((img) => (
                 <div
                   key={img.src}
-                  className="relative aspect-[4/5] bg-[#f7f7f7] overflow-hidden rounded-2xl"
+                  className="relative aspect-[4/5] bg-[#141414] overflow-hidden rounded-2xl"
                 >
                   <Image
                     src={img.src}
@@ -147,7 +146,7 @@ export default function ProductDetail({ product }: Props) {
               {gallery.map((img) => (
                 <div
                   key={img.src}
-                  className="relative aspect-[4/5] bg-[#f7f7f7] overflow-hidden rounded-2xl"
+                  className="relative aspect-[4/5] bg-[#141414] overflow-hidden rounded-2xl"
                 >
                   <Image
                     src={img.src}
@@ -168,16 +167,16 @@ export default function ProductDetail({ product }: Props) {
           {/* Purchase panel */}
           <div className="lg:sticky lg:top-[88px] lg:self-start px-4 md:px-8 lg:px-0 py-8 lg:py-12 lg:max-h-[calc(100vh-88px)] lg:overflow-y-auto">
             <div className="text-center mb-6">
-              <h1 className="text-lg md:text-xl font-normal font-serif uppercase tracking-[0.1em] leading-snug">
+              <h1 className="text-lg md:text-xl font-bold uppercase tracking-[0.1em] leading-snug text-white">
                 {product.name}
               </h1>
-              <p className="text-xs text-neutral-400 mt-3">{product.tagline}</p>
+              <p className="text-xs text-white/40 mt-3">{product.tagline}</p>
             </div>
 
             <div className="flex items-baseline justify-center lg:justify-start gap-3 mb-8">
-              <span className="text-base font-medium">{formatPrice(product.price)}</span>
+              <span className="text-base font-medium text-white">{formatPrice(product.price)}</span>
               {product.compareAtPrice > product.price && (
-                <span className="text-sm text-neutral-400 line-through">
+                <span className="text-sm text-white/30 line-through">
                   {formatPrice(product.compareAtPrice)}
                 </span>
               )}
@@ -185,7 +184,7 @@ export default function ProductDetail({ product }: Props) {
 
             {product.variants.length > 1 && (
               <div className="mb-6">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 mb-3 text-center lg:text-left">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-3 text-center lg:text-left">
                   {t.product.otherColors}
                 </p>
                 <div className="flex justify-center lg:justify-start gap-2">
@@ -195,7 +194,7 @@ export default function ProductDetail({ product }: Props) {
                       type="button"
                       onClick={() => selectVariant(v)}
                       className={`relative w-14 h-16 border overflow-hidden rounded-xl ${
-                        variant.color === v.color ? 'border-black' : 'border-neutral-200'
+                        variant.color === v.color ? 'border-white' : 'border-white/20'
                       }`}
                     >
                       <Image src={v.back} alt={v.label} fill className="object-contain p-1" sizes="56px" />
@@ -206,7 +205,7 @@ export default function ProductDetail({ product }: Props) {
             )}
 
             <div className="mb-6">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 mb-3 text-center lg:text-left">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-3 text-center lg:text-left">
                 {t.product.size}
               </p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-2">
@@ -217,8 +216,8 @@ export default function ProductDetail({ product }: Props) {
                     onClick={() => setSelectedSize(size)}
                     className={`min-w-[52px] h-11 text-sm border rounded-full transition-all ${
                       selectedSize === size
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 hover:border-black'
+                        ? 'border-white bg-white text-black font-bold'
+                        : 'border-white/20 text-white hover:border-white/60'
                     }`}
                   >
                     {size}
@@ -228,18 +227,18 @@ export default function ProductDetail({ product }: Props) {
               <button
                 type="button"
                 onClick={() => setSizeGuideOpen(true)}
-                className="block w-full text-center lg:text-left text-xs underline text-neutral-500 mt-3"
+                className="block w-full text-center lg:text-left text-xs underline text-white/30 mt-3 hover:text-white/60"
               >
                 {t.product.sizeGuide}
               </button>
             </div>
 
             <div className="mb-8 flex justify-center lg:justify-start">
-              <div className="inline-flex items-center border border-neutral-300 rounded-full overflow-hidden">
+              <div className="inline-flex items-center border border-white/20 rounded-full overflow-hidden text-white">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="w-11 h-11 hover:bg-neutral-50"
+                  className="w-11 h-11 hover:bg-white/10"
                   aria-label="Moins"
                 >
                   −
@@ -248,7 +247,7 @@ export default function ProductDetail({ product }: Props) {
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="w-11 h-11 hover:bg-neutral-50"
+                  className="w-11 h-11 hover:bg-white/10"
                   aria-label="Plus"
                 >
                   +
@@ -261,7 +260,7 @@ export default function ProductDetail({ product }: Props) {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={!selectedSize}
-                className="w-full h-12 bg-neutral-900 text-white text-sm flex items-center justify-between px-5 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed transition-colors rounded-full"
+                className="w-full h-12 bg-white text-black text-sm flex items-center justify-between px-5 hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-full font-bold"
               >
                 <span className="uppercase tracking-[0.12em]">
                   {added ? t.product.added : t.product.addToCart}
@@ -273,7 +272,7 @@ export default function ProductDetail({ product }: Props) {
                 type="button"
                 onClick={handleCheckout}
                 disabled={!selectedSize || checkoutLoading}
-                className="w-full h-11 border border-neutral-900 text-sm uppercase tracking-[0.12em] hover:bg-neutral-50 disabled:opacity-40 rounded-full"
+                className="w-full h-11 border border-white/30 text-white text-sm uppercase tracking-[0.12em] hover:border-white/60 disabled:opacity-30 rounded-full"
               >
                 {checkoutLoading ? t.product.redirecting : t.product.payNow}
               </button>
@@ -281,12 +280,12 @@ export default function ProductDetail({ product }: Props) {
 
             <PaymentIcons className="mt-4" />
 
-            <p className="text-[11px] text-neutral-500 text-center lg:text-left mt-4 leading-relaxed">
+            <p className="text-[11px] text-white/30 text-center lg:text-left mt-4 leading-relaxed">
               {t.product.shippingNote}
             </p>
 
-            <div className="mt-8 border-t border-neutral-200">
-              <div className="flex border-b border-neutral-200">
+            <div className="mt-8 border-t border-white/10">
+              <div className="flex border-b border-white/10">
                 {(
                   [
                     ['description', t.product.description],
@@ -299,14 +298,14 @@ export default function ProductDetail({ product }: Props) {
                     type="button"
                     onClick={() => setTab(key)}
                     className={`flex-1 py-3 text-[10px] uppercase tracking-widest ${
-                      tab === key ? 'border-b-2 border-black font-semibold' : 'text-neutral-400'
+                      tab === key ? 'border-b-2 border-white text-white font-semibold' : 'text-white/30'
                     }`}
                   >
                     {label}
                   </button>
                 ))}
               </div>
-              <div className="py-4 text-sm text-neutral-600 leading-relaxed space-y-3">
+              <div className="py-4 text-sm text-white/60 leading-relaxed space-y-3">
                 {tab === 'description' && (
                   <>
                     <p>{product.description}</p>
@@ -316,7 +315,7 @@ export default function ProductDetail({ product }: Props) {
                         <li key={d}>{d}</li>
                       ))}
                     </ul>
-                    <ul className="list-disc pl-4 space-y-1 text-neutral-500">
+                    <ul className="list-disc pl-4 space-y-1 text-white/30">
                       {product.material.map((m) => (
                         <li key={m}>{m}</li>
                       ))}
@@ -332,12 +331,12 @@ export default function ProductDetail({ product }: Props) {
       </div>
 
       {related.length > 0 && (
-        <section className="max-w-[1200px] mx-auto px-4 md:px-8 py-20 border-t border-neutral-100 mt-12">
-          <h2 className="text-center text-sm font-medium uppercase tracking-[0.2em] mb-12">
+        <section className="max-w-[1600px] mx-auto px-4 md:px-8 py-16 border-t border-white/10 mt-8">
+          <h2 className="text-white/40 text-[10px] uppercase tracking-[0.3em] mb-8">
             {t.product.related}
           </h2>
-          <div className="grid grid-cols-2 gap-8 md:gap-12 max-w-2xl mx-auto">
-            {related.map((p) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-5">
+            {related.slice(0, 5).map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
