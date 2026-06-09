@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { linkOrdersToUser } from '@/lib/orders'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
   let body: { email?: string; password?: string }
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const origin = req.nextUrl.origin
 
+  // Step 1 — create the user
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -32,18 +34,41 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 })
   }
 
-  if (data.user?.email && data.session) {
-    try {
-      await linkOrdersToUser(data.user.id, data.user.email)
-    } catch (err) {
-      console.error('linkOrdersToUser:', err)
-    }
-    return NextResponse.json({ ok: true, needsEmailConfirmation: false })
+  const userId = data.user?.id
+  if (!userId) {
+    return NextResponse.json({ error: 'Erreur lors de la creation du compte.' }, { status: 500 })
   }
 
-  return NextResponse.json({
-    ok: true,
-    needsEmailConfirmation: true,
-    message: 'Vérifiez votre e-mail pour activer le compte.',
+  // Step 2 — auto-confirm the email via admin client (bypasses Supabase email delivery)
+  try {
+    const admin = createAdminClient()
+    await admin.auth.admin.updateUserById(userId, { email_confirm: true })
+  } catch (err) {
+    console.error('Auto-confirm failed:', err)
+    // Non-fatal: user may still need to confirm manually
+  }
+
+  // Step 3 — sign in immediately so the session cookie is set
+  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   })
+
+  if (signInError || !signInData.session) {
+    // Account created but auto-login failed — user can log in manually
+    return NextResponse.json({
+      ok: true,
+      needsEmailConfirmation: false,
+      message: 'Compte cree. Connectez-vous avec vos identifiants.',
+    })
+  }
+
+  // Link any guest orders placed before registration
+  try {
+    await linkOrdersToUser(userId, email)
+  } catch (err) {
+    console.error('linkOrdersToUser:', err)
+  }
+
+  return NextResponse.json({ ok: true, needsEmailConfirmation: false })
 }
