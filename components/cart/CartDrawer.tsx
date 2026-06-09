@@ -6,9 +6,7 @@ import { requireAuthForCheckout } from '@/lib/require-auth-checkout'
 import { useFormatPrice } from '@/lib/use-format-price'
 import CartItem from './CartItem'
 import PaymentIcons from '@/components/shop/PaymentIcons'
-import { isCheckoutFreeShipping } from '@/lib/shipping-config'
-
-const FREE_SHIPPING_THRESHOLD = 6000
+import { isCheckoutFreeShipping, FREE_SHIPPING_MIN_QUANTITY } from '@/lib/shipping-config'
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, total, count } = useCartStore()
@@ -16,7 +14,8 @@ export default function CartDrawer() {
   const formatPrice = useFormatPrice()
   const cartTotal = total()
   const cartCount = count()
-  const freeShipping = isCheckoutFreeShipping(cartTotal)
+  const freeShipping = isCheckoutFreeShipping(cartCount)
+  const itemsNeeded = Math.max(0, FREE_SHIPPING_MIN_QUANTITY - cartCount)
 
   async function handleCheckout() {
     const userId = await requireAuthForCheckout('/cart')
@@ -86,13 +85,15 @@ export default function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-white/10 px-6 py-6 space-y-4">
-            {!freeShipping && (
+            {!freeShipping && itemsNeeded > 0 && (
               <p className="text-[11px] text-white/40 text-center">
-                {t.cart.freeShippingLeft.replace('{amount}', formatPrice(FREE_SHIPPING_THRESHOLD - cartTotal))}
+                Plus que {itemsNeeded} T-shirt{itemsNeeded > 1 ? 's' : ''} pour la livraison offerte
               </p>
             )}
             {freeShipping && (
-              <p className="text-[11px] text-emerald-400 text-center font-medium">{t.cart.freeShipping}</p>
+              <p className="text-[11px] text-emerald-400 text-center font-medium">
+                Livraison offerte
+              </p>
             )}
             <div className="flex justify-between items-baseline">
               <p className="text-xs tracking-[0.15em] uppercase text-white/40">{t.cart.total}</p>

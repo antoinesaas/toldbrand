@@ -59,7 +59,7 @@ export const translations = {
       legal: 'Légal',
       rights: 'Tous droits réservés.',
     },
-    announcement: ['Livraison offerte dès 60 €', 'Coton bio · 220 gsm', 'Nouveautés chaque mois', 'Expédition sous 24–48 h'],
+    announcement: ['Livraison offerte dès 2 T-shirts', 'Sinon 4,95 €', 'Stock limité', 'Expédition sous 24–48 h'],
     region: { label: 'Pays / devise' },
     success: {
       title: 'Merci',
@@ -130,7 +130,7 @@ export const translations = {
       legal: 'Legal',
       rights: 'All rights reserved.',
     },
-    announcement: ['Free shipping over €60', 'Organic cotton · 220 gsm', 'New drops monthly', 'Ships in 24–48 h'],
+    announcement: ['Free shipping from 2 T-shirts', 'Otherwise €4.95', 'Limited stock', 'Ships in 24–48 h'],
     region: { label: 'Country / currency' },
     success: {
       title: 'Thank you',
@@ -200,7 +200,7 @@ export const translations = {
       legal: 'Rechtliches',
       rights: 'Alle Rechte vorbehalten.',
     },
-    announcement: ['Kostenloser Versand ab 60 €', 'Bio-Baumwolle · 220 gsm', 'Neue Drops monatlich', 'Versand in 24–48 h'],
+    announcement: ['Gratisversand ab 2 T-Shirts', 'Sonst 4,95 €', 'Begrenzter Vorrat', 'Versand in 24–48 h'],
     region: { label: 'Land / Währung' },
     success: {
       title: 'Danke',
@@ -270,7 +270,7 @@ export const translations = {
       legal: 'Legale',
       rights: 'Tutti i diritti riservati.',
     },
-    announcement: ['Spedizione gratuita da 60 €', 'Cotone bio · 220 gsm', 'Novità ogni mese', 'Spedizione in 24–48 h'],
+    announcement: ['Spedizione gratuita da 2 T-shirt', 'Altrimenti 4,95 €', 'Stock limitato', 'Spedizione in 24–48 h'],
     region: { label: 'Paese / valuta' },
     success: {
       title: 'Grazie',
@@ -338,7 +338,7 @@ export const translations = {
       legal: 'Legal',
       rights: 'Todos los derechos reservados.',
     },
-    announcement: ['Envío gratis desde 60 €', 'Algodón orgánico · 220 gsm', 'Novedades cada mes', 'Envío en 24–48 h'],
+    announcement: ['Envío gratis desde 2 camisetas', 'Si no 4,95 €', 'Stock limitado', 'Envío en 24–48 h'],
     region: { label: 'País / moneda' },
     success: {
       title: 'Gracias',

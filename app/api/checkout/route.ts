@@ -68,7 +68,8 @@ export async function POST(req: NextRequest) {
   const region = REGIONS.find((r) => r.country === country) ?? REGIONS[0]
   const language = bodyLanguage ?? region.language
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
-  const freeShipping = isCheckoutFreeShipping(subtotal)
+  const totalQty = items.reduce((sum, i) => sum + i.quantity, 0)
+  const freeShipping = isCheckoutFreeShipping(totalQty)
   const url = baseUrl()
   const shippingLabels = SHIPPING_LABELS[language]
 

@@ -58,6 +58,7 @@ export default function ProductCard({ product }: Props) {
         ) : (
           <p className="text-white/40 text-xs mt-1.5">{formatPrice(product.price)}</p>
         )}
+        <p className="text-white/20 text-[9px] uppercase tracking-[0.2em] mt-1">Stock limité</p>
       </div>
     </Link>
   )
