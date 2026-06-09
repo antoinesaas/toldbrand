@@ -41,7 +41,7 @@ export default function MenuDrawer({ open, onClose }: Props) {
     { href: '/', label: t.nav.home },
     { href: '/shop', label: t.nav.shirts },
     { href: '/account/orders', label: 'Mon compte' },
-    { href: 'mailto:antoine08.pro@gmail.com', label: t.nav.contact, external: true },
+    { href: '/contact', label: t.nav.contact },
   ]
 
   const LEGAL_LINKS = [
@@ -80,29 +80,18 @@ export default function MenuDrawer({ open, onClose }: Props) {
 
         <nav className="flex-1 overflow-y-auto px-6 py-4">
           <ul className="space-y-0 border-b border-white/10 pb-6 mb-6">
-            {NAV_LINKS.map(({ href, label, external }) => (
+            {NAV_LINKS.map(({ href, label }) => (
               <li key={href} className="border-b border-white/5 last:border-0">
-                {external ? (
-                  <a
-                    href={href}
-                    onClick={onClose}
-                    className="flex items-center justify-between py-4 text-sm tracking-wide text-white hover:text-white/60"
-                  >
-                    {label}
-                    <span className="text-white/20">›</span>
-                  </a>
-                ) : (
-                  <Link
-                    href={href}
-                    onClick={onClose}
-                    className={`flex items-center justify-between py-4 text-sm tracking-wide ${
-                      pathname === href ? 'font-bold text-white' : 'text-white/80 hover:text-white'
-                    }`}
-                  >
-                    {label}
-                    <span className="text-white/20">›</span>
-                  </Link>
-                )}
+                <Link
+                  href={href}
+                  onClick={onClose}
+                  className={`flex items-center justify-between py-4 text-sm tracking-wide ${
+                    pathname === href ? 'font-bold text-white' : 'text-white/80 hover:text-white'
+                  }`}
+                >
+                  {label}
+                  <span className="text-white/20">›</span>
+                </Link>
               </li>
             ))}
           </ul>

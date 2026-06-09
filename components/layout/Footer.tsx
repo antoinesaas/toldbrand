@@ -27,18 +27,12 @@ export default function Footer() {
             {[
               { href: '/shop', label: t.nav.shirts },
               { href: '/cart', label: t.nav.cart },
-              { href: 'mailto:antoine08.pro@gmail.com', label: t.nav.contact },
+              { href: '/contact', label: t.nav.contact },
             ].map(({ href, label }) => (
               <li key={href}>
-                {href.startsWith('mailto') ? (
-                  <a href={href} className="text-xs text-white/50 hover:text-white">
-                    {label}
-                  </a>
-                ) : (
-                  <Link href={href} className="text-xs text-white/50 hover:text-white">
-                    {label}
-                  </Link>
-                )}
+                <Link href={href} className="text-xs text-white/50 hover:text-white">
+                  {label}
+                </Link>
               </li>
             ))}
           </ul>

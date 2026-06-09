@@ -5,10 +5,11 @@ import { getGelatoVariantId, GELATO_STORE_ID } from '@/lib/gelato-store-products
 import type { CartItem, ProductSize } from '@/types'
 
 const GELATO_ECOMMERCE_BASE = 'https://ecommerce.gelatoapis.com'
+const GELATO_ORDER_BASE = 'https://order.gelatoapis.com'
 const gelatoApiKey = process.env.GELATO_API_KEY?.trim()
 
 /**
- * Lists the store's products (used by the health-check endpoint).
+ * Lists the store products via ecommerce API (health-check only).
  */
 export async function getGelatoCustomerProducts() {
   if (!gelatoApiKey) {
@@ -29,10 +30,10 @@ export async function getGelatoCustomerProducts() {
 }
 
 /**
- * Creates a Gelato ecommerce order from a paid Stripe session.
+ * Creates a Gelato order from a paid Stripe session.
  *
- * Uses Gelato's store product variant IDs — NO print files sent.
- * The artwork is already configured inside each Gelato store product.
+ * Uses order.gelatoapis.com/v4/orders with storeId + productVariantId.
+ * Gelato uses the pre-uploaded artwork from the store product — NO print files sent.
  */
 export async function createGelatoOrder(
   stripeSession: Stripe.Checkout.Session
@@ -55,7 +56,7 @@ export async function createGelatoOrder(
     throw new Error('Stripe session has no line items')
   }
 
-  // Build order items — one per line item, resolved from Gelato store product variants
+  // Build order items from Gelato store variant IDs
   const items = lineItems.map((item, idx) => {
     const product = item.price?.product as Stripe.Product | undefined
     const meta = product?.metadata ?? {}
@@ -67,7 +68,6 @@ export async function createGelatoOrder(
       throw new Error(`Missing productId in Stripe metadata for item ${idx}`)
     }
 
-    // Look up the Gelato variant UUID for this product + size
     const productVariantId = getGelatoVariantId(productId, size)
 
     return {
@@ -84,6 +84,7 @@ export async function createGelatoOrder(
 
   const order = {
     orderType: 'order',
+    storeId: GELATO_STORE_ID,
     orderReferenceId: stripeSession.id,
     customerReferenceId: customer?.email ?? stripeSession.id,
     currency: (stripeSession.currency ?? 'eur').toUpperCase(),
@@ -100,17 +101,14 @@ export async function createGelatoOrder(
     },
   }
 
-  const res = await fetch(
-    `${GELATO_ECOMMERCE_BASE}/v1/stores/${GELATO_STORE_ID}/orders`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': gelatoApiKey,
-      },
-      body: JSON.stringify(order),
-    }
-  )
+  const res = await fetch(`${GELATO_ORDER_BASE}/v4/orders`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-KEY': gelatoApiKey,
+    },
+    body: JSON.stringify(order),
+  })
 
   if (!res.ok) {
     const err = await res.text()
