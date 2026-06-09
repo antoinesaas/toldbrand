@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 import { getCheckoutLineItems } from '@/lib/stripe-session'
 import { getCheckoutShipping } from '@/lib/stripe-shipping'
-import { getGelatoVariantId, GELATO_STORE_ID } from '@/lib/gelato-store-products'
+import { getGelatoDesignData, GELATO_STORE_ID } from '@/lib/gelato-store-products'
 import type { CartItem, ProductSize } from '@/types'
 
 const GELATO_ECOMMERCE_BASE = 'https://ecommerce.gelatoapis.com'
@@ -32,8 +32,9 @@ export async function getGelatoCustomerProducts() {
 /**
  * Creates a Gelato order from a paid Stripe session.
  *
- * Uses order.gelatoapis.com/v4/orders with storeId + productVariantId.
- * Gelato uses the pre-uploaded artwork from the store product — NO print files sent.
+ * Uses order.gelatoapis.com/v4/orders with productUid + designId per variant.
+ * The designId references the artwork uploaded in the Gelato store editor.
+ * No print files are sent — Gelato retrieves the design from its own storage.
  */
 export async function createGelatoOrder(
   stripeSession: Stripe.Checkout.Session
@@ -56,7 +57,7 @@ export async function createGelatoOrder(
     throw new Error('Stripe session has no line items')
   }
 
-  // Build order items from Gelato store variant IDs
+  // Build order items using productUid + designId (correct for manual Gelato stores)
   const items = lineItems.map((item, idx) => {
     const product = item.price?.product as Stripe.Product | undefined
     const meta = product?.metadata ?? {}
@@ -68,11 +69,12 @@ export async function createGelatoOrder(
       throw new Error(`Missing productId in Stripe metadata for item ${idx}`)
     }
 
-    const productVariantId = getGelatoVariantId(productId, size)
+    const { productUid, designId } = getGelatoDesignData(productId, size)
 
     return {
       itemReferenceId: `item-${stripeSession.id}-${idx}`,
-      productVariantId,
+      productUid,
+      designId,
       quantity: item.quantity ?? 1,
     }
   })
@@ -84,7 +86,6 @@ export async function createGelatoOrder(
 
   const order = {
     orderType: 'order',
-    storeId: GELATO_STORE_ID,
     orderReferenceId: stripeSession.id,
     customerReferenceId: customer?.email ?? stripeSession.id,
     currency: (stripeSession.currency ?? 'eur').toUpperCase(),

@@ -1,99 +1,107 @@
 /**
- * Gelato ecommerce store product mapping.
- * Each site product slug maps to its Gelato store variant IDs per size.
- * These IDs are immutable — tied to the artwork uploaded in Gelato dashboard.
+ * Gelato store product mapping.
+ * Each slug maps to size -> { productUid, designId }.
  *
+ * productUid: catalog UID for the blank Gildan 5000 in that size/color
+ * designId:   Gelato design ID tied to the artwork uploaded per variant
+ *
+ * Used with order.gelatoapis.com/v4/orders (productUid + designId).
  * Store ID: 9a22dc4f-fa1d-489d-917b-142dc011c1ac
  */
 
 export const GELATO_STORE_ID = '9a22dc4f-fa1d-489d-917b-142dc011c1ac'
 
-/** productSlug → { size → Gelato variant UUID } */
-export const GELATO_VARIANTS: Record<string, Record<string, string>> = {
+export interface GelatoVariantData {
+  productUid: string
+  designId: string
+}
+
+/** productSlug -> size -> { productUid, designId } */
+export const GELATO_DESIGNS: Record<string, Record<string, GelatoVariantData>> = {
   'kanye-west-east': {
-    S:   '69429b99-a3bd-42c5-aa14-680a29a74c3f',
-    M:   'f4d4c875-cb67-4017-97e9-9b7f1733d3d5',
-    L:   '3e38b7ef-cec1-4bbb-9e8e-0158cd2a53c2',
-    XL:  'f5af24c3-cc53-419f-a8ea-98bf1385b300',
-    '2XL': '2ec4fd41-813d-455d-80d8-50841f5dc70c',
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: '755aba95-1241-40a1-a7c0-cdc36c7d528d' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: '680fd45a-5223-419a-bc12-8011d8335eaa' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '0cb53a8f-50d6-4900-8699-5b29ac640125' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '1e3a2ca0-525f-4464-83e2-00d62f60b19b' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: 'fbc15d36-11ce-4fff-9dd2-81f3858eb1fd' },
   },
   'billionaires-backstage': {
-    S:   '57493706-48a4-4fbd-985e-4ae4324d2b15',
-    M:   '3bb5bdf0-3e15-4e18-aa9a-15ea0a4defdf',
-    L:   'ac94b570-f6d3-4b66-a6f0-06d1d3a67b92',
-    XL:  '49173e02-91ba-4353-94db-d22ebf4b682c',
-    '2XL': '719d6ca8-1b26-4af9-9430-a5d629930175',
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: 'd72e1e3d-cdf4-42d0-960a-9d0eeb12ac87' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: '36e5f1f6-143a-4fbd-95d7-c93fafed2f53' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '5945532c-f0cb-4f5b-9807-9db54855e3b6' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '5a5efb8c-972c-4ba8-a200-6a26e5776f5f' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: '838d60f9-2df3-41b5-9d06-76efc112a019' },
   },
   'world-peace': {
-    S:   'bebfef6d-b80e-4b5e-899b-b813e4dd47b4',
-    M:   '31c6e36c-c01e-4983-9ba9-de83a70fd18d',
-    L:   '8bdf05f9-4635-4535-ae85-42e0e16af712',
-    XL:  '52cfc5ce-3540-405e-ab90-70c0e8eb8205',
-    '2XL': '1c6b0ef9-5d8b-4a8d-994b-e7a61d0631df',
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: 'e09d1258-7bc6-46f1-97cf-1c94f1ca3232' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: 'dea69633-7841-4fd8-9ff8-428c4c88286e' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '82000b5c-8924-42b6-815c-b78e7aae3c1f' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: 'aea70d75-92e3-4966-8141-44c1c85031fb' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: 'cb12f594-797e-4312-84ce-a123bf1b362d' },
   },
   'breaking-bread': {
-    S:   'ac202bcb-31db-4580-9ba0-90664d6ccd87',
-    M:   'e37bf276-90c6-4421-aad2-ea0f516111b2',
-    L:   '90201e7b-748c-4768-b072-ec9a78092e52',
-    XL:  'b678de57-8734-45af-943a-eea82abebfb1',
-    '2XL': '64a598fd-8209-40d0-83ba-201903f64900',
-  },
-  'jewpiter': {
-    S:   '9abeaab8-343f-4725-8f53-48a92dfa571e',
-    M:   '79a74f6f-02ef-4304-a698-1b95d8b3849d',
-    L:   'b9da3e69-55bf-478e-8c4f-fa7c5ea68726',
-    XL:  '4ce29b66-bba7-4f98-99cf-5c3efd8cc0ab',
-    '2XL': 'c2bee5b3-b29d-41b8-9483-f569598bfcd8',
-  },
-  'lara-ciste': {
-    S:   '3d748247-87b1-4cbd-b2a3-623ff2ff8f78',
-    M:   '9dfb7dde-1fbb-4e7e-a7d9-bbc1df9100ae',
-    L:   'e2325fb6-425a-4236-a300-565d5d784fef',
-    XL:  '53b6a775-10cf-4065-8b27-32b6a1976c10',
-    '2XL': '255fb459-2c05-4522-be2c-365bbb9d84cd',
-  },
-  'sybau': {
-    S:   'd251c86d-dd7b-4d1b-8aad-6eca455965b8',
-    M:   'c32b1ba7-a66e-4194-bd50-74315c3a468f',
-    L:   '07d22d45-4118-4151-9e12-bdb5f631f1cb',
-    XL:  '1d99894f-ef90-4fd8-86af-5ca889792a06',
-    '2XL': '3af5ac9e-2622-4ba3-8fa4-5f997284269e',
-  },
-  'the-don': {
-    S:   '3aef4f87-4596-4dc3-9bc4-aee1c0d2ce96',
-    M:   '7317be80-9e73-4953-9c2e-28214a13310d',
-    L:   'c0457258-fdc9-4d8c-a4b0-c811a76310ba',
-    XL:  '863090b1-0da8-457d-af6c-aa58ec3dda65',
-    '2XL': '4608599d-1c98-492d-8b55-3070110b336e',
-  },
-  'jeffrey': {
-    S:   '6dccd982-092d-4816-9830-4f1a45a0f7e7',
-    M:   '2a1a6a05-3fcb-404f-bdee-b77c29392cfe',
-    L:   '818273ca-e06d-410f-b439-e86097ad752f',
-    XL:  '838a93ae-c9ca-4c1f-9503-351bb1de9b48',
-    '2XL': '71114112-21f6-4559-9193-388ba18b8580',
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: '6b78e7fe-a18e-4c30-bd79-e3ee7732eeb3' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: 'bcad35fa-d9a9-4f1c-9118-14e1aabcab5e' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '45fd407d-6870-48dc-b3ec-aca0f09a2a27' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: 'ad58d3a0-d7c2-4092-8024-5263eadcd1a5' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: '44fe9d77-07eb-4358-a333-b58f072f377b' },
   },
   'shrock': {
-    S:   '7308edf3-2c32-4a20-93bf-01b5a285b87d',
-    M:   '1b073797-b2b9-4ac8-bd9d-8430a335afa7',
-    L:   'ae3292e9-a6ba-42ff-9c0e-6da12cbfdcbd',
-    XL:  '46a43784-52b7-4dbe-bc6b-b4796eca0bb4',
-    '2XL': '26e6fdf7-80b0-4ea6-9b9c-c9adaed8e692',
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: 'e974fd3a-0374-4129-abad-88a7322695f3' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: 'af10b502-33b4-4a18-bd91-17d37e084448' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '9b51107d-8f48-4ce3-8210-bd23ffdf1548' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '5923ac37-e0e7-4209-8de3-1b2f29efb9af' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: 'c285e432-0388-4757-9ed8-865df230c4fb' },
+  },
+  'jewpiter': {
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: '4e5fee6c-129f-47fc-a894-b72b6df270cc' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: '4d5f743d-c269-4cc4-a7c4-41643f9f87db' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: 'ac1f6664-4377-49c0-9df6-8f8341186f29' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '7abeea56-98e2-4161-8bfb-434cfea3f77f' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: 'be57bd5a-bfa2-4a8b-b403-206245629ccd' },
+  },
+  'lara-ciste': {
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: 'a8dc5170-457e-4a5a-8e0a-ce53f19fbcca' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: 'bc9923e2-aa11-43ea-a5f0-4f8cac52be73' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '996cbf49-fdba-4d38-bfaa-fda0611864b4' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '22bb1111-fdbb-4952-8b8e-ff79bb484366' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: '8c499b29-b3a1-49e8-862e-8a01ada80e56' },
+  },
+  'sybau': {
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: 'f28de850-615a-4493-af41-8dc3a72221bd' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: 'adaabd69-8671-47cf-8438-b37942929760' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: 'f7fa968a-e074-40f3-a3f6-cc89472c3625' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '91700e68-a068-4550-bdda-d557b7ef5e28' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: 'af256ef0-2860-40c7-b690-a2389097ae9c' },
+  },
+  'the-don': {
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: '734b55f1-7c2d-43c6-9b61-18f5818fbcf1' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: 'f18b1164-386f-47a3-93d8-38f158b6361f' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: 'cd40ef8f-3a19-448e-9dd0-fe722f6878e9' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '8150019f-19a3-4405-86b3-8571c95b5f95' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: '11886d3c-68c9-4b26-b3fa-4334f966cc6e' },
+  },
+  'jeffrey': {
+    S:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_white_gpr_4-0_gildan_5000',   designId: '09fdc42f-49b9-484f-87d2-3d112bdd04d5' },
+    M:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_4-0_gildan_5000',   designId: '4554b304-1562-49f0-9cc6-71a59ef5b6a0' },
+    L:   { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_white_gpr_4-0_gildan_5000',   designId: '3e422381-f056-4fcd-8d55-e9265945ae03' },
+    XL:  { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_white_gpr_4-0_gildan_5000',  designId: '254b2339-b62f-47e3-a4b1-9d0d03317c45' },
+    '2XL': { productUid: 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_white_gpr_4-0_gildan_5000', designId: '31d61d56-07b3-46bc-85b9-792d19f988bf' },
   },
 }
 
 /**
- * Returns the Gelato variant UUID for a given product + size.
+ * Returns the productUid and designId for a given product + size.
  * Throws if the combination is not found.
  */
-export function getGelatoVariantId(productSlug: string, size: string): string {
-  const variants = GELATO_VARIANTS[productSlug]
+export function getGelatoDesignData(productSlug: string, size: string): GelatoVariantData {
+  const variants = GELATO_DESIGNS[productSlug]
   if (!variants) {
-    throw new Error(`No Gelato variants configured for product: ${productSlug}`)
+    throw new Error(`No Gelato designs configured for product: ${productSlug}`)
   }
-  const variantId = variants[size]
-  if (!variantId) {
-    throw new Error(`No Gelato variant for product "${productSlug}" size "${size}"`)
+  const data = variants[size]
+  if (!data) {
+    throw new Error(`No Gelato design for product "${productSlug}" size "${size}"`)
   }
-  return variantId
+  return data
 }
