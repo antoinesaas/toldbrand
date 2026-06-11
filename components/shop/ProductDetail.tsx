@@ -12,6 +12,9 @@ import { useFormatPrice } from '@/lib/use-format-price'
 import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
 import PaymentIcons from './PaymentIcons'
+import StockUrgency from '@/components/ui/StockUrgency'
+import SocialProof from '@/components/ui/SocialProof'
+import StickyMobileCTA from '@/components/ui/StickyMobileCTA'
 
 interface Props {
   product: Product
@@ -279,6 +282,8 @@ export default function ProductDetail({ product }: Props) {
             </div>
 
             <PaymentIcons className="mt-4" />
+            <StockUrgency productId={product.id} />
+            <SocialProof />
 
             <p className="text-[11px] text-white/30 text-center lg:text-left mt-4 leading-relaxed">
               {t.product.shippingNote}
@@ -344,6 +349,12 @@ export default function ProductDetail({ product }: Props) {
       )}
 
       {sizeGuideOpen && <SizeGuide onClose={() => setSizeGuideOpen(false)} />}
+      <StickyMobileCTA
+        onAddToCart={handleAddToCart}
+        onBuyNow={handleCheckout}
+        disabled={!selectedSize}
+        loading={checkoutLoading}
+      />
     </div>
   )
 }

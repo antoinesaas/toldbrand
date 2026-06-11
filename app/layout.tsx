@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import LocaleSync from '@/components/layout/LocaleSync'
 import VercelAnalytics from '@/components/analytics/VercelAnalytics'
+import PromoPopup from '@/components/ui/PromoPopup'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <CartDrawer />
         <VercelAnalytics />
+        <PromoPopup />
       </body>
     </html>
   )

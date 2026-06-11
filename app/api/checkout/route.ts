@@ -107,6 +107,7 @@ export async function POST(req: NextRequest) {
         }
       }),
       mode: 'payment',
+      allow_promotion_codes: true,
       locale: getStripeLocale(language),
       shipping_address_collection: {
         allowed_countries: allowedCountries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
