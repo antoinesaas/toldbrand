@@ -40,7 +40,7 @@ export default function SocialProof() {
           Achat verifie
         </span>
       </div>
-      <p className="text-sm text-white/70 leading-relaxed mb-3">"{review.text}"</p>
+      <p className="text-sm text-white/70 leading-relaxed mb-3">&ldquo;{review.text}&rdquo;</p>
       <p className="text-[10px] text-white/40 uppercase tracking-[0.15em]">
         {review.name} — {review.city}
       </p>
