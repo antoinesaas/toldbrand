@@ -22,7 +22,9 @@ type GalleryImage = { src: string; label: string }
 
 export default function ProductDetail({ product }: Props) {
   const [variant, setVariant] = useState(product.variants[0])
-  const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null)
+  const [selectedSize, setSelectedSize] = useState<ProductSize | null>(
+    product.sizes.includes('M') ? 'M' : product.sizes[0] ?? null
+  )
   const [quantity, setQuantity] = useState(1)
   const [tab, setTab] = useState<'description' | 'shipping' | 'size'>('description')
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false)
