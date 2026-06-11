@@ -18,16 +18,24 @@ export default function PromoPopup() {
       setVisible(true)
     }
 
-    const timer = setTimeout(show, 45000)
+    const isMobile = window.innerWidth < 768
 
-    const onMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0) show()
+    // Mobile: show after 5s unconditionally
+    // Desktop: show after 45s OR on exit intent (mouse leaving top of page)
+    const delay = isMobile ? 5000 : 45000
+    const timer = setTimeout(show, delay)
+
+    let leaveHandler: ((e: MouseEvent) => void) | null = null
+    if (!isMobile) {
+      leaveHandler = (e: MouseEvent) => {
+        if (e.clientY <= 0) show()
+      }
+      document.addEventListener('mouseleave', leaveHandler)
     }
-    document.addEventListener('mouseleave', onMouseLeave)
 
     return () => {
       clearTimeout(timer)
-      document.removeEventListener('mouseleave', onMouseLeave)
+      if (leaveHandler) document.removeEventListener('mouseleave', leaveHandler)
     }
   }, [])
 
@@ -50,7 +58,7 @@ export default function PromoPopup() {
           className="absolute top-4 right-4 text-white/40 hover:text-white text-xl leading-none"
           aria-label="Fermer"
         >
-          ×
+          &times;
         </button>
 
         <p className="text-[10px] tracking-[0.3em] uppercase text-white/40 mb-2">Offre exclusive</p>
