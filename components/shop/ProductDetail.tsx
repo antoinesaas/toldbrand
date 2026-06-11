@@ -2,12 +2,10 @@
 
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
 import type { Product, ProductSize } from '@/types'
 import { PRODUCTS } from '@/lib/products'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
 import { useI18n } from '@/lib/i18n/use-i18n'
-import { requireAuthForCheckout } from '@/lib/require-auth-checkout'
 import { useFormatPrice } from '@/lib/use-format-price'
 import ProductCard from './ProductCard'
 import SizeGuide from './SizeGuide'
@@ -30,9 +28,9 @@ export default function ProductDetail({ product }: Props) {
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false)
   const [added, setAdded] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [sizeError, setSizeError] = useState(false)
   const { addItem, openCart, items } = useCartStore()
   const { t, currency, country, language } = useI18n()
-  const pathname = usePathname()
   const formatPrice = useFormatPrice()
 
   const gallery: GalleryImage[] = useMemo(
@@ -50,18 +48,12 @@ export default function ProductDetail({ product }: Props) {
   }
 
   async function checkoutWithItems(checkoutItems: typeof items) {
-    const userId = await requireAuthForCheckout(pathname)
-    if (!userId) return
-
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: checkoutItems, currency, country, language, userId }),
+      body: JSON.stringify({ items: checkoutItems, currency, country, language }),
     })
     const data = await res.json()
-    if (data.loginRequired) {
-      return
-    }
     if (data.url) {
       window.location.href = data.url
       return
@@ -70,8 +62,9 @@ export default function ProductDetail({ product }: Props) {
   }
 
   async function handleAddToCart() {
-    if (!selectedSize) return
+    if (!selectedSize) { setSizeError(true); return }
 
+    setSizeError(false)
     addItem({
       id: makeItemId(product.id, variant.color, selectedSize),
       productId: product.id,
@@ -90,7 +83,8 @@ export default function ProductDetail({ product }: Props) {
   }
 
   async function handleCheckout() {
-    if (!selectedSize) return
+    if (!selectedSize) { setSizeError(true); return }
+    setSizeError(false)
     setCheckoutLoading(true)
 
     const cartItem = {
@@ -234,6 +228,11 @@ export default function ProductDetail({ product }: Props) {
               >
                 {t.product.sizeGuide}
               </button>
+              {sizeError && (
+                <p className="text-red-400 text-xs text-center lg:text-left mt-2 animate-pulse">
+                  Veuillez choisir une taille
+                </p>
+              )}
             </div>
 
             <div className="mb-8 flex justify-center lg:justify-start">

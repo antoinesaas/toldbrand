@@ -2,7 +2,6 @@
 
 import { useCartStore } from '@/lib/cart-store'
 import { useI18n } from '@/lib/i18n/use-i18n'
-import { requireAuthForCheckout } from '@/lib/require-auth-checkout'
 import { useFormatPrice } from '@/lib/use-format-price'
 import CartItem from './CartItem'
 import PaymentIcons from '@/components/shop/PaymentIcons'
@@ -18,16 +17,12 @@ export default function CartDrawer() {
   const itemsNeeded = Math.max(0, FREE_SHIPPING_MIN_QUANTITY - cartCount)
 
   async function handleCheckout() {
-    const userId = await requireAuthForCheckout('/cart')
-    if (!userId) return
-
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, currency, country, language, userId }),
+      body: JSON.stringify({ items, currency, country, language }),
     })
     const data = await res.json()
-    if (data.loginRequired) return
     if (data.url) {
       window.location.href = data.url
     } else {

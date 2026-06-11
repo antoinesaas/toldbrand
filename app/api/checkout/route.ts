@@ -56,14 +56,7 @@ export async function POST(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) {
-    return NextResponse.json(
-      { error: 'Connexion requise pour payer et suivre votre commande.', loginRequired: true },
-      { status: 401 }
-    )
-  }
-
-  const userId = user.id
+  const userId = user?.id ?? null
 
   const region = REGIONS.find((r) => r.country === country) ?? REGIONS[0]
   const language = bodyLanguage ?? region.language
@@ -78,8 +71,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      customer_email: user.email ?? undefined,
-      payment_intent_data: user.email
+      customer_email: user?.email ?? undefined,
+      payment_intent_data: user?.email
         ? { receipt_email: user.email }
         : undefined,
       line_items: items.map((item) => {
@@ -150,7 +143,7 @@ export async function POST(req: NextRequest) {
         country,
         language,
         freeShipping: freeShipping ? 'yes' : 'no',
-        supabase_user_id: userId ?? '',
+        supabase_user_id: userId ?? 'guest',
       },
     })
 

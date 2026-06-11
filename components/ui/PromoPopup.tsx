@@ -20,22 +20,28 @@ export default function PromoPopup() {
 
     const isMobile = window.innerWidth < 768
 
-    // Mobile: show after 5s unconditionally
-    // Desktop: show after 45s OR on exit intent (mouse leaving top of page)
-    const delay = isMobile ? 5000 : 45000
-    const timer = setTimeout(show, delay)
-
-    let leaveHandler: ((e: MouseEvent) => void) | null = null
-    if (!isMobile) {
-      leaveHandler = (e: MouseEvent) => {
+    if (isMobile) {
+      // Mobile: trigger when user has scrolled ~40% of the page (shows real interest)
+      const onScroll = () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight
+        if (scrollable > 0 && window.scrollY / scrollable >= 0.4) {
+          show()
+          window.removeEventListener('scroll', onScroll)
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true })
+      return () => window.removeEventListener('scroll', onScroll)
+    } else {
+      // Desktop: 45s delay OR exit intent
+      const timer = setTimeout(show, 45000)
+      const onMouseLeave = (e: MouseEvent) => {
         if (e.clientY <= 0) show()
       }
-      document.addEventListener('mouseleave', leaveHandler)
-    }
-
-    return () => {
-      clearTimeout(timer)
-      if (leaveHandler) document.removeEventListener('mouseleave', leaveHandler)
+      document.addEventListener('mouseleave', onMouseLeave)
+      return () => {
+        clearTimeout(timer)
+        document.removeEventListener('mouseleave', onMouseLeave)
+      }
     }
   }, [])
 
