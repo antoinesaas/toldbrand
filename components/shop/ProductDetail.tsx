@@ -13,6 +13,7 @@ import PaymentIcons from './PaymentIcons'
 import StockUrgency from '@/components/ui/StockUrgency'
 import SocialProof from '@/components/ui/SocialProof'
 import StickyMobileCTA from '@/components/ui/StickyMobileCTA'
+import { pixelAddToCart, pixelInitiateCheckout } from '@/lib/pixel'
 
 interface Props {
   product: Product
@@ -67,6 +68,7 @@ export default function ProductDetail({ product }: Props) {
     if (!selectedSize) { setSizeError(true); return }
 
     setSizeError(false)
+    pixelAddToCart(product.price, 'EUR', product.name)
     addItem({
       id: makeItemId(product.id, variant.color, selectedSize),
       productId: product.id,
@@ -87,6 +89,7 @@ export default function ProductDetail({ product }: Props) {
   async function handleCheckout() {
     if (!selectedSize) { setSizeError(true); return }
     setSizeError(false)
+    pixelInitiateCheckout(product.price * quantity, 'EUR', quantity)
     setCheckoutLoading(true)
 
     const cartItem = {

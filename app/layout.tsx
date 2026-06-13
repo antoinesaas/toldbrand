@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import LocaleSync from '@/components/layout/LocaleSync'
 import VercelAnalytics from '@/components/analytics/VercelAnalytics'
+import MetaPixel from '@/components/analytics/MetaPixel'
 import PromoPopup from '@/components/ui/PromoPopup'
 
 const playfair = Playfair_Display({
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <CartDrawer />
         <VercelAnalytics />
+        <MetaPixel />
         <PromoPopup />
       </body>
     </html>

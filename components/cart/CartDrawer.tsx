@@ -6,6 +6,7 @@ import { useFormatPrice } from '@/lib/use-format-price'
 import CartItem from './CartItem'
 import PaymentIcons from '@/components/shop/PaymentIcons'
 import { isCheckoutFreeShipping, FREE_SHIPPING_MIN_QUANTITY } from '@/lib/shipping-config'
+import { pixelInitiateCheckout } from '@/lib/pixel'
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, total, count } = useCartStore()
@@ -17,6 +18,7 @@ export default function CartDrawer() {
   const itemsNeeded = Math.max(0, FREE_SHIPPING_MIN_QUANTITY - cartCount)
 
   async function handleCheckout() {
+    pixelInitiateCheckout(cartTotal, 'EUR', cartCount)
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

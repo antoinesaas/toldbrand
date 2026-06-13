@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/use-i18n'
 import { ACCOUNT_COPY } from '@/lib/order-labels'
+import { pixelPurchase } from '@/lib/pixel'
 import OrderStatusBadge from '@/components/account/OrderStatusBadge'
 import type { OrderStatus } from '@/lib/orders'
 
@@ -54,6 +55,7 @@ export default function SuccessContent() {
       .then((data) => {
         if (data.order) {
           setOrder(data.order)
+          pixelPurchase(data.order.total_cents, data.order.currency?.toUpperCase() ?? 'EUR', data.order.id)
         }
         if (data.gelatoError) {
           setGelatoError(data.gelatoError)
