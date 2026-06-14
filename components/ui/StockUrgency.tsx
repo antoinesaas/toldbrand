@@ -1,12 +1,12 @@
 const STOCK: Record<string, number> = {
   'jewpiter': 4,
   'kanye-west-east': 3,
-  'billionaires-backstage': 6,
+  'fih': 5,
   'world-peace': 5,
   'breaking-bread': 4,
   'lara-ciste': 7,
   'sybau': 3,
-  'the-don': 5,
+  'overstimulated': 6,
   'jeffrey': 4,
   'shrock': 6,
 }

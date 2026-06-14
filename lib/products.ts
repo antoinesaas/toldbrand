@@ -61,15 +61,20 @@ export const PRODUCTS: Product[] = [
     'Il regarde a gauche. Il regarde a droite. C\'est le meme. La direction n\'a jamais vraiment importe.',
     ['Face : TOLD · EST. 2025', 'Dos : Kanye West / Kanye East', 'Coloris : blanc']
   ),
-  tee(
-    'BILLIONAIRES_BACKSTAGE',
-    'billionaires-backstage',
-    'BILLIONAIRES BACKSTAGE',
-    'Money. Vibes. No comment.',
-    ['BILLIONAIRES', 'BACKSTAGE'],
-    'Deux gars dans une piece. Des milliards entre eux. Et apparemment du bon son.',
-    ['Face : TOLD · EST. 2025', 'Dos : Billionaires Backstage', 'Coloris : blanc']
-  ),
+  {
+    ...tee(
+      'FIH',
+      'fih',
+      'FIH',
+      'fih calling...',
+      ['FIH'],
+      'Un poisson. Une montre. Un appel entrant. Quelque chose cloche mais tu decroches quand meme.',
+      ['Face : TOLD · EST. 2025', 'Dos : Fih', 'Coloris : blanc'],
+      'jpg'
+    ),
+    price: 1995,
+    compareAtPrice: 2995,
+  },
   tee(
     'WORLD_PEACE',
     'world-peace',
@@ -118,13 +123,14 @@ export const PRODUCTS: Product[] = [
   ),
   {
     ...tee(
-      'THE_DON',
-      'the-don',
-      'THE DON',
-      'No caption needed.',
-      ['THE', 'DON'],
-      'Un geste. Toute une philosophie. The Don ne parle pas — il communique.',
-      ['Face : TOLD · EST. 2025', 'Dos : The Don', 'Coloris : blanc']
+      'OVERSTIMULATED',
+      'overstimulated',
+      'OVERSTIMULATED',
+      'Too much. Always.',
+      ['OVER', 'STIMULATED'],
+      'Un telephone sur les yeux. Un cable autour du cou. Le portrait d\'une generation qui ne sait plus ou regarder.',
+      ['Face : TOLD · EST. 2025', 'Dos : Overstimulated', 'Coloris : blanc'],
+      'jpg'
     ),
     price: 1995,
     compareAtPrice: 2995,
