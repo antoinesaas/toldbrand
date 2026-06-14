@@ -69,8 +69,7 @@ export const PRODUCTS: Product[] = [
       'fih calling...',
       ['FIH'],
       'Un poisson. Une montre. Un appel entrant. Quelque chose cloche mais tu decroches quand meme.',
-      ['Face : TOLD · EST. 2025', 'Dos : Fih', 'Coloris : blanc'],
-      'jpg'
+      ['Face : TOLD · EST. 2025', 'Dos : Fih', 'Coloris : blanc']
     ),
     price: 1995,
     compareAtPrice: 2995,
@@ -129,8 +128,7 @@ export const PRODUCTS: Product[] = [
       'Too much. Always.',
       ['OVER', 'STIMULATED'],
       'Un telephone sur les yeux. Un cable autour du cou. Le portrait d\'une generation qui ne sait plus ou regarder.',
-      ['Face : TOLD · EST. 2025', 'Dos : Overstimulated', 'Coloris : blanc'],
-      'jpg'
+      ['Face : TOLD · EST. 2025', 'Dos : Overstimulated', 'Coloris : blanc']
     ),
     price: 1995,
     compareAtPrice: 2995,
