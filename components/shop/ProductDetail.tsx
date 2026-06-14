@@ -38,8 +38,8 @@ export default function ProductDetail({ product }: Props) {
 
   const gallery: GalleryImage[] = useMemo(
     () => [
-      { src: variant.front, label: 'Mockup' },
       { src: variant.lifestyle, label: 'Porté' },
+      { src: variant.front, label: 'Mockup' },
     ],
     [variant.front, variant.lifestyle]
   )

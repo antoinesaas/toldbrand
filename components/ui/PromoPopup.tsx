@@ -21,16 +21,30 @@ export default function PromoPopup() {
     const isMobile = window.innerWidth < 768
 
     if (isMobile) {
-      // Mobile: trigger when user has scrolled ~40% of the page (shows real interest)
+      // iOS exit-intent: fires when user swipes back or switches app
+      const onVisibility = () => {
+        if (document.hidden) show()
+      }
+      document.addEventListener('visibilitychange', onVisibility)
+
+      // Also trigger at 20% scroll as fallback
       const onScroll = () => {
         const scrollable = document.documentElement.scrollHeight - window.innerHeight
-        if (scrollable > 0 && window.scrollY / scrollable >= 0.4) {
+        if (scrollable > 0 && window.scrollY / scrollable >= 0.2) {
           show()
           window.removeEventListener('scroll', onScroll)
         }
       }
       window.addEventListener('scroll', onScroll, { passive: true })
-      return () => window.removeEventListener('scroll', onScroll)
+
+      // 12s timer fallback for users who don't scroll
+      const timer = setTimeout(show, 12000)
+
+      return () => {
+        document.removeEventListener('visibilitychange', onVisibility)
+        window.removeEventListener('scroll', onScroll)
+        clearTimeout(timer)
+      }
     } else {
       // Desktop: 45s delay OR exit intent
       const timer = setTimeout(show, 45000)
