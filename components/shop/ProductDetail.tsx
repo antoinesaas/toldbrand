@@ -37,8 +37,11 @@ export default function ProductDetail({ product }: Props) {
   const formatPrice = useFormatPrice()
 
   const gallery: GalleryImage[] = useMemo(() => {
-    const imgs: GalleryImage[] = [{ src: variant.lifestyle, label: 'Porté' }]
-    if (variant.front && variant.front !== variant.lifestyle) {
+    const hasLifestyle = variant.lifestyle !== variant.front
+    const imgs: GalleryImage[] = [
+      { src: variant.lifestyle, label: hasLifestyle ? 'Porté' : 'Mockup' },
+    ]
+    if (hasLifestyle && variant.front) {
       imgs.push({ src: variant.front, label: 'Mockup' })
     }
     return imgs

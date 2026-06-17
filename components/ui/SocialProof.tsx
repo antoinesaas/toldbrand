@@ -44,17 +44,6 @@ export default function SocialProof() {
       <p className="text-[10px] text-white/40 uppercase tracking-[0.15em]">
         {review.name} — {review.city}
       </p>
-      <div className="flex gap-1 mt-3">
-        {REVIEWS.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => setIdx(i)}
-            className={`h-0.5 flex-1 rounded-full transition-all ${i === idx ? 'bg-white' : 'bg-white/20'}`}
-            aria-label={`Avis ${i + 1}`}
-          />
-        ))}
-      </div>
     </div>
   )
 }
