@@ -70,6 +70,7 @@ export const PRODUCTS: Product[] = [
     ['PORSCHE', 'X', 'STAR WARS'],
     'Une Porsche. Un TIE Fighter. Deux icones qui n\'avaient rien a faire ensemble — et pourtant ca marche.',
     ['Face : TOLD · EST. 2025', 'Dos : Porsche x Star Wars', 'Coloris : noir ou blanc'],
+    1995, 2995,
   ),
   tee(
     'moto',
@@ -78,6 +79,7 @@ export const PRODUCTS: Product[] = [
     ['MOTO'],
     'Le viseur orange. La route derriere. Tout le reste est bruit.',
     ['Face : TOLD · EST. 2025', 'Dos : Moto', 'Coloris : noir ou blanc'],
+    1995, 2995,
   ),
   tee(
     'ski',
@@ -86,6 +88,7 @@ export const PRODUCTS: Product[] = [
     ['SKI'],
     'Avant le depart. Apres l\'arrivee. Entre les deux, juste la vitesse et le silence.',
     ['Face : TOLD · EST. 2025', 'Dos : Ski', 'Coloris : noir ou blanc'],
+    1995, 2995,
   ),
   tee(
     'porsche-white',
@@ -94,6 +97,7 @@ export const PRODUCTS: Product[] = [
     ['PORSCHE', 'WHITE'],
     'La Porsche blanche. L\'esthetique au-dessus de tout le reste.',
     ['Face : TOLD · EST. 2025', 'Dos : Porsche White', 'Coloris : noir ou blanc'],
+    1995, 2995,
   ),
   tee(
     'nissan-gtr',
