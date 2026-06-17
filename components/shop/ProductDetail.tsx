@@ -36,13 +36,13 @@ export default function ProductDetail({ product }: Props) {
   const { t, currency, country, language } = useI18n()
   const formatPrice = useFormatPrice()
 
-  const gallery: GalleryImage[] = useMemo(
-    () => [
-      { src: variant.lifestyle, label: 'Porté' },
-      { src: variant.front, label: 'Mockup' },
-    ],
-    [variant.front, variant.lifestyle]
-  )
+  const gallery: GalleryImage[] = useMemo(() => {
+    const imgs: GalleryImage[] = [{ src: variant.lifestyle, label: 'Porté' }]
+    if (variant.front && variant.front !== variant.lifestyle) {
+      imgs.push({ src: variant.front, label: 'Mockup' })
+    }
+    return imgs
+  }, [variant.front, variant.lifestyle])
 
   const related = PRODUCTS.filter((p) => p.id !== product.id)
 

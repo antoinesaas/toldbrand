@@ -1,164 +1,148 @@
 import type { Product, ProductVariant } from '@/types'
-import { GELATO_CATALOG, gelatoUidFromEnv } from '@/lib/gelato-catalog'
 
-const uid = (key: string) => gelatoUidFromEnv(key, GELATO_CATALOG.CLASSIC_TEE_WHITE)
+const BLACK_UID = 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000'
+const WHITE_UID = 'apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_white_gpr_0-4_gildan_5000'
+
+const MATERIAL = [
+  '100 % coton peigne, 220 gsm',
+  'Coupe relax unisexe',
+  'Impression haute qualite dos',
+  'Lavage 30°C',
+]
+
+function variants(slug: string): ProductVariant[] {
+  const lifestyle = `/images/products/${slug}/lifestyle.jpg`
+  return [
+    {
+      color: 'black',
+      label: 'Noir',
+      hex: '#0a0a0a',
+      front: lifestyle,
+      back: lifestyle,
+      lifestyle,
+      gelatoProductUid: BLACK_UID,
+    },
+    {
+      color: 'white',
+      label: 'Blanc',
+      hex: '#FFFFFF',
+      front: lifestyle,
+      back: lifestyle,
+      lifestyle,
+      gelatoProductUid: WHITE_UID,
+    },
+  ]
+}
 
 function tee(
-  key: string,
   slug: string,
   name: string,
   tagline: string,
   phrase: string[],
   description: string,
   details: string[],
-  ext: 'png' | 'jpg' = 'png'
+  price = 2995,
+  compareAtPrice = 2995,
 ): Product {
-  const lifestyle =
-    ext === 'jpg'
-      ? `/images/products/${slug}/lifestyle.jpg`
-      : `/images/products/${slug}/lifestyle.png`
-
-  const variant: ProductVariant = {
-    color: 'white',
-    label: 'Blanc',
-    hex: '#FFFFFF',
-    front: `/images/products/${slug}/mockup.png`,
-    back: `/images/products/${slug}/mockup.png`, // front-only print, same file
-    lifestyle,
-    gelatoProductUid: uid(key),
-  }
-
   return {
     id: slug,
     slug,
     name,
     tagline,
     phrase,
-    price: 2995,
-    compareAtPrice: 2995,
+    price,
+    compareAtPrice,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    variants: [variant],
+    variants: variants(slug),
     isNew: true,
     isBestseller: false,
     description,
     details,
-    material: [
-      '100 % coton peigne, 220 gsm',
-      'Coupe relax unisexe',
-      'Impression haute qualite recto',
-      'Lavage 30°C',
-    ],
+    material: MATERIAL,
   }
 }
 
 export const PRODUCTS: Product[] = [
   tee(
-    'KANYE_WEST_EAST',
-    'kanye-west-east',
-    'KANYE WEST / KANYE EAST',
-    'Neither north.',
-    ['KANYE', 'WEST', 'KANYE', 'EAST'],
-    'Il regarde a gauche. Il regarde a droite. C\'est le meme. La direction n\'a jamais vraiment importe.',
-    ['Face : TOLD · EST. 2025', 'Dos : Kanye West / Kanye East', 'Coloris : blanc']
-  ),
-  {
-    ...tee(
-      'FIH',
-      'fih',
-      'FIH',
-      'fih calling...',
-      ['FIH'],
-      'Un poisson. Une montre. Un appel entrant. Quelque chose cloche mais tu decroches quand meme.',
-      ['Face : TOLD · EST. 2025', 'Dos : Fih', 'Coloris : blanc']
-    ),
-    price: 1995,
-    compareAtPrice: 2995,
-  },
-  tee(
-    'WORLD_PEACE',
-    'world-peace',
-    'WORLD PEACE',
-    'Summit exclusive. No press.',
-    ['WORLD', 'PEACE'],
-    'Deux chefs d\'Etat. Un fisheye. Une bouteille. Ce que la diplomatie ne montre jamais.',
-    ['Face : TOLD · EST. 2025', 'Dos : World Peace', 'Coloris : blanc']
+    'porsche-star-wars',
+    'PORSCHE X STAR WARS',
+    'A galaxy far, far away. In Stuttgart.',
+    ['PORSCHE', 'X', 'STAR WARS'],
+    'Une Porsche. Un TIE Fighter. Deux icones qui n\'avaient rien a faire ensemble — et pourtant ca marche.',
+    ['Face : TOLD · EST. 2025', 'Dos : Porsche x Star Wars', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'BREAKING_BREAD',
-    'breaking-bread',
-    'BREAKING BREAD',
-    'I am the one who knocks on heaven.',
-    ['BREAKING', 'BREAD'],
-    'Il est mort pour tes peches. Mais il est revenu pour l\'empire. Breaking Bread — saison finale.',
-    ['Face : TOLD · EST. 2025', 'Dos : Breaking Bread', 'Coloris : blanc'],
-    'jpg'
+    'moto',
+    'MOTO',
+    'No lane. No limit.',
+    ['MOTO'],
+    'Le viseur orange. La route derriere. Tout le reste est bruit.',
+    ['Face : TOLD · EST. 2025', 'Dos : Moto', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'JEWPITER',
-    'jewpiter',
-    'JEWPITER',
-    'The chosen planet.',
-    ['JEW', 'PITER'],
-    'La cinquieme planete du systeme solaire. La plus grande. La plus choisie. Jewpiter.',
-    ['Face : TOLD · EST. 2025', 'Dos : Jewpiter', 'Coloris : blanc']
+    'ski',
+    'SKI',
+    'First track. Last stop.',
+    ['SKI'],
+    'Avant le depart. Apres l\'arrivee. Entre les deux, juste la vitesse et le silence.',
+    ['Face : TOLD · EST. 2025', 'Dos : Ski', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'LARA_CISTE',
-    'lara-ciste',
-    'LARA CISTE',
-    'Aventuriere. No comment on the rest.',
-    ['LARA', 'CISTE'],
-    'Elle cherche des artefacts. Elle penetre les temples. Elle a des opinions tres arretees sur l\'identite nationale.',
-    ['Face : TOLD · EST. 2025', 'Dos : Lara Ciste', 'Coloris : blanc']
+    'porsche-white',
+    'PORSCHE WHITE',
+    'Clean. Mean. White.',
+    ['PORSCHE', 'WHITE'],
+    'La Porsche blanche. L\'esthetique au-dessus de tout le reste.',
+    ['Face : TOLD · EST. 2025', 'Dos : Porsche White', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'SYBAU',
-    'sybau',
-    'SYBAU',
-    "C'est beau.",
-    ['SY', 'BAU'],
-    'Un pigeon. Des flammes. L\'eau. Un regard qui juge. Sybau — l\'art de ne rien comprendre et d\'y trouver de la beaute.',
-    ['Face : TOLD · EST. 2025', 'Dos : Sybau', 'Coloris : blanc']
+    'nissan-gtr',
+    'NISSAN GTR',
+    'Godzilla never sleeps.',
+    ['NISSAN', 'GTR'],
+    'Des phares rouges dans la nuit de New York. La Godzilla n\'a pas besoin de lumiere pour te trouver.',
+    ['Face : TOLD · EST. 2025', 'Dos : Nissan GTR', 'Coloris : noir ou blanc'],
   ),
-  {
-    ...tee(
-      'OVERSTIMULATED',
-      'overstimulated',
-      'OVERSTIMULATED',
-      'Too much. Always.',
-      ['OVER', 'STIMULATED'],
-      'Un telephone sur les yeux. Un cable autour du cou. Le portrait d\'une generation qui ne sait plus ou regarder.',
-      ['Face : TOLD · EST. 2025', 'Dos : Overstimulated', 'Coloris : blanc']
-    ),
-    price: 1995,
-    compareAtPrice: 2995,
-  },
-  {
-    ...tee(
-      'JEFFREY',
-      'jeffrey',
-      'JEFFREY',
-      "He didn't kill himself.",
-      ['JEFFREY'],
-      "Le sourire le plus celebre de l'histoire recente. Jeffrey — une icone. Une legende. Un mystere.",
-      ['Face : TOLD · EST. 2025', 'Dos : Jeffrey', 'Coloris : blanc']
-    ),
-    price: 1995,
-    compareAtPrice: 2995,
-  },
-  {
-    ...tee(
-      'SHROCK',
-      'shrock',
-      'SHROCK',
-      'Zero explanation needed.',
-      ['SHROCK'],
-      'La moitie Shrek, la moitie Rock, cent pour cent inexplicable. SHROCK — quelque part dans le bayou.',
-      ['Face : TOLD · EST. 2025', 'Dos : Shrock', 'Coloris : blanc']
-    ),
-    price: 1995,
-    compareAtPrice: 2995,
-  },
+  tee(
+    'supra-cine',
+    'SUPRA CINÉ',
+    'Scene. Car. Girl. Night.',
+    ['SUPRA', 'CINÉ'],
+    'Une Toyota Supra sous la pluie. Une femme au sommet. Un cadre cinematique. TOLD.',
+    ['Face : TOLD · EST. 2025', 'Dos : Supra Cine', 'Coloris : noir ou blanc'],
+  ),
+  tee(
+    'porsche-black',
+    'PORSCHE BLACK',
+    'Stealth mode on.',
+    ['PORSCHE', 'BLACK'],
+    'La Porsche noire vue du ciel. Meme de loin, elle est immediatement reconnaissable.',
+    ['Face : TOLD · EST. 2025', 'Dos : Porsche Black', 'Coloris : noir ou blanc'],
+  ),
+  tee(
+    'mercedes',
+    'MERCEDES BENZ',
+    'Das Beste oder nichts.',
+    ['MERCEDES', 'BENZ'],
+    'Le flou rouge d\'une Mercedes en mouvement. Elle ne s\'arrete pas — elle disparait.',
+    ['Face : TOLD · EST. 2025', 'Dos : Mercedes Benz', 'Coloris : noir ou blanc'],
+  ),
+  tee(
+    'f1',
+    'F1',
+    '300 km/h. Then stop for gas.',
+    ['F1'],
+    'Une Formule 1 a la pompe a essence. Le contraste parfait entre la vitesse absolue et le quotidien.',
+    ['Face : TOLD · EST. 2025', 'Dos : F1', 'Coloris : noir ou blanc'],
+  ),
+  tee(
+    'konigsegg',
+    'KONIGSEGG X DARKSTAR',
+    'Built different. Priced accordingly.',
+    ['KONIGSEGG', 'X', 'DARKSTAR'],
+    'Un Konigsegg face a l\'infini de l\'ocean. L\'Etoile Noire sur 4 roues. Rien a ajouter.',
+    ['Face : TOLD · EST. 2025', 'Dos : Konigsegg x Darkstar', 'Coloris : noir ou blanc'],
+  ),
 ]
 
 export function getProductBySlug(slug: string): Product | undefined {

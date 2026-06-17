@@ -1,14 +1,14 @@
 const STOCK: Record<string, number> = {
-  'jewpiter': 4,
-  'kanye-west-east': 3,
-  'fih': 5,
-  'world-peace': 5,
-  'breaking-bread': 4,
-  'lara-ciste': 7,
-  'sybau': 3,
-  'overstimulated': 6,
-  'jeffrey': 4,
-  'shrock': 6,
+  'porsche-star-wars': 4,
+  'moto': 6,
+  'ski': 5,
+  'porsche-white': 3,
+  'nissan-gtr': 5,
+  'supra-cine': 7,
+  'porsche-black': 4,
+  'mercedes': 3,
+  'f1': 6,
+  'konigsegg': 4,
 }
 
 interface Props {

@@ -1,26 +1,18 @@
 import Stripe from 'stripe'
 import { getCheckoutLineItems } from '@/lib/stripe-session'
 import { getCheckoutShipping } from '@/lib/stripe-shipping'
-import { getGelatoDesignData, GELATO_STORE_ID } from '@/lib/gelato-store-products'
-import type { CartItem, ProductSize } from '@/types'
+import { getGelatoVariantId, GELATO_STORE_ID } from '@/lib/gelato-store-products'
+import type { ProductSize } from '@/types'
 
-const GELATO_ECOMMERCE_BASE = 'https://ecommerce.gelatoapis.com'
 const GELATO_ORDER_BASE = 'https://order.gelatoapis.com'
+const GELATO_ECOMMERCE_BASE = 'https://ecommerce.gelatoapis.com'
 const gelatoApiKey = process.env.GELATO_API_KEY?.trim()
 
-/**
- * Lists the store products via ecommerce API (health-check only).
- */
 export async function getGelatoCustomerProducts() {
-  if (!gelatoApiKey) {
-    throw new Error('GELATO_API_KEY is not configured')
-  }
+  if (!gelatoApiKey) throw new Error('GELATO_API_KEY is not configured')
   const res = await fetch(
     `${GELATO_ECOMMERCE_BASE}/v1/stores/${GELATO_STORE_ID}/products?limit=20`,
-    {
-      headers: { 'X-API-KEY': gelatoApiKey },
-      next: { revalidate: 3600 },
-    }
+    { headers: { 'X-API-KEY': gelatoApiKey }, next: { revalidate: 3600 } }
   )
   if (!res.ok) {
     const err = await res.text()
@@ -31,61 +23,52 @@ export async function getGelatoCustomerProducts() {
 
 /**
  * Creates a Gelato order from a paid Stripe session.
- *
- * Uses order.gelatoapis.com/v4/orders with productUid + designId per variant.
- * The designId references the artwork uploaded in the Gelato store editor.
- * No print files are sent — Gelato retrieves the design from its own storage.
+ * Uses productVariantId (from the connected Gelato store) keyed by productId + color + size.
  */
 export async function createGelatoOrder(
   stripeSession: Stripe.Checkout.Session
 ): Promise<unknown> {
-  if (!gelatoApiKey) {
-    throw new Error('GELATO_API_KEY is not configured')
-  }
+  if (!gelatoApiKey) throw new Error('GELATO_API_KEY is not configured')
 
   const shipping = getCheckoutShipping(stripeSession)
   const customer = stripeSession.customer_details
   const lineItems = await getCheckoutLineItems(stripeSession)
 
   if (!shipping?.address) {
-    throw new Error(
-      'Stripe session missing shipping address (collected_information.shipping_details)'
-    )
+    throw new Error('Stripe session missing shipping address')
   }
-
   if (!lineItems.length) {
     throw new Error('Stripe session has no line items')
   }
 
-  // Build order items using productUid + designId (correct for manual Gelato stores)
   const items = lineItems.map((item, idx) => {
     const product = item.price?.product as Stripe.Product | undefined
     const meta = product?.metadata ?? {}
 
     const productId = meta.productId as string | undefined
     const size = (meta.size as ProductSize | undefined) ?? 'M'
+    const color = (meta.color as string | undefined) ?? 'black'
 
     if (!productId) {
       throw new Error(`Missing productId in Stripe metadata for item ${idx}`)
     }
 
-    const { productUid, designId } = getGelatoDesignData(productId, size)
+    const productVariantId = getGelatoVariantId(productId, color, size)
 
     return {
       itemReferenceId: `item-${stripeSession.id}-${idx}`,
-      productUid,
-      designId,
+      productVariantId,
       quantity: item.quantity ?? 1,
     }
   })
 
-  // Build shipping address
   const nameParts = (shipping.name ?? customer?.name ?? '').split(' ')
   const firstName = nameParts[0] ?? 'Customer'
   const lastName = nameParts.slice(1).join(' ') || firstName
 
   const order = {
     orderType: 'order',
+    storeId: GELATO_STORE_ID,
     orderReferenceId: stripeSession.id,
     customerReferenceId: customer?.email ?? stripeSession.id,
     currency: (stripeSession.currency ?? 'eur').toUpperCase(),
@@ -104,10 +87,7 @@ export async function createGelatoOrder(
 
   const res = await fetch(`${GELATO_ORDER_BASE}/v4/orders`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-KEY': gelatoApiKey,
-    },
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': gelatoApiKey },
     body: JSON.stringify(order),
   })
 
