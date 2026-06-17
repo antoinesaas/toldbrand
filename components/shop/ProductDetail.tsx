@@ -195,12 +195,12 @@ export default function ProductDetail({ product }: Props) {
                       key={v.color}
                       type="button"
                       onClick={() => selectVariant(v)}
-                      className={`relative w-14 h-16 border overflow-hidden rounded-xl ${
-                        variant.color === v.color ? 'border-white' : 'border-white/20'
+                      title={v.label}
+                      className={`w-8 h-8 rounded-full border-2 transition-all ${
+                        variant.color === v.color ? 'border-white scale-110' : 'border-white/20 hover:border-white/50'
                       }`}
-                    >
-                      <Image src={v.back} alt={v.label} fill className="object-contain p-1" sizes="56px" />
-                    </button>
+                      style={{ backgroundColor: v.hex }}
+                    />
                   ))}
                 </div>
               </div>

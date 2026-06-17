@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+import Link from 'next/link'
 import { useCartStore } from '@/lib/cart-store'
 import { useI18n } from '@/lib/i18n/use-i18n'
 import { useFormatPrice } from '@/lib/use-format-price'
@@ -7,6 +9,7 @@ import CartItem from './CartItem'
 import PaymentIcons from '@/components/shop/PaymentIcons'
 import { isCheckoutFreeShipping, FREE_SHIPPING_MIN_QUANTITY } from '@/lib/shipping-config'
 import { pixelInitiateCheckout } from '@/lib/pixel'
+import { PRODUCTS } from '@/lib/products'
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, total, count } = useCartStore()
@@ -16,6 +19,9 @@ export default function CartDrawer() {
   const cartCount = count()
   const freeShipping = isCheckoutFreeShipping(cartCount)
   const itemsNeeded = Math.max(0, FREE_SHIPPING_MIN_QUANTITY - cartCount)
+
+  const cartProductIds = new Set(items.map((i) => i.productId))
+  const suggestions = PRODUCTS.filter((p) => !cartProductIds.has(p.id)).slice(0, 4)
 
   async function handleCheckout() {
     pixelInitiateCheckout(cartTotal, 'EUR', cartCount)
@@ -65,18 +71,53 @@ export default function CartDrawer() {
         </div>
 
         {/* Items */}
-        <div className="flex-1 overflow-y-auto py-4 px-6">
-          {items.length === 0 ? (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-xs tracking-[0.15em] uppercase text-white/30">{t.cart.empty}</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-white/10">
-              {items.map((item) => (
-                <CartItem key={item.id} item={item} />
-              ))}
+        <div className="flex-1 overflow-y-auto">
+          {/* You might also like */}
+          {suggestions.length > 0 && (
+            <div className="px-6 pt-5 pb-4 border-b border-white/10">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-3">
+                Vous aimeriez aussi
+              </p>
+              <div className="flex gap-3 overflow-x-auto scrollbar-none pb-1">
+                {suggestions.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/products/${p.slug}`}
+                    onClick={closeCart}
+                    className="flex-none w-[90px] group"
+                  >
+                    <div className="relative aspect-square bg-[#1a1a1a] rounded-lg overflow-hidden mb-2">
+                      <Image
+                        src={p.variants[0].lifestyle}
+                        alt={p.name}
+                        fill
+                        className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                        sizes="90px"
+                      />
+                    </div>
+                    <p className="text-[9px] tracking-[0.1em] uppercase text-white/60 truncate leading-tight">
+                      {p.name}
+                    </p>
+                    <p className="text-[10px] text-white/40 mt-0.5">{formatPrice(p.price)}</p>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
+
+          <div className="py-4 px-6">
+            {items.length === 0 ? (
+              <div className="flex items-center justify-center py-16">
+                <p className="text-xs tracking-[0.15em] uppercase text-white/30">{t.cart.empty}</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/10">
+                {items.map((item) => (
+                  <CartItem key={item.id} item={item} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Footer */}

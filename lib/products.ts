@@ -10,8 +10,8 @@ const MATERIAL = [
   'Lavage 30°C',
 ]
 
-function variants(slug: string): ProductVariant[] {
-  const lifestyle = `/images/products/${slug}/lifestyle.jpg`
+function variants(slug: string, imgNum: number): ProductVariant[] {
+  const lifestyle = `/images/products/${slug}/${imgNum}.png`
   return [
     {
       color: 'black',
@@ -36,6 +36,7 @@ function variants(slug: string): ProductVariant[] {
 
 function tee(
   slug: string,
+  imgNum: number,
   name: string,
   tagline: string,
   phrase: string[],
@@ -53,7 +54,7 @@ function tee(
     price,
     compareAtPrice,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    variants: variants(slug),
+    variants: variants(slug, imgNum),
     isNew: true,
     isBestseller: false,
     description,
@@ -64,7 +65,7 @@ function tee(
 
 export const PRODUCTS: Product[] = [
   tee(
-    'porsche-star-wars',
+    'porsche-star-wars', 1,
     'PORSCHE X STAR WARS',
     'A galaxy far, far away. In Stuttgart.',
     ['PORSCHE', 'X', 'STAR WARS'],
@@ -73,7 +74,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'moto',
+    'moto', 9,
     'MOTO',
     'No lane. No limit.',
     ['MOTO'],
@@ -82,7 +83,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'ski',
+    'ski', 10,
     'SKI',
     'First track. Last stop.',
     ['SKI'],
@@ -91,7 +92,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'porsche-white',
+    'porsche-white', 2,
     'PORSCHE WHITE',
     'Clean. Mean. White.',
     ['PORSCHE', 'WHITE'],
@@ -100,7 +101,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'nissan-gtr',
+    'nissan-gtr', 3,
     'NISSAN GTR',
     'Godzilla never sleeps.',
     ['NISSAN', 'GTR'],
@@ -108,7 +109,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Nissan GTR', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'supra-cine',
+    'supra-cine', 4,
     'SUPRA CINÉ',
     'Scene. Car. Girl. Night.',
     ['SUPRA', 'CINÉ'],
@@ -116,7 +117,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Supra Cine', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'porsche-black',
+    'porsche-black', 8,
     'PORSCHE BLACK',
     'Stealth mode on.',
     ['PORSCHE', 'BLACK'],
@@ -124,7 +125,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Porsche Black', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'mercedes',
+    'mercedes', 7,
     'MERCEDES BENZ',
     'Das Beste oder nichts.',
     ['MERCEDES', 'BENZ'],
@@ -132,7 +133,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Mercedes Benz', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'f1',
+    'f1', 5,
     'F1',
     '300 km/h. Then stop for gas.',
     ['F1'],
@@ -140,7 +141,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : F1', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'konigsegg',
+    'konigsegg', 6,
     'KONIGSEGG X DARKSTAR',
     'Built different. Priced accordingly.',
     ['KONIGSEGG', 'X', 'DARKSTAR'],
