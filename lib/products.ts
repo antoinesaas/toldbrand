@@ -10,15 +10,22 @@ const MATERIAL = [
   'Lavage 30°C',
 ]
 
-function variants(slug: string, imgNum: number): ProductVariant[] {
-  const lifestyle = `/images/products/${slug}/${imgNum}.png`
+function variants(slug: string, hasMockupWhite = false): ProductVariant[] {
+  const hasLifestyle = !['supra-cine', 'konigsegg'].includes(slug)
+  const lifestyle = hasLifestyle
+    ? `/images/products/${slug}/lifestyle.png`
+    : `/images/products/${slug}/mockup.png`
+  const mockupBlack = `/images/products/${slug}/mockup.png`
+  const mockupWhite = hasMockupWhite
+    ? `/images/products/${slug}/mockup-white.png`
+    : mockupBlack
   return [
     {
       color: 'black',
       label: 'Noir',
       hex: '#0a0a0a',
-      front: lifestyle,
-      back: lifestyle,
+      front: mockupBlack,
+      back: mockupBlack,
       lifestyle,
       gelatoProductUid: BLACK_UID,
     },
@@ -26,8 +33,8 @@ function variants(slug: string, imgNum: number): ProductVariant[] {
       color: 'white',
       label: 'Blanc',
       hex: '#FFFFFF',
-      front: lifestyle,
-      back: lifestyle,
+      front: mockupWhite,
+      back: mockupWhite,
       lifestyle,
       gelatoProductUid: WHITE_UID,
     },
@@ -36,7 +43,6 @@ function variants(slug: string, imgNum: number): ProductVariant[] {
 
 function tee(
   slug: string,
-  imgNum: number,
   name: string,
   tagline: string,
   phrase: string[],
@@ -44,6 +50,7 @@ function tee(
   details: string[],
   price = 2995,
   compareAtPrice = 2995,
+  hasMockupWhite = false,
 ): Product {
   return {
     id: slug,
@@ -54,7 +61,7 @@ function tee(
     price,
     compareAtPrice,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    variants: variants(slug, imgNum),
+    variants: variants(slug, hasMockupWhite),
     isNew: true,
     isBestseller: false,
     description,
@@ -65,7 +72,7 @@ function tee(
 
 export const PRODUCTS: Product[] = [
   tee(
-    'porsche-star-wars', 1,
+    'porsche-star-wars',
     'PORSCHE X STAR WARS',
     'A galaxy far, far away. In Stuttgart.',
     ['PORSCHE', 'X', 'STAR WARS'],
@@ -74,7 +81,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'moto', 9,
+    'moto',
     'MOTO',
     'No lane. No limit.',
     ['MOTO'],
@@ -83,7 +90,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'ski', 10,
+    'ski',
     'SKI',
     'First track. Last stop.',
     ['SKI'],
@@ -92,7 +99,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'porsche-white', 2,
+    'porsche-white',
     'PORSCHE WHITE',
     'Clean. Mean. White.',
     ['PORSCHE', 'WHITE'],
@@ -101,7 +108,7 @@ export const PRODUCTS: Product[] = [
     1995, 2995,
   ),
   tee(
-    'nissan-gtr', 3,
+    'nissan-gtr',
     'NISSAN GTR',
     'Godzilla never sleeps.',
     ['NISSAN', 'GTR'],
@@ -109,15 +116,16 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Nissan GTR', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'supra-cine', 4,
+    'supra-cine',
     'SUPRA CINÉ',
     'Scene. Car. Girl. Night.',
     ['SUPRA', 'CINÉ'],
     'Une Toyota Supra sous la pluie. Une femme au sommet. Un cadre cinematique. TOLD.',
     ['Face : TOLD · EST. 2025', 'Dos : Supra Cine', 'Coloris : noir ou blanc'],
+    2995, 2995, true,
   ),
   tee(
-    'porsche-black', 8,
+    'porsche-black',
     'PORSCHE BLACK',
     'Stealth mode on.',
     ['PORSCHE', 'BLACK'],
@@ -125,7 +133,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Porsche Black', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'mercedes', 7,
+    'mercedes',
     'MERCEDES BENZ',
     'Das Beste oder nichts.',
     ['MERCEDES', 'BENZ'],
@@ -133,7 +141,7 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : Mercedes Benz', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'f1', 5,
+    'f1',
     'F1',
     '300 km/h. Then stop for gas.',
     ['F1'],
@@ -141,12 +149,13 @@ export const PRODUCTS: Product[] = [
     ['Face : TOLD · EST. 2025', 'Dos : F1', 'Coloris : noir ou blanc'],
   ),
   tee(
-    'konigsegg', 6,
+    'konigsegg',
     'KONIGSEGG X DARKSTAR',
     'Built different. Priced accordingly.',
     ['KONIGSEGG', 'X', 'DARKSTAR'],
     'Un Konigsegg face a l\'infini de l\'ocean. L\'Etoile Noire sur 4 roues. Rien a ajouter.',
     ['Face : TOLD · EST. 2025', 'Dos : Konigsegg x Darkstar', 'Coloris : noir ou blanc'],
+    2995, 2995, true,
   ),
 ]
 
