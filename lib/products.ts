@@ -10,15 +10,13 @@ const MATERIAL = [
   'Lavage 30°C',
 ]
 
-function variants(slug: string, hasMockupWhite = false): ProductVariant[] {
-  const hasLifestyle = !['supra-cine', 'konigsegg'].includes(slug)
-  const lifestyle = hasLifestyle
-    ? `/images/products/${slug}/lifestyle.png`
-    : `/images/products/${slug}/mockup.png`
+function variants(slug: string): ProductVariant[] {
+  const noLifestyle = slug === 'konigsegg'
+  const lifestyle = noLifestyle
+    ? `/images/products/${slug}/mockup.png`
+    : `/images/products/${slug}/lifestyle.png`
   const mockupBlack = `/images/products/${slug}/mockup.png`
-  const mockupWhite = hasMockupWhite
-    ? `/images/products/${slug}/mockup-white.png`
-    : mockupBlack
+  const mockupWhite = `/images/products/${slug}/mockup-white.jpg`
   return [
     {
       color: 'black',
@@ -50,7 +48,6 @@ function tee(
   details: string[],
   price = 2995,
   compareAtPrice = 2995,
-  hasMockupWhite = false,
 ): Product {
   return {
     id: slug,
@@ -61,7 +58,7 @@ function tee(
     price,
     compareAtPrice,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
-    variants: variants(slug, hasMockupWhite),
+    variants: variants(slug),
     isNew: true,
     isBestseller: false,
     description,
@@ -82,20 +79,20 @@ export const PRODUCTS: Product[] = [
   ),
   tee(
     'moto',
-    'MOTO',
+    'FLAT TRACK',
     'No lane. No limit.',
-    ['MOTO'],
+    ['FLAT', 'TRACK'],
     'Le viseur orange. La route derriere. Tout le reste est bruit.',
-    ['Face : TOLD · EST. 2025', 'Dos : Moto', 'Coloris : noir ou blanc'],
+    ['Face : TOLD · EST. 2025', 'Dos : Flat Track', 'Coloris : noir ou blanc'],
     1995, 2995,
   ),
   tee(
     'ski',
-    'SKI',
+    'HORS PISTE',
     'First track. Last stop.',
-    ['SKI'],
+    ['HORS', 'PISTE'],
     'Avant le depart. Apres l\'arrivee. Entre les deux, juste la vitesse et le silence.',
-    ['Face : TOLD · EST. 2025', 'Dos : Ski', 'Coloris : noir ou blanc'],
+    ['Face : TOLD · EST. 2025', 'Dos : Hors Piste', 'Coloris : noir ou blanc'],
     1995, 2995,
   ),
   tee(
@@ -122,7 +119,6 @@ export const PRODUCTS: Product[] = [
     ['SUPRA', 'CINÉ'],
     'Une Toyota Supra sous la pluie. Une femme au sommet. Un cadre cinematique. TOLD.',
     ['Face : TOLD · EST. 2025', 'Dos : Supra Cine', 'Coloris : noir ou blanc'],
-    2995, 2995, true,
   ),
   tee(
     'porsche-black',
@@ -155,7 +151,6 @@ export const PRODUCTS: Product[] = [
     ['KONIGSEGG', 'X', 'DARKSTAR'],
     'Un Konigsegg face a l\'infini de l\'ocean. L\'Etoile Noire sur 4 roues. Rien a ajouter.',
     ['Face : TOLD · EST. 2025', 'Dos : Konigsegg x Darkstar', 'Coloris : noir ou blanc'],
-    2995, 2995, true,
   ),
 ]
 
