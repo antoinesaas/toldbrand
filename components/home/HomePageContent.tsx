@@ -11,7 +11,7 @@ export default function HomePageContent() {
         <div className="mb-10 md:mb-14">
           <p className="text-white/30 text-[9px] uppercase tracking-[0.4em]">TOLD— · EST. 2025</p>
           <h1 className="text-white text-2xl md:text-4xl font-bold uppercase tracking-tight mt-2">
-            Même Vitesse.
+            Dans le Rouge.
           </h1>
         </div>
 

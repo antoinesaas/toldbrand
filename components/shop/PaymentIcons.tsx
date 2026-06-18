@@ -9,10 +9,10 @@ const PAYMENTS = [
   { src: '/images/payments/klarna.svg', label: 'Klarna', w: 36 },
 ] as const
 
-export default function PaymentIcons({ className = '' }: { className?: string }) {
+export default function PaymentIcons({ className = '', compact = false }: { className?: string; compact?: boolean }) {
   return (
     <div
-      className={`flex flex-wrap items-center justify-center gap-2 ${className}`}
+      className={`flex flex-wrap items-center justify-center gap-1.5 ${className}`}
       role="list"
       aria-label="Moyens de paiement"
     >
@@ -21,14 +21,16 @@ export default function PaymentIcons({ className = '' }: { className?: string })
           key={src}
           role="listitem"
           title={label}
-          className="inline-flex items-center justify-center h-9 min-w-[52px] px-2 rounded-lg border border-neutral-200 bg-white"
+          className={compact
+            ? 'inline-flex items-center justify-center h-6 min-w-[38px] px-1.5 rounded border border-neutral-200 bg-white'
+            : 'inline-flex items-center justify-center h-9 min-w-[52px] px-2 rounded-lg border border-neutral-200 bg-white'}
         >
           <Image
             src={src}
             alt={label}
-            width={w}
-            height={20}
-            className="h-5 w-auto object-contain"
+            width={compact ? Math.round(w * 0.7) : w}
+            height={compact ? 14 : 20}
+            className={compact ? 'h-3.5 w-auto object-contain' : 'h-5 w-auto object-contain'}
             unoptimized
           />
         </span>

@@ -185,7 +185,7 @@ export default function CartDrawer() {
               <p className="text-xs tracking-[0.15em] uppercase text-white/40">{t.cart.total}</p>
               <p className="text-lg font-medium text-white">{formatPrice(cartTotal)}</p>
             </div>
-            <PaymentIcons />
+            <PaymentIcons compact />
             <button
               type="button"
               onClick={handleCheckout}

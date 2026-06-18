@@ -38,7 +38,6 @@ export default function SiteHeader() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
-        <AnnouncementBar light={lightOnDark} />
         <div className={`transition-colors duration-300 ${navBg}`}>
           <nav className="max-w-[1400px] mx-auto h-14 md:h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8">
             <button
@@ -111,6 +110,7 @@ export default function SiteHeader() {
             </div>
           </nav>
         </div>
+        <AnnouncementBar light={false} />
       </header>
 
       <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />

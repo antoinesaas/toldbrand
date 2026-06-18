@@ -31,7 +31,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? 'https://toldbrand.vercel.app'),
   title: {
-    default: 'TOLD— | Même Vitesse',
+    default: 'TOLD— | Dans le Rouge',
     template: '%s | TOLD—',
   },
   description:

@@ -11,10 +11,7 @@ const MATERIAL = [
 ]
 
 function variants(slug: string): ProductVariant[] {
-  const noLifestyle = slug === 'konigsegg'
-  const lifestyle = noLifestyle
-    ? `/images/products/${slug}/mockup.png`
-    : `/images/products/${slug}/lifestyle.png`
+  const lifestyle = `/images/products/${slug}/lifestyle.png`
   const mockupBlack = `/images/products/${slug}/mockup.png`
   const mockupWhite = `/images/products/${slug}/mockup-white.png`
   return [
