@@ -189,20 +189,24 @@ export default function ProductDetail({ product }: Props) {
 
             {product.variants.length > 1 && (
               <div className="mb-6">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-3 text-center lg:text-left">
-                  {t.product.otherColors}
-                </p>
-                <div className="flex justify-center lg:justify-start gap-2">
+                <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-white/40">
+                    Coloris
+                  </p>
+                  <span className="text-[10px] tracking-[0.15em] uppercase text-white/70">
+                    — {variant.label}
+                  </span>
+                </div>
+                <div className="flex justify-center lg:justify-start gap-3">
                   {product.variants.map((v) => (
                     <button
                       key={v.color}
                       type="button"
                       onClick={() => selectVariant(v)}
                       title={v.label}
-                      className={`w-8 h-8 rounded-full border-2 transition-all ${
-                        variant.color === v.color ? 'border-white scale-110' : 'border-white/20 hover:border-white/50'
-                      }`}
-                      style={{ backgroundColor: v.hex }}
+                      className={`w-9 h-9 rounded-full transition-all ring-offset-2 ring-offset-[#0a0a0a] ${
+                        variant.color === v.color ? 'ring-2 ring-white scale-110' : 'ring-1 ring-white/30 hover:ring-white/60'
+                      } ${v.color === 'black' ? 'bg-[#1c1c1c]' : 'bg-white'}`}
                     />
                   ))}
                 </div>
