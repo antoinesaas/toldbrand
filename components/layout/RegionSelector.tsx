@@ -48,7 +48,7 @@ export default function RegionSelector({ onSelect, compact = false, light = fals
         {open && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-            <ul className="absolute right-0 top-full mt-2 z-50 min-w-[220px] bg-white border border-neutral-200 shadow-xl rounded-2xl py-2 overflow-hidden">
+            <ul className="absolute right-0 top-full mt-2 z-50 min-w-[220px] bg-white border border-neutral-200 shadow-xl rounded-2xl py-2 overflow-hidden text-neutral-800">
               {REGIONS.map((r) => (
                 <li key={r.country}>
                   <button

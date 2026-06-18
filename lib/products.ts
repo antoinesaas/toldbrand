@@ -111,11 +111,11 @@ export const PRODUCTS: Product[] = [
   ),
   tee(
     'supra-cine',
-    'CINEMA NOIRE',
+    'SUPRA',
     'Scene. Car. Girl. Night.',
-    ['CINEMA', 'NOIRE'],
+    ['SUPRA'],
     'Une Toyota Supra sous la pluie. Une femme au sommet. Un cadre cinematique. TOLD.',
-    ['Face : TOLD · EST. 2025', 'Dos : Cinema Noire', 'Coloris : noir ou blanc'],
+    ['Face : TOLD · EST. 2025', 'Dos : Supra', 'Coloris : noir ou blanc'],
   ),
   tee(
     'porsche-black',
@@ -127,11 +127,11 @@ export const PRODUCTS: Product[] = [
   ),
   tee(
     'mercedes',
-    'VITESSE ROUGE',
+    'REDLINE',
     'Das Beste oder nichts.',
-    ['VITESSE', 'ROUGE'],
+    ['REDLINE'],
     'Le flou rouge d\'une Mercedes en mouvement. Elle ne s\'arrete pas — elle disparait.',
-    ['Face : TOLD · EST. 2025', 'Dos : Vitesse Rouge', 'Coloris : noir ou blanc'],
+    ['Face : TOLD · EST. 2025', 'Dos : Redline', 'Coloris : noir ou blanc'],
   ),
   tee(
     'f1',
