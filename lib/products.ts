@@ -16,7 +16,7 @@ function variants(slug: string): ProductVariant[] {
     ? `/images/products/${slug}/mockup.png`
     : `/images/products/${slug}/lifestyle.png`
   const mockupBlack = `/images/products/${slug}/mockup.png`
-  const mockupWhite = `/images/products/${slug}/mockup-white.jpg`
+  const mockupWhite = `/images/products/${slug}/mockup-white.png`
   return [
     {
       color: 'black',
