@@ -197,16 +197,18 @@ export default function ProductDetail({ product }: Props) {
                     — {variant.label}
                   </span>
                 </div>
-                <div className="flex justify-center lg:justify-start gap-3">
+                <div className="flex justify-center lg:justify-start gap-3 py-1">
                   {product.variants.map((v) => (
                     <button
                       key={v.color}
                       type="button"
                       onClick={() => selectVariant(v)}
                       title={v.label}
-                      className={`w-9 h-9 rounded-full transition-all ring-offset-2 ring-offset-[#0a0a0a] ${
-                        variant.color === v.color ? 'ring-2 ring-white scale-110' : 'ring-1 ring-white/30 hover:ring-white/60'
-                      } ${v.color === 'black' ? 'bg-[#1c1c1c]' : 'bg-white'}`}
+                      className={`w-8 h-8 rounded-full transition-all flex-shrink-0 ${
+                        variant.color === v.color
+                          ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0a0a0a]'
+                          : 'ring-1 ring-white/30 hover:ring-white/50'
+                      } ${v.color === 'black' ? 'bg-[#2a2a2a]' : 'bg-white'}`}
                     />
                   ))}
                 </div>

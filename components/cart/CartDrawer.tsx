@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore, makeItemId } from '@/lib/cart-store'
@@ -19,9 +20,10 @@ export default function CartDrawer() {
   const cartCount = count()
   const freeShipping = isCheckoutFreeShipping(cartCount)
   const itemsNeeded = Math.max(0, FREE_SHIPPING_MIN_QUANTITY - cartCount)
+  const [colorPickerId, setColorPickerId] = React.useState<string | null>(null)
 
   const cartProductIds = new Set(items.map((i) => i.productId))
-  const suggestions = PRODUCTS.filter((p) => !cartProductIds.has(p.id)).slice(0, 4)
+  const suggestions = PRODUCTS.filter((p) => !cartProductIds.has(p.id)).slice(0, 3)
 
   async function handleCheckout() {
     pixelInitiateCheckout(cartTotal, 'EUR', cartCount)
@@ -93,48 +95,74 @@ export default function CartDrawer() {
                 Vous aimeriez aussi
               </p>
               <div className="space-y-3">
-                {suggestions.map((p) => (
-                  <div key={p.id} className="flex items-center gap-3">
-                    <Link href={`/shop/${p.slug}`} onClick={closeCart} className="flex-none">
-                      <div className="relative w-16 h-16 bg-[#1a1a1a] rounded-lg overflow-hidden">
-                        <Image
-                          src={p.variants[0].front}
-                          alt={p.name}
-                          fill
-                          className="object-cover object-center"
-                          sizes="64px"
-                        />
+                {suggestions.map((p) => {
+                  const isOpen = colorPickerId === p.id
+                  return (
+                    <div key={p.id}>
+                      <div className="flex items-center gap-3">
+                        <Link href={`/shop/${p.slug}`} onClick={closeCart} className="flex-none">
+                          <div className="relative w-16 h-16 bg-[#1a1a1a] rounded-lg overflow-hidden">
+                            <Image
+                              src={p.variants[0].front}
+                              alt={p.name}
+                              fill
+                              className="object-cover object-center"
+                              sizes="64px"
+                            />
+                          </div>
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/shop/${p.slug}`} onClick={closeCart}>
+                            <p className="text-[10px] tracking-[0.1em] uppercase text-white truncate">
+                              {p.name}
+                            </p>
+                          </Link>
+                          <p className="text-[11px] text-white/40 mt-0.5">{formatPrice(p.price)}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setColorPickerId(isOpen ? null : p.id)}
+                          className="flex-none text-[10px] tracking-[0.1em] uppercase border border-white/30 text-white px-3 py-1.5 rounded-full hover:border-white hover:bg-white hover:text-black transition-all whitespace-nowrap"
+                        >
+                          + Ajouter
+                        </button>
                       </div>
-                    </Link>
-                    <div className="flex-1 min-w-0">
-                      <Link href={`/shop/${p.slug}`} onClick={closeCart}>
-                        <p className="text-[10px] tracking-[0.1em] uppercase text-white truncate">
-                          {p.name}
-                        </p>
-                      </Link>
-                      <p className="text-[11px] text-white/40 mt-0.5">{formatPrice(p.price)}</p>
+
+                      {isOpen && (
+                        <div className="flex gap-2 mt-2 ml-[76px]">
+                          {p.variants.map((v) => (
+                            <button
+                              key={v.color}
+                              type="button"
+                              onClick={() => {
+                                addItem({
+                                  id: makeItemId(p.id, v.color as 'black' | 'white', 'M'),
+                                  productId: p.id,
+                                  name: p.name,
+                                  size: 'M',
+                                  color: v.color as 'black' | 'white',
+                                  colorLabel: v.label,
+                                  price: p.price,
+                                  imageUrl: v.front,
+                                  gelatoProductUid: v.gelatoProductUid,
+                                })
+                                setColorPickerId(null)
+                              }}
+                              className={`flex items-center gap-1.5 text-[10px] tracking-[0.1em] uppercase px-3 py-1.5 rounded-full border transition-all ${
+                                v.color === 'black'
+                                  ? 'bg-[#1c1c1c] border-white/20 text-white hover:border-white'
+                                  : 'bg-white border-white text-black hover:bg-white/80'
+                              }`}
+                            >
+                              <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${v.color === 'black' ? 'bg-white/40' : 'bg-black/20'}`} />
+                              {v.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        addItem({
-                          id: makeItemId(p.id, 'black', 'M'),
-                          productId: p.id,
-                          name: p.name,
-                          size: 'M',
-                          color: 'black',
-                          colorLabel: 'Noir',
-                          price: p.price,
-                          imageUrl: p.variants[0].front,
-                          gelatoProductUid: p.variants[0].gelatoProductUid,
-                        })
-                      }}
-                      className="flex-none text-[10px] tracking-[0.1em] uppercase border border-white/30 text-white px-3 py-1.5 rounded-full hover:border-white hover:bg-white hover:text-black transition-all whitespace-nowrap"
-                    >
-                      + Ajouter
-                    </button>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}

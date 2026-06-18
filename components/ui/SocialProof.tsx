@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 
 const REVIEWS = [
-  { name: 'Lucas M.', city: 'Paris', text: 'Qualite incroyable, le tissu est epais et le design parfait. Je recommande.', stars: 5 },
-  { name: 'Theo R.', city: 'Lyon', text: 'Recu en 3 jours, conforme aux photos. Mon pote a voulu le meme direct.', stars: 5 },
-  { name: 'Maxime D.', city: 'Bordeaux', text: 'Le print tient apres plusieurs lavages. Vraiment solide pour le prix.', stars: 5 },
-  { name: 'Jules B.', city: 'Marseille', text: 'Trop marrant comme concept, les gens dans la rue me demandent ou je l\'ai eu.', stars: 5 },
-  { name: 'Antoine V.', city: 'Toulouse', text: 'Livraison rapide, packaging soigne. Le T-shirt vaut vraiment son prix.', stars: 5 },
+  { name: 'Lucas M.', city: 'Paris', text: 'Le Porsche x Star Wars est parfait. Le print est net, les couleurs intenses. Tissu lourd, ca tient bien.', stars: 5 },
+  { name: 'Theo R.', city: 'Lyon', text: 'Recu en 3 jours, conforme aux photos. Le Tokyo Ghost en vrai c\'est encore mieux. Mon pote en a commande un direct.', stars: 5 },
+  { name: 'Maxime D.', city: 'Bordeaux', text: 'Le Phantom est incroyable. Print ultra net, tient apres plusieurs lavages. Le meilleur achat streetwear de l\'annee.', stars: 5 },
+  { name: 'Jules B.', city: 'Marseille', text: 'Cinema Noire porte en sortie, j\'ai eu des compliments toute la soiree. Tout le monde demandait ou j\'avais trouve ca.', stars: 5 },
+  { name: 'Antoine V.', city: 'Toulouse', text: 'Packaging soigne, livraison rapide. Le tissu est epais, la qualite est la. Je recommande sans hesiter.', stars: 5 },
 ]
 
 function Stars({ count }: { count: number }) {

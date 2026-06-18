@@ -18,7 +18,7 @@ export default function SiteHeader() {
   const { count, toggleCart } = useCartStore()
   const cartCount = count()
   const isHome = pathname === '/'
-  const lightOnDark = isHome && !scrolled
+  const lightOnDark = true
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
