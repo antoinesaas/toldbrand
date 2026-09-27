@@ -1,4 +1,4 @@
-# Configure Supabase Auth for TOLD Brand (project befyczgottbemittzpop)
+# Configure Supabase Auth for TOLD Brand (default project cyabxaynfzjhrzxfldsx, override with $env:SUPABASE_PROJECT_REF)
 # Requires: Supabase Personal Access Token → https://supabase.com/dashboard/account/tokens
 #
 # Usage:
@@ -8,7 +8,7 @@
 #   .\scripts\configure-supabase-auth.ps1
 
 $ErrorActionPreference = "Stop"
-$ProjectRef = "befyczgottbemittzpop"
+$ProjectRef = if ($env:SUPABASE_PROJECT_REF) { $env:SUPABASE_PROJECT_REF } else { "cyabxaynfzjhrzxfldsx" }
 
 if (-not $env:SUPABASE_ACCESS_TOKEN) {
   Write-Host "Set SUPABASE_ACCESS_TOKEN (https://supabase.com/dashboard/account/tokens)" -ForegroundColor Red

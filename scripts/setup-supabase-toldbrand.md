@@ -1,54 +1,61 @@
 # Configuration Supabase — TOLD Brand
 
-Projet : [befyczgottbemittzpop](https://supabase.com/dashboard/project/befyczgottbemittzpop)
+Projet actuel : **`cyabxaynfzjhrzxfldsx`** → [dashboard](https://supabase.com/dashboard/project/cyabxaynfzjhrzxfldsx)
 
-> **Attention** : le site **toldbrand.fr** utilise le projet **`befyczgottbemittzpop`**, pas un autre projet Supabase (ex. « totalbread » affiché dans la sidebar). Si vous ouvrez le mauvais projet, vous verrez « No tables » alors que le site écrit ailleurs — ou l’inverse. Vérifiez : `https://toldbrand.fr/api/health/db` → champ `supabaseProjectRef` doit être `befyczgottbemittzpop`.
+Vérifier à tout moment que le site pointe bien dessus :
+`https://toldbrand.fr/api/health/db` → `supabaseProjectRef` doit valoir `cyabxaynfzjhrzxfldsx`.
 
-> **MCP Cursor** : le serveur Supabase doit être lié à `befyczgottbemittzpop`.  
-> Voir [`SUPABASE-MCP-README.md`](./SUPABASE-MCP-README.md) et [`configure-supabase-auth.ps1`](./configure-supabase-auth.ps1).
+> Les anciens projets (`befyczgottbemittzpop`, `elwqdulkxprjmkejwcai`) ne sont plus utilisés.
 
 ## 1. Base de données
 
-1. Ouvrir **SQL Editor** dans le dashboard
-2. Coller et exécuter le fichier `supabase/migrations/20250328120000_toldbrand_orders.sql`
+[SQL Editor](https://supabase.com/dashboard/project/cyabxaynfzjhrzxfldsx/sql/new) → coller **tout** `supabase/schema.sql` → **Run**.
 
-## 2. Variables Vercel
+Le script est relançable sans risque. Résultat attendu dans Table Editor : `orders` et `order_items`.
 
-Dashboard → **Settings → API** :
+## 2. Variables Vercel (Settings → Environment Variables → Production)
+
+Valeurs dans Supabase → **Project Settings → API Keys** :
 
 | Variable | Valeur |
 |----------|--------|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://befyczgottbemittzpop.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | clé **anon** `public` |
-| `SUPABASE_SERVICE_ROLE_KEY` | clé **service_role** (secrète) |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://cyabxaynfzjhrzxfldsx.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | clé **anon / publishable** |
+| `SUPABASE_SERVICE_ROLE_KEY` | clé **service_role / secret** (ne jamais la mettre côté client) |
 
-```bash
-vercel env add NEXT_PUBLIC_SUPABASE_URL production
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
-vercel env add SUPABASE_SERVICE_ROLE_KEY production
-vercel deploy --prod
-```
+Puis **Redeploy** le dernier déploiement (les variables ne s'appliquent qu'aux nouveaux déploiements).
 
 ## 3. Auth — URLs de redirection
 
-**Authentication → URL Configuration** :
+[Authentication → URL Configuration](https://supabase.com/dashboard/project/cyabxaynfzjhrzxfldsx/auth/url-configuration) :
 
 - Site URL : `https://toldbrand.fr`
-- Redirect URLs :
-  - `https://toldbrand.fr/auth/callback`
-  - `http://localhost:3000/auth/callback`
+- Redirect URLs : `https://toldbrand.fr/auth/callback` et `http://localhost:3000/auth/callback`
 
-## 4. OAuth Google
+## 4. Connexion Google (optionnel)
 
-Voir le guide détaillé : [`setup-google-oauth.md`](./setup-google-oauth.md)
+1. [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → ton client OAuth « Application Web »
+2. **URI de redirection autorisés** : remplacer l'ancienne par
+   `https://cyabxaynfzjhrzxfldsx.supabase.co/auth/v1/callback`
+3. [Supabase → Providers → Google](https://supabase.com/dashboard/project/cyabxaynfzjhrzxfldsx/auth/providers) → activer, coller Client ID + Secret.
 
-Résumé des URI à saisir dans Google Cloud (client OAuth « Application Web ») :
+Ou en une commande (PowerShell) : `scripts/configure-supabase-auth.ps1`.
 
-- **Origines JavaScript** : `https://toldbrand.fr`, `http://localhost:3000`
-- **URI de redirection** : `https://befyczgottbemittzpop.supabase.co/auth/v1/callback`
+| Erreur | Cause probable |
+|--------|----------------|
+| `redirect_uri_mismatch` | URI Supabase manquante dans Google Cloud |
+| `Access blocked` | App OAuth en mode Test → ajouter ton e-mail dans « Utilisateurs de test » |
+| Retour sur le site sans session | Redirect URL manquante dans Supabase (étape 3) |
 
-Puis activer **Google** dans Supabase → Providers avec l’ID client et le secret.
+## 5. Anti-pause
 
-## 5. Email (inscription)
+Le plan gratuit met un projet en pause après ~7 jours sans activité. Le cron Vercel
+(`vercel.json`) appelle `/api/health/db` chaque matin pour le garder actif.
 
-**Authentication → Providers → Email** : activer, confirmer par e-mail si souhaité.
+## Comment une commande est traitée
+
+1. Stripe envoie `checkout.session.completed` → `/api/webhooks/stripe`
+2. Le site crée la commande **Gelato d'abord** (en vérifiant qu'elle n'existe pas déjà)
+3. Puis l'enregistre dans Supabase — si la base est en panne, le colis part quand même,
+   la base est rattrapée au prochain passage
+4. Stripe ne reçoit une erreur (et ne renvoie l'événement) que si **Gelato** a échoué

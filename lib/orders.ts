@@ -27,6 +27,18 @@ export function mapGelatoStatus(gelatoStatus: string): OrderStatus {
   return 'processing'
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/**
+ * Le checkout met `supabase_user_id: 'guest'` pour les invités. Ce n'est pas un UUID :
+ * l'insérer dans `orders.user_id` faisait planter l'enregistrement de TOUTES les
+ * commandes invité (erreur Postgres « invalid input syntax for type uuid »).
+ */
+export function normalizeUserId(value: string | null | undefined): string | null {
+  const v = value?.trim()
+  return v && UUID_RE.test(v) ? v : null
+}
+
 export async function saveOrderFromStripeSession(
   session: Stripe.Checkout.Session,
   opts?: { userId?: string | null; gelatoOrderId?: string }
@@ -43,7 +55,8 @@ export async function saveOrderFromStripeSession(
 
   const totalCents = session.amount_total ?? 0
   const currency = (session.currency ?? 'eur').toUpperCase()
-  const userId = opts?.userId || session.metadata?.supabase_user_id || null
+  const userId =
+    normalizeUserId(opts?.userId) ?? normalizeUserId(session.metadata?.supabase_user_id)
 
   const { data: existing } = await admin
     .from('orders')

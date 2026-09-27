@@ -21,6 +21,47 @@ export async function getGelatoCustomerProducts() {
   return res.json()
 }
 
+type GelatoOrderSummary = {
+  id: string
+  orderReferenceId?: string
+  fulfillmentStatus?: string
+}
+
+const DEAD_STATUSES = ['canceled', 'cancelled', 'failed', 'rejected']
+
+/**
+ * Cherche une commande Gelato déjà créée pour cette session Stripe
+ * (orderReferenceId = id de session Stripe). Empêche les doublons quand Stripe
+ * renvoie le webhook ou que le client recharge la page de succès.
+ * Renvoie null si aucune commande « vivante » n'existe.
+ */
+export async function findGelatoOrderByReference(
+  orderReferenceId: string
+): Promise<GelatoOrderSummary | null> {
+  if (!gelatoApiKey) throw new Error('GELATO_API_KEY is not configured')
+
+  const res = await fetch(`${GELATO_ORDER_BASE}/v4/orders:search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-KEY': gelatoApiKey },
+    body: JSON.stringify({ orderReferenceIds: [orderReferenceId], limit: 10 }),
+    cache: 'no-store',
+    signal: AbortSignal.timeout(10000),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Gelato search failed (${res.status}): ${err}`)
+  }
+
+  const data = (await res.json()) as { orders?: GelatoOrderSummary[] }
+  const alive = (data.orders ?? []).find(
+    (o) =>
+      o.orderReferenceId === orderReferenceId &&
+      !DEAD_STATUSES.includes(String(o.fulfillmentStatus ?? '').toLowerCase())
+  )
+  return alive ?? null
+}
+
 /**
  * Creates a Gelato order from a paid Stripe session.
  * Uses productVariantId (from the connected Gelato store) keyed by productId + color + size.
@@ -89,6 +130,8 @@ export async function createGelatoOrder(
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-API-KEY': gelatoApiKey },
     body: JSON.stringify(order),
+    cache: 'no-store',
+    signal: AbortSignal.timeout(20000),
   })
 
   if (!res.ok) {

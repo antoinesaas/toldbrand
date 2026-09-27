@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { GELATO_STORE_ID } from '@/lib/gelato-store-products'
 
+export const dynamic = 'force-dynamic'
+
 const GELATO_ECOMMERCE_BASE = 'https://ecommerce.gelatoapis.com'
 
 /**

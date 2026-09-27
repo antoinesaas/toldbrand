@@ -26,8 +26,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const order = await ensureOrderFromStripeSession(sessionId, { userId: user.id })
-    return NextResponse.json({ order })
+    const result = await ensureOrderFromStripeSession(sessionId, { userId: user.id })
+    return NextResponse.json({
+      order: result.order,
+      gelatoOrderId: result.gelatoOrderId,
+      gelatoError: result.gelatoError,
+    })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Sync failed'
     console.error('orders/sync:', message)

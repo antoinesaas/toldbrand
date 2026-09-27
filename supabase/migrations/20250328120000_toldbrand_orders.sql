@@ -1,5 +1,4 @@
--- TOLD Brand — run on project befyczgottbemittzpop
--- Supabase Dashboard → SQL Editor → New query → paste & run
+-- TOLD Brand — schéma initial (historique). Pour un nouveau projet, utiliser supabase/schema.sql
 
 CREATE TYPE public.order_status AS ENUM (
   'pending',
