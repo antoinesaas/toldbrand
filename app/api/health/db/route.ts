@@ -26,8 +26,12 @@ export async function GET() {
       const missing =
         !schemaCache && (error.message.includes('does not exist') || error.code === '42P01')
 
+      const unreachable = /fetch failed|abort|timeout|ENOTFOUND|ECONNREFUSED/i.test(error.message)
+
       let hint: string
-      if (schemaCache) {
+      if (unreachable) {
+        hint = `Base injoignable : projet ${ref} en pause, supprimé, ou mauvaise URL sur Vercel.`
+      } else if (schemaCache) {
         hint = `Tables créées mais l'API n'est pas à jour. SQL Editor → NOTIFY pgrst, 'reload schema'; puis rechargez.`
       } else if (missing) {
         hint = `Tables manquantes. https://supabase.com/dashboard/project/${ref}/sql/new → collez supabase/schema.sql`
